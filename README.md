@@ -7,6 +7,13 @@
 
 ## ForestInventory: Overview
 
+<a name="logo"/>
+<div align="center">
+<a href="https://julialang.org/" target="_blank">
+<img src="docs/src/logo.jpg" alt="Julia Logo" width="210" height="142"></img>
+</a>
+</div>
+
 ForestInventory is a Julia project that leverages the powerful Julia programming language along with the versatility of the Qt framework. The project aims to [provide a concise description of the main goal or functionality of the project].
 
 ## Features
