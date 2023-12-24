@@ -1,5 +1,15 @@
 module ForestInventory
 
-# Write your package code here.
+export Inventory
+
+    using QML
+
+    function Inventory()
+
+        loadqml(joinpath(pwd(), "src\\qml", "main.qml"))
+
+        exec()
+
+    end
 
 end
