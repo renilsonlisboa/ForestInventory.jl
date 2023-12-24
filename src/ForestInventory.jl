@@ -1,5 +1,9 @@
 module ForestInventory
 
+include(joinpath(@__DIR__, "AAS.jl"))
+include(joinpath(@__DIR__, "Save.jl"))
+include(joinpath(@__DIR__, "ImportData.jl"))
+
 # Importa os módulos auxiliares para cálculos e funções
 import AAS, Save, ImportData
 

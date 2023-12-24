@@ -79,29 +79,5 @@ export AAS
         XLSX.writetable(("F:/Version_09_07_21/iflorestal.jl/01.xlsx"), Dados=(collect(DataFrames.eachcol(AAS)), 
         DataFrames.names(AAS)), Resultados=(collect(DataFrames.eachcol(Resultados)),
         DataFrames.names(Resultados))) #Exportar para o Excel
-end
-_________________________________________________________________________________________________________________________________________
-
-#Processamento do inventário
-#Importar dados
-Dados = CSV.read("F:/Version_09_07_21/aas.csv", DataFrame) 
-#Informações necessárias
-#Área da população
-const Área = 45
-#Número total de unidades de amostragem na população
-const N = Área/0.1 
-#Nível de significância (α)
-const alpha = 0.05
-const EAR = 10 #Erro da amostragem requerido
-#Unidade de medida da variável
-Unidade = "m³/0.1 ha" #Alterar em função do inventário
-#Conversor para a unidade de área por hectare
-Área_da_parcela=0.1
-Conversor=1/Área_da_parcela
-#AAS(Unidades, Volume)
-AAS(Dados.Unidades, Dados.Volume) #Saída dos dados
-
-
     end
-
 end
