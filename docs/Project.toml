@@ -1,0 +1,3 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+ForestInventory = "d3650ffc-a530-4289-b27b-e6a44e3508d3"
