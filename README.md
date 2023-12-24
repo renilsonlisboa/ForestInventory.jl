@@ -1,5 +1,13 @@
 # ForestInventory
 
+<a name="logo"/>
+<div align="center">
+<a href="https://julialang.org/" target="_blank">
+<img src="docs/src/logo.jpg" alt="Julia Logo" width="210" height="142"></img>
+</a>
+</div>
+
+
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://renilsonlisboa.github.io/ForestInventory.jl/stable/)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://renilsonlisboa.github.io/ForestInventory.jl/dev/)
 [![Build Status](https://github.com/renilsonlisboa/ForestInventory.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/renilsonlisboa/ForestInventory.jl/actions/workflows/CI.yml?query=branch%3Amain)
@@ -7,12 +15,6 @@
 
 ## ForestInventory: Overview
 
-<a name="logo"/>
-<div align="center">
-<a href="https://julialang.org/" target="_blank">
-<img src="docs/src/logo.jpg" alt="Julia Logo" width="210" height="142"></img>
-</a>
-</div>
 
 ForestInventory is a Julia project that leverages the powerful Julia programming language along with the versatility of the Qt framework. The project aims to [provide a concise description of the main goal or functionality of the project].
 
