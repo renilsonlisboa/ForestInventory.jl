@@ -1,5 +1,7 @@
 module ForestInventory
 
+import AAS
+
 export Inventory
 
     using QML
