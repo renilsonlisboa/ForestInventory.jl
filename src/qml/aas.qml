@@ -1,113 +1,93 @@
+/*
+This is a UI file (.ui.qml) that is intended to be edited in Qt Design Studio only.
+It is supposed to be strictly declarative and only uses a subset of QML. If you edit
+this file manually, you might introduce QML code that is not supported by Qt Design Studio.
+Check out https://doc.qt.io/qtcreator/creator-quick-ui-forms.html for details on .ui.qml files.
+*/
 import QtQuick 6.5
 import QtQuick.Controls 6.5
-import QtQuick.Dialogs 6.5
+import QtQuick.Dialogs
+import QtQuick.Window
 
-ApplicationWindow {
-    visible: true
-    width: 640
-    height: 480
+ApplicationWindow{
+    width: 480
+    height: 520
     title: "Amostragem Aleatória Simples"
-    maximumHeight: height
-    maximumWidth: width
 
     Rectangle {
-        id: retangulo
-        visible: true
-        width: 640
-        height: 480
+        width: 480
+        height: 520
 
-        Image {
-            id: backgroundImage
-            source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
-            anchors.fill: parent
-            fillMode: Image.PreserveAspectFit
-            width: retangulo.width
-            height: retangulo.height
-        }
+        color: Constants.backgroundColor
 
-        ComboBox {
-            id: comboBox
+        Text {
+            text: qsTr("Selecione um arquivo .CSV com os dados a serem processados")
+            anchors.verticalCenterOffset: -200
             anchors.centerIn: parent
-            width: 480
-            height: 30
-            currentIndex: 0
+            font.family: Constants.font.family
+        }
 
-            // Adicionar 10 opções ao ComboBox
-            model: ListModel {
-                ListElement {
-                    text: "Amostragem Aleatória Simples"
-                }
-                ListElement {
-                    text: "Amostragem Estratificada"
-                }
-                ListElement {
-                    text: "Amostragem Sistemática"
-                }
-                ListElement {
-                    text: "Amostragem em Dois Estágios"
-                }
-                ListElement {
-                    text: "Amostragem em Conglomerados"
-                }
-                ListElement {
-                    text: "Amostragem Sistemática com Múltiplos Inícios Aleatórios"
-                }
-                ListElement {
-                    text: "Amostragem Independente"
-                }
-                ListElement {
-                    text: "Amostragem com Repetição Total"
-                }
-                ListElement {
-                    text: "Amostragem Dupla"
-                }
-                ListElement {
-                    text: "Amostragem com Repetição Parcial"
-                }
+        Row {
+            anchors.centerIn: parent
+
+            Button {
+                id: importdata
+                width: 120
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: -150
+                anchors.horizontalCenterOffset: -60
+                text: qsTr("Importar dados")
             }
-            // Usar um ItemDelegate personalizado para centralizar o texto
-            delegate: ItemDelegate {
-                width: comboBox.width
-                height: comboBox.height
 
-                contentItem: Text {
-                    text: model.text
-                    anchors.centerIn: parent
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
+            Button {
+                id: view
+                width: 120
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: -150
+                anchors.horizontalCenterOffset: 60
+                text: qsTr("View")
             }
         }
+
+        Grid {
+            id: gridLayout
+            columns: 1
+            anchors.centerIn: parent
+            spacing: 10
+
+            // Adicione 3 campos de entrada (TextField)
+            TextField {
+                id: areainv
+                placeholderText: "Informe a área inventariada (ha)"
+                horizontalAlignment: Text.AlignHCenter
+                width: 250
+            }
+            TextField {
+                id: areaparc
+                placeholderText: "Informe a área da parcela (m²)"
+                horizontalAlignment: Text.AlignHCenter
+                width: 250
+            }
+            TextField {
+                id: ear
+                placeholderText: "Informe o erro relativo admitido (%)"
+                horizontalAlignment: Text.AlignHCenter
+                width: 250
+            }
+            TextField {
+                id: alpha
+                placeholderText: "Informe o valor de Alpha (0.01 à 0.99)"
+                horizontalAlignment: Text.AlignHCenter
+                width: 250
+            }
+        }
+
         Button {
-            text: qsTr("Iniciar Processamento")
+            id: execute
+            width: 250
             anchors.centerIn: parent
-            anchors.verticalCenterOffset: 50
-            onClicked: {
-                if (comboBox.currentIndex === 0) {
-                    console.log(comboBox.currentIndex);
-                } else if (comboBox.currentIndex === 1) {
-                    console.log(comboBox.currentIndex);
-                } else if (comboBox.currentIndex === 2) {
-                    console.log(comboBox.currentIndex);
-                } else if (comboBox.currentIndex === 3) {
-                    console.log(comboBox.currentIndex);
-                } else if (comboBox.currentIndex === 4) {
-                    console.log(comboBox.currentIndex);
-                } else if (comboBox.currentIndex === 5) {
-                    console.log(comboBox.currentIndex);
-                } else if (comboBox.currentIndex === 6) {
-                    console.log(comboBox.currentIndex);
-                } else if (comboBox.currentIndex === 7) {
-                    console.log(comboBox.currentIndex);
-                } else if (comboBox.currentIndex === 8) {
-                    console.log(comboBox.currentIndex);
-                } else if (comboBox.currentIndex === 9) {
-                    console.log(comboBox.currentIndex);
-                } else {
-                    Qt.quit()
-                }
-
-            }
+            anchors.verticalCenterOffset: 150
+            text: qsTr("Processar Inventário")
         }
     }
 }
