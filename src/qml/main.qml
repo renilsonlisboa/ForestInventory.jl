@@ -74,12 +74,13 @@ ApplicationWindow {
 
                 contentItem: Text {
                     text: model.text
-                    anchors.centerIn: comboBox
+                    anchors.centerIn: parent
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
             }
         }
+
         Button {
             text: qsTr("Iniciar Processamento")
             anchors.centerIn: parent

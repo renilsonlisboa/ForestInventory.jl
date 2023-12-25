@@ -1,6 +1,6 @@
 module AAS
 
-export AAS
+export CalcAAS
 
     using DataFrames, Statistics, Distributions, CSV, XLSX #Habilitar pacotes
 
