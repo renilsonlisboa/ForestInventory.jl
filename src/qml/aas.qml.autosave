@@ -116,10 +116,9 @@ ApplicationWindow{
         }
 
         FileDialog {
-            id: fileDialog
+            id: saveDialog
             title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
-            fileMode: FileDialog.OpenFile
-            nameFilters: ["CSV Files (*.csv)"]
+            fileMode: FileDialog.SaveFile
             currentFolder: standardLocations(StandardPaths.HomeLocation)[0]
             onAccepted: {
                 Julia.savefile(selectedFile)

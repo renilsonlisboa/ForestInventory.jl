@@ -11,7 +11,7 @@ ApplicationWindow {
     title: "Forest Inventory"
     maximumHeight: height
     maximumWidth: width
-
+    
     Rectangle {
         id: retangulo
         visible: true
