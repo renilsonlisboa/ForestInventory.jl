@@ -11,7 +11,7 @@ export Inventory
 
     function Inventory()
 
-        @qmlfunction AAS.CalcAAS
+        @qmlfunction aasCalc
 
         loadqml(joinpath(pwd(), "src\\qml", "main.qml"))
 

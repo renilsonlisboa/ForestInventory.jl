@@ -4,10 +4,8 @@ export CalcAAS
 
     using DataFrames, Statistics, Distributions, CSV, XLSX #Habilitar pacotes
 
-    Dados = CSV.read("src/aas.csv", DataFrame)
-
-    function CalcAAS(Dados::DataFrame, Area::Int64, N::Float64, α::Float64, EAR::Int64, Área_da_Parcela::Float64, Conversor::Float64)
-        
+    function calcAAS(Area::Float64, N::Float64, α::Float64, EAR::Float64, Área_da_Parcela::Float64, Conversor::Float64)
+        Dados = CSV.read("src/aas.csv", DataFrame)
         Volume = (Conversor.*Dados.Volume)
         Unidades = Dados.Unidades
         
@@ -35,7 +33,8 @@ export CalcAAS
             round(Infinita)
         elseif (1-(NumUni/N)) < 0.98 #f menor que 0,98 população finita
             #População finita. O tamanho da amostra é calculado pela seguinte equação:
-            Finita=(N*((t)^2)*Variancia)/((N*(((0.1*Media))^2))+(((t)^2)*Variancia))
+            Finita=(N*((t)^2)*Variancia)/((N*(((0.1*Media))^2))+(((
+                t)^2)*Variancia))
             round(Finita)
         end 
     

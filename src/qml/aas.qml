@@ -8,6 +8,7 @@ import QtQuick 6.5
 import QtQuick.Controls 6.5
 import QtQuick.Dialogs
 import QtQuick.Window
+import org.julialang
 
 ApplicationWindow{
     width: 480
@@ -18,13 +19,17 @@ ApplicationWindow{
         width: 480
         height: 520
 
-        color: Constants.backgroundColor
+        Image {
+            id: backgroundImage
+            source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
+            anchors.fill: parent
+            fillMode: Image.Stretch
+        }
 
         Text {
             text: qsTr("Selecione um arquivo .CSV com os dados a serem processados")
             anchors.verticalCenterOffset: -200
             anchors.centerIn: parent
-            font.family: Constants.font.family
         }
 
         Row {
@@ -33,7 +38,6 @@ ApplicationWindow{
             Button {
                 id: importdata
                 width: 120
-                anchors.centerIn: parent
                 anchors.verticalCenterOffset: -150
                 anchors.horizontalCenterOffset: -60
                 text: qsTr("Importar dados")
@@ -42,7 +46,6 @@ ApplicationWindow{
             Button {
                 id: view
                 width: 120
-                anchors.centerIn: parent
                 anchors.verticalCenterOffset: -150
                 anchors.horizontalCenterOffset: 60
                 text: qsTr("View")
@@ -88,6 +91,9 @@ ApplicationWindow{
             anchors.centerIn: parent
             anchors.verticalCenterOffset: 150
             text: qsTr("Processar Inventário")
+            onClicked: {
+                Julia.aasCalc(45.0, 450.0, 0.05, 10.0, 0.1, 10.0)
+            }
         }
     }
 }
