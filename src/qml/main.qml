@@ -86,26 +86,42 @@ ApplicationWindow {
             anchors.verticalCenterOffset: 50
             onClicked: {
                 if (comboBox.currentIndex === 0) {
-                    var vpchwindow = Qt.createComponent("aas.qml")
-                    if (vpchwindow.status === Component.Ready) {
-                        var vpchwindowObject = vpchwindow.createObject(parent);
+                    var aaswindow = Qt.createComponent("aas.qml")
+                    if (aaswindow.status === Component.Ready) {
+                        var aaswindowObject = aaswindow.createObject(parent);
 
                       // Mostre a nova janela
-                        vpchwindowObject.show();
+                        aaswindowObject.show();
                     } else {
-                      console.error("Falha ao criar a nova janela:", vpchwindow.errorString());
+                      console.error("Falha ao criar a nova janela:", aaswindow.errorString());
                     }
                 } else if (comboBox.currentIndex === 1) {
-                    console.log(comboBox.currentIndex);
-                } else if (comboBox.currentIndex === 2) {
-                    console.log(comboBox.currentIndex);
-                } else if (comboBox.currentIndex === 3) {
-                    var vpch2window = Qt.createComponent("aas.qml")
-                    if (vpch2window.status === Component.Ready) {
-                        var vpch2windowObject = vpch2window.createObject(parent);
+                    var aewindow = Qt.createComponent("ae.qml")
+                    if (aewindow.status === Component.Ready) {
+                        var aewindowObject = aewindow.createObject(parent);
 
                       // Mostre a nova janela
-                        vpch2windowObject.show();
+                        aewindowObject.show();
+                    } else {
+                      console.error("Falha ao criar a nova janela:", aewindow.errorString());
+                    }
+                } else if (comboBox.currentIndex === 2) {
+                    var aswindow = Qt.createComponent("as.qml")
+                    if (aswindow.status === Component.Ready) {
+                        var aswindowObject = aswindow.createObject(parent);
+
+                      // Mostre a nova janela
+                        aswindowObject.show();
+                    } else {
+                      console.error("Falha ao criar a nova janela:", aswindow.errorString());
+                    }
+                } else if (comboBox.currentIndex === 3) {
+                    var adewindow = Qt.createComponent("ade.qml")
+                    if (adewindow.status === Component.Ready) {
+                        var adewindowObject = adewindow.createObject(parent);
+
+                      // Mostre a nova janela
+                        adeswindowObject.show();
                     } else {
                       console.error("Falha ao criar a nova janela:", vpch2window.errorString());
                     }
@@ -120,7 +136,15 @@ ApplicationWindow {
                 } else if (comboBox.currentIndex === 8) {
                     console.log(comboBox.currentIndex);
                 } else if (comboBox.currentIndex === 9) {
-                    console.log(comboBox.currentIndex);
+                    var arpwindow = Qt.createComponent("arp.qml")
+                    if (arpwindow.status === Component.Ready) {
+                        var arpwindowObject = arpwindow.createObject(parent);
+
+                      // Mostre a nova janela
+                        arpwindowObject.show();
+                    } else {
+                      console.error("Falha ao criar a nova janela:", arpwindow.errorString());
+                    }
                 } else {
                     Qt.quit()
                 }

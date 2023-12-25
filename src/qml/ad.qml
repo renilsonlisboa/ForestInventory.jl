@@ -6,7 +6,7 @@ ApplicationWindow {
     visible: true
     width: 640
     height: 480
-    title: "Amostragem Aleatória Simples"
+    title: "Amostragem Dupla"
     maximumHeight: height
     maximumWidth: width
 
