@@ -1,8 +1,6 @@
-import QtQuick
 import QtQuick 6.5
 import QtQuick.Controls 6.5
 import QtQuick.Dialogs 6.5
-import Qt.labs.platform
 
 ApplicationWindow {
     visible: true
@@ -86,29 +84,13 @@ ApplicationWindow {
             anchors.verticalCenterOffset: 50
             onClicked: {
                 if (comboBox.currentIndex === 0) {
-                    var vpchwindow = Qt.createComponent("aas.qml")
-                    if (vpchwindow.status === Component.Ready) {
-                        var vpchwindowObject = vpchwindow.createObject(parent);
-
-                      // Mostre a nova janela
-                        vpchwindowObject.show();
-                    } else {
-                      console.error("Falha ao criar a nova janela:", vpchwindow.errorString());
-                    }
+                    console.log(comboBox.currentIndex);
                 } else if (comboBox.currentIndex === 1) {
                     console.log(comboBox.currentIndex);
                 } else if (comboBox.currentIndex === 2) {
                     console.log(comboBox.currentIndex);
                 } else if (comboBox.currentIndex === 3) {
-                    var vpch2window = Qt.createComponent("aas.qml")
-                    if (vpch2window.status === Component.Ready) {
-                        var vpch2windowObject = vpch2window.createObject(parent);
-
-                      // Mostre a nova janela
-                        vpch2windowObject.show();
-                    } else {
-                      console.error("Falha ao criar a nova janela:", vpch2window.errorString());
-                    }
+                    console.log(comboBox.currentIndex);
                 } else if (comboBox.currentIndex === 4) {
                     console.log(comboBox.currentIndex);
                 } else if (comboBox.currentIndex === 5) {
