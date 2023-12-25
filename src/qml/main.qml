@@ -3,7 +3,6 @@ import QtQuick 6.5
 import QtQuick.Controls 6.5
 import QtQuick.Dialogs 6.5
 import Qt.labs.platform
-import QDialogs
 
 ApplicationWindow {
     visible: true
@@ -16,16 +15,14 @@ ApplicationWindow {
     Rectangle {
         id: retangulo
         visible: true
-        width: 640
-        height: 480
+        width: parent.width
+        height: parent.height
 
         Image {
             id: backgroundImage
             source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
             anchors.fill: parent
-            fillMode: Image.PreserveAspectFit
-            width: retangulo.width
-            height: retangulo.height
+            fillMode: Image.Stretch
         }
 
         ComboBox {
@@ -37,6 +34,7 @@ ApplicationWindow {
 
             // Adicionar 10 opções ao ComboBox
             model: ListModel {
+                id: model
                 ListElement {
                     text: "Amostragem Aleatória Simples"
                 }
@@ -68,6 +66,7 @@ ApplicationWindow {
                     text: "Amostragem com Repetição Parcial"
                 }
             }
+
             // Usar um ItemDelegate personalizado para centralizar o texto
             delegate: ItemDelegate {
                 width: comboBox.width
@@ -75,7 +74,7 @@ ApplicationWindow {
 
                 contentItem: Text {
                     text: model.text
-                    anchors.centerIn: parent
+                    anchors.centerIn: comboBox
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
@@ -86,7 +85,7 @@ ApplicationWindow {
             anchors.centerIn: parent
             anchors.verticalCenterOffset: 50
             onClicked: {
-                if (comboBox.currentIndex === 10) {
+                if (comboBox.currentIndex === 0) {
                     var aaswindow = Qt.createComponent("aas.qml")
                     if (aaswindow.status === Component.Ready) {
                         var aaswindowObject = aaswindow.createObject(parent);
