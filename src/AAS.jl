@@ -87,6 +87,7 @@ export CalcAAS
         XLSX.writetable(("02.xlsx"), Dados=(collect(DataFrames.eachcol(AAS)), 
         DataFrames.names(AAS)), Resultados=(collect(DataFrames.eachcol(Resultados)),
         DataFrames.names(Resultados)), overwrite = true) #Exportar para o Excel
-
+        
+        return Resultados
     end
 end
