@@ -3,6 +3,7 @@ import QtQuick 6.5
 import QtQuick.Controls 6.5
 import QtQuick.Dialogs 6.5
 import Qt.labs.platform
+import QDialogs
 
 ApplicationWindow {
     visible: true
@@ -85,7 +86,7 @@ ApplicationWindow {
             anchors.centerIn: parent
             anchors.verticalCenterOffset: 50
             onClicked: {
-                if (comboBox.currentIndex === 0) {
+                if (comboBox.currentIndex === 10) {
                     var aaswindow = Qt.createComponent("aas.qml")
                     if (aaswindow.status === Component.Ready) {
                         var aaswindowObject = aaswindow.createObject(parent);
@@ -121,20 +122,60 @@ ApplicationWindow {
                         var adewindowObject = adewindow.createObject(parent);
 
                       // Mostre a nova janela
-                        adeswindowObject.show();
+                        adewindowObject.show();
                     } else {
                       console.error("Falha ao criar a nova janela:", vpch2window.errorString());
                     }
                 } else if (comboBox.currentIndex === 4) {
-                    console.log(comboBox.currentIndex);
+                    var acwindow = Qt.createComponent("ac.qml")
+                    if (acwindow.status === Component.Ready) {
+                        var acwindowObject = acwindow.createObject(parent);
+
+                      // Mostre a nova janela
+                        acwindowObject.show();
+                    } else {
+                      console.error("Falha ao criar a nova janela:", acwindow.errorString());
+                    }
                 } else if (comboBox.currentIndex === 5) {
-                    console.log(comboBox.currentIndex);
+                    var ascmiawindow = Qt.createComponent("ascmia.qml")
+                    if (ascmiawindow.status === Component.Ready) {
+                        var ascmiawindowObject = ascmiawindow.createObject(parent);
+
+                      // Mostre a nova janela
+                        ascmiawindowObject.show();
+                    } else {
+                      console.error("Falha ao criar a nova janela:", ascmiawindow.errorString());
+                    }
                 } else if (comboBox.currentIndex === 6) {
-                    console.log(comboBox.currentIndex);
+                    var aiwindow = Qt.createComponent("ai.qml")
+                    if (aiwindow.status === Component.Ready) {
+                        var aiwindowObject = aiwindow.createObject(parent);
+
+                      // Mostre a nova janela
+                        aiwindowObject.show();
+                    } else {
+                      console.error("Falha ao criar a nova janela:", aiwindow.errorString());
+                    }
                 } else if (comboBox.currentIndex === 7) {
-                    console.log(comboBox.currentIndex);
+                    var artwindow = Qt.createComponent("art.qml")
+                    if (artwindow.status === Component.Ready) {
+                        var artwindowObject = artwindow.createObject(parent);
+
+                      // Mostre a nova janela
+                        artwindowObject.show();
+                    } else {
+                      console.error("Falha ao criar a nova janela:", artwindow.errorString());
+                    }
                 } else if (comboBox.currentIndex === 8) {
-                    console.log(comboBox.currentIndex);
+                    var adwindow = Qt.createComponent("ad.qml")
+                    if (adwindow.status === Component.Ready) {
+                        var adwindowObject = adwindow.createObject(parent);
+
+                      // Mostre a nova janela
+                        adwindowObject.show();
+                    } else {
+                      console.error("Falha ao criar a nova janela:", adwindow.errorString());
+                    }
                 } else if (comboBox.currentIndex === 9) {
                     var arpwindow = Qt.createComponent("arp.qml")
                     if (arpwindow.status === Component.Ready) {
@@ -146,9 +187,8 @@ ApplicationWindow {
                       console.error("Falha ao criar a nova janela:", arpwindow.errorString());
                     }
                 } else {
-                    Qt.quit()
-                }
 
+                }
             }
         }
     }

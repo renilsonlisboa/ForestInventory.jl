@@ -3,11 +3,10 @@ import QtQuick.Controls 6.5
 import QtQuick.Dialogs 6.5
 
 ApplicationWindow {
-    id: app
     visible: true
     width: 640
     height: 480
-    title: "Amostragem Sistemática com Múltiplos Inícios Aleatórios"
+    title: "Amostragem Independente"
     maximumHeight: height
     maximumWidth: width
 
@@ -22,8 +21,8 @@ ApplicationWindow {
             source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
             anchors.fill: parent
             fillMode: Image.PreserveAspectFit
-            width: app.width
-            height: app.height
+            width: retangulo.width
+            height: retangulo.height
         }
 
         ComboBox {
@@ -107,6 +106,7 @@ ApplicationWindow {
                 } else {
                     Qt.quit()
                 }
+
             }
         }
     }
