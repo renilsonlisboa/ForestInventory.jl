@@ -22,8 +22,8 @@ export Inventory
     end
 
     # processamento do Inventário por meio da amostragem aleatória simples
-    function calcAAS(Dados, Area, N, α, EAR, Conversor)
-        AAS.calcAAS(Dados, Area, N, α, EAR, Conversor)
+    function calcAAS(Dados, Area, AreaParc, α, EAR)
+        AAS.calcAAS(Dados, Area, AreaParc, α, EAR)
     end
 
     # Ativa o programa em QML
@@ -33,7 +33,7 @@ export Inventory
 
         current_directory = dirname(@__FILE__)
 
-        loadqml(joinpath(current_directory, "qml", "main.qml"))
+        loadqml(joinpath(current_directory, "sqml", "main.qml"))
 
         exec()
 

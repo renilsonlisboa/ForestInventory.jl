@@ -2,9 +2,17 @@ module AAS
 
 export CalcAAS
 
-    using DataFrames, Statistics, Distributions, CSV, XLSX #Habilitar pacotes
+    using QML, DataFrames, Statistics, Distributions, CSV, XLSX #Habilitar pacotes
 
-    function calcAAS(Dados, Area, N, α, EAR, Conversor)
+    function calcAAS(Dados, Area, AreaParc, α, EAR)
+
+        Area = Float64(Meta.parse(Area))
+        AreaParc = Float64(Meta.parse(AreaParc))
+        α = Float64(Meta.parse(α))
+        EAR = Float64(Meta.parse(EAR))
+
+        N = Area/AreaParc
+        Conversor = 1/AreaParc
  
         Volume = (Conversor.*Dados.Volume)
         Unidades = Dados.Unidades
@@ -83,11 +91,7 @@ export CalcAAS
         "Fator de correção", "Tamanho da amostra", "População", "Número total de unidades amostrais da população", 
         "Nível de significância (α)", "Observação"], Valores=[Media, LII, LIS, ValTotal, LIItotal, LIStotal, ErroPadRel, Area, ErroAmostAbs, ErroPad, DesvPad, Variancia, VarMed, VarMedRel, CV, LE, EAR, FatorCorr, Tamanho_da_amostra, População, N, α, Observação])
 
-       
-        XLSX.writetable(("02.xlsx"), Dados=(collect(DataFrames.eachcol(AAS)), 
-        DataFrames.names(AAS)), Resultados=(collect(DataFrames.eachcol(Resultados)),
-        DataFrames.names(Resultados)), overwrite = true) #Exportar para o Excel
-        
+     
         return Resultados
     end
 end

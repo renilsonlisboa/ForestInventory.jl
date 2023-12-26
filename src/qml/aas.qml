@@ -122,7 +122,7 @@ ApplicationWindow{
             currentFolder: standardLocations(StandardPaths.HomeLocation)[0]
             onAccepted: {
                 var pathfile = Julia.singleFile(fileDialog.selectedFile)
-                var resultado = Julia.calcAAS(pathfile, 45.0, 450, 0.05, 10, 10)
+                var resultado = Julia.calcAAS(pathfile, areainv.text, areaparc.text, alpha.text, ear    )
                 Julia.saveFile(resultado, saveDialog.selectedFile)
             }
             onRejected: {
