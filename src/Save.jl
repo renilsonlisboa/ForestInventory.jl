@@ -9,6 +9,12 @@ export saveFile
     # Define a função  saveFile usada para salvar o arquivo de resultado
     function saveFile(Dados, uri)
         
+        if uri !== nothing
+            uri_s = QString(uri)
+        else
+            return 0
+        end
+
         # Converte a entrada em QString do QML em String do Julia
         uri_s = QString(uri)
 

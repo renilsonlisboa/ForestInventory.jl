@@ -4,8 +4,8 @@ export CalcAAS
 
     using DataFrames, Statistics, Distributions, CSV, XLSX #Habilitar pacotes
 
-    function calcAAS(Area::Float64, N::Float64, α::Float64, EAR::Float64, Área_da_Parcela::Float64, Conversor::Float64)
-        Dados = CSV.read("src/aas.csv", DataFrame)
+    function calcAAS(Dados, Area, N, α, EAR, Conversor)
+ 
         Volume = (Conversor.*Dados.Volume)
         Unidades = Dados.Unidades
         

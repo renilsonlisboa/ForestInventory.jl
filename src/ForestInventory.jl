@@ -22,8 +22,8 @@ export Inventory
     end
 
     # processamento do Inventário por meio da amostragem aleatória simples
-    function calcAAS()
-        AAS.calcAAS()
+    function calcAAS(Dados, Area, N, α, EAR, Conversor)
+        AAS.calcAAS(Dados, Area, N, α, EAR, Conversor)
     end
 
     # Ativa o programa em QML

@@ -8,7 +8,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Window
-import Qt.labs.platform
 import QtCore
 import org.julialang
 
@@ -62,8 +61,9 @@ ApplicationWindow{
             title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
             fileMode: FileDialog.OpenFile
             nameFilters: ["CSV Files (*.csv)"]
+            currentFolder: standardLocations(StandardPaths.HomeLocation)[0]
             onAccepted: {
-                Julia.singleFile(selectedFile)
+                Julia.singleFile(fileDialog.selectedFile)
             }
             onRejected: {
                 Qt.quit()
@@ -119,9 +119,11 @@ ApplicationWindow{
             id: saveDialog
             title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
             fileMode: FileDialog.SaveFile
+            currentFolder: standardLocations(StandardPaths.HomeLocation)[0]
             onAccepted: {
-                var resultado = Julia.singleFile(fileDialog.selectedFile)
-                Julia.saveFile(resultado, selectedFile)
+                var pathfile = Julia.singleFile(fileDialog.selectedFile)
+                var resultado = Julia.calcAAS(pathfile, 45.0, 450, 0.05, 10, 10)
+                Julia.saveFile(resultado, saveDialog.selectedFile)
             }
             onRejected: {
                 Qt.quit()

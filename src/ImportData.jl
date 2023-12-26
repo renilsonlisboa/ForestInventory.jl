@@ -6,7 +6,11 @@ export singlefile
 
     function singlefile(uri)
         
-        uri_s = QString(uri)
+        if uri !== nothing
+            uri_s = QString(uri)
+        else
+            return 0
+        end
 
         # Remover o prefixo "file:///"
         cleaned_path = replace(uri_s, "file:///" => "")
