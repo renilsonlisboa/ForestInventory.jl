@@ -35,10 +35,11 @@ You can install ForestInventory.jl and its dependencies using the Julia package 
 
 ```julia
 using Pkg
+
 Pkg.add("https://github.com/renilsonlisboa/ForestInventory.jl")
 ```
 
-Or you can install using 
+Or you can install using ]
 
 ```julia
 ]add https://github.com/renilsonlisboa/ForestInventory.jl
@@ -48,5 +49,6 @@ Or you can install using
 
 ```julia
 using ForestInventory
+
 Inventory()
 ```
