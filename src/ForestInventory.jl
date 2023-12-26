@@ -1,8 +1,8 @@
 module ForestInventory
 
-include(joinpath(@__DIR__, "src/AAS.jl"))
-include(joinpath(@__DIR__, "src/Save.jl"))
-include(joinpath(@__DIR__, "src/ImportData.jl"))
+include(joinpath(@__DIR__, "AAS.jl"))
+include(joinpath(@__DIR__, "Save.jl"))
+include(joinpath(@__DIR__, "ImportData.jl"))
 
 # Exporta a função Inventory possibilitando ser chamada via terminal pelo usuário
 export Inventory
@@ -24,7 +24,7 @@ export Inventory
         
         @qmlfunction singleFile saveFile calcAAS
 
-        loadqml(joinpath(pwd(), "src\\qml", "main.qml"))
+        loadqml(joinpath(pwd(), "qml", "main.qml"))
 
         exec()
 
