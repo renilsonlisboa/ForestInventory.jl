@@ -77,7 +77,7 @@ ApplicationWindow{
             anchors.centerIn: parent
             spacing: 10
 
-            // Adicione 3 campos de entrada (TextField)
+            // Adicione 4 campos de entrada (TextField)
             TextField {
                 id: areainv
                 placeholderText: "Informe a área inventariada (ha)"
