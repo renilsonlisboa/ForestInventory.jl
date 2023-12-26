@@ -24,7 +24,7 @@ export Inventory
         
         @qmlfunction singleFile saveFile calcAAS
 
-        loadqml(joinpath(pwd(), "qml", "main.qml"))
+        loadqml(joinpath(pwd(), "rc\\qml", "main.qml"))
 
         exec()
 
