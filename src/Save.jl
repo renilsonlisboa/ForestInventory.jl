@@ -2,13 +2,17 @@ module Save
 
 export saveFile
     
-    using QML, DataFrames, CSV, XSLX 
+    using QML, DataFrames, CSV, XLSX 
 
-    function saveFile(uri::DataFrame)
+    function saveFile(Dados, uri)
 
-        XLSX.writetable("resultado.xlsx",Resultados=(collect(DataFrames.eachcol(Resultados)), DataFrames.names(Resultados)), overwrite = true) #Exportar para o Excel
+        uri_s = QString(uri)
+
         # Remover o prefixo "file:///"
+        cleaned_path = replace(uri_s, "file:///" => "")
 
+        XLSX.writetable("$(cleaned_path).xlsx",Resultados=(collect(DataFrames.eachcol(Dados)), DataFrames.names(Dados)), overwrite = true) #Exportar para o Excel
+    
     end
 
 end

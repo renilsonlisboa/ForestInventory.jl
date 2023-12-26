@@ -13,12 +13,6 @@ export singlefile
     
         Dados = CSV.read("$cleaned_path", DataFrame)
 
-        if typeof(Dados) == DataFrame
-            println("Funcionou")
-        else
-            println("faio")
-        end
-
         return Dados
 
     end

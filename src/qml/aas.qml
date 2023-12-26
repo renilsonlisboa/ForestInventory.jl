@@ -63,7 +63,7 @@ ApplicationWindow{
             nameFilters: ["CSV Files (*.csv)"]
             currentFolder: standardLocations(StandardPaths.HomeLocation)[0]
             onAccepted: {
-                Julia.savefile(selectedFile)
+                Julia.singleFile(selectedFile)
             }
             onRejected: {
                 Qt.quit()
@@ -111,18 +111,18 @@ ApplicationWindow{
             anchors.verticalCenterOffset: 150
             text: qsTr("Processar Inventário")
             onClicked: {
-
+                saveDialog.open()
             }
         }
 
         FileDialog {
-            id: fileDialog
+            id: saveDialog
             title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
-            fileMode: FileDialog.OpenFile
-            nameFilters: ["CSV Files (*.csv)"]
+            fileMode: FileDialog.SaveFile
             currentFolder: standardLocations(StandardPaths.HomeLocation)[0]
             onAccepted: {
-                Julia.savefile(selectedFile)
+                var resultado = Julia.singleFile(fileDialog.selectedFile)
+                Julia.saveFile(resultado, selectedFile)
             }
             onRejected: {
                 Qt.quit()
