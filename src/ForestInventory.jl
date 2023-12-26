@@ -33,7 +33,7 @@ export Inventory
 
         current_directory = dirname(@__FILE__)
 
-        loadqml(joinpath(current_directory, "sqml", "main.qml"))
+        loadqml(joinpath(current_directory, "qml", "main.qml"))
 
         exec()
 
