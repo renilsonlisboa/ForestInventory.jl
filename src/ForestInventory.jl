@@ -23,10 +23,10 @@ export Inventory
     function Inventory()
         
         @qmlfunction singleFile saveFile calcAAS
-        
+
         current_directory = dirname(@__FILE__)
 
-        loadqml(joinpath(current_directory, "src", "qml", "main.qml"))
+        loadqml(joinpath(current_directory, "qml", "main.qml"))
 
         exec()
 
