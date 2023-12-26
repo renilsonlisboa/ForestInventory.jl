@@ -43,3 +43,10 @@ Or you can install using
 ```julia
 ]add https://github.com/renilsonlisboa/ForestInventory.jl
 ```
+
+## Using ForestInventory.jl
+
+```julia
+using ForestInventory
+Inventory()
+```
