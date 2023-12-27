@@ -5,11 +5,12 @@ include(joinpath(@__DIR__, "src/AAS.jl"))
 include(joinpath(@__DIR__, "src/Save.jl"))
 include(joinpath(@__DIR__, "src/ImportData.jl"))
 
+import QML: QString, @qmlfunction, load_qml, exec
+
 # Exporta a função Inventory possibilitando ser chamada via terminal pelo usuário
 export Inventory
 
     # Ativa os pacotes necessários para o programa rodar assim como os módulos auxiliares
-    using QML, .Save, .ImportData, .AAS, DataFrames, CSV, XLSX
 
     # Função para seleção de arquivo em .CSV com dados para processamento
     function singleFile(arg)
@@ -29,11 +30,11 @@ export Inventory
     # Ativa o programa em QML
     function Inventory()
         
-        @qmlfunction singleFile saveFile calcAAS
+        #@qmlfunction singleFile saveFile calcAAS
 
         current_directory = dirname(@__FILE__)
 
-        loadqml(joinpath(current_directory, "src/qml", "main.qml"))
+        loadqml(joinpath(current_directory, "qml", "main.qml"))
 
         exec()
 

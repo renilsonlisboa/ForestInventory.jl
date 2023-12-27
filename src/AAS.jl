@@ -1,8 +1,11 @@
 module AAS
 
-export CalcAAS
+import DataFrames: DataFrame
+import Statistics: mean, var, std
+import Distributions: TDist
+import CSV: CSV.read
 
-    using QML, DataFrames, Statistics, Distributions, CSV, XLSX #Habilitar pacotes
+export CalcAAS
 
     function calcAAS(Dados, Area, AreaParc, α, EAR)
 

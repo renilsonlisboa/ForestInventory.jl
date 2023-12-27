@@ -1,8 +1,13 @@
 module ImportData
 
+
+import QML: QString
+import DataFrames: DataFrame
+import CSV: CSV.read
+
 export singlefile
     
-    using QML, DataFrames, CSV 
+
 
     function singlefile(uri)
         
