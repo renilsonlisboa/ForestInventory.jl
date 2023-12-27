@@ -21,7 +21,6 @@ ApplicationWindow {
         Image {
             id: backgroundImage
             source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
-            anchors.fill: parent
             fillMode: Image.Stretch
         }
 
@@ -30,7 +29,7 @@ ApplicationWindow {
             anchors.centerIn: parent
             width: 480
             height: 30
-            currentIndex: 0
+            currentIndex: 0;
 
             // Adicionar 10 opções ao ComboBox
             model: ListModel {
@@ -79,6 +78,7 @@ ApplicationWindow {
                     verticalAlignment: Text.AlignVCenter
                 }
             }
+
         }
 
         Button {
