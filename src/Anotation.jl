@@ -28,3 +28,4 @@
 #-> Apresentar uma janela com os resultados básicos do inventário 
 #-> Inserir uma barra de carregamento ao lado do botão de importar dados ou então alterar a cor do botão se importado com sucesso
 #-> No aviso de saida apresentar o caminho onde foi salvo o arquivo de saida
+#-> Corrigir WARNINGS do QML (Estão funcionando mas gerando avisos)
