@@ -1,9 +1,9 @@
 module ForestInventory
 
 # Inclui os módulos auxiliares no projeto
-include(joinpath(@__DIR__, "src/AAS.jl"))
-include(joinpath(@__DIR__, "src/Save.jl"))
-include(joinpath(@__DIR__, "src/ImportData.jl"))
+include(joinpath(@__DIR__, "AAS.jl"))
+include(joinpath(@__DIR__, "Save.jl"))
+include(joinpath(@__DIR__, "ImportData.jl"))
 
 import QML: QString, @qmlfunction, load_qml, exec
 
