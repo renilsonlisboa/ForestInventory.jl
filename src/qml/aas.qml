@@ -50,9 +50,11 @@ ApplicationWindow{
             Button {
                 id: view
                 width: 120
-
                 anchors.horizontalCenterOffset: 60
                 text: qsTr("View")
+                onClicked: {
+                    testedialog.open()
+                }
             }
         }
 
@@ -64,9 +66,6 @@ ApplicationWindow{
             currentFolder: standardLocations(StandardPaths.HomeLocation)[0]
             onAccepted: {
                 Julia.singleFile(fileDialog.selectedFile)
-            }
-            onRejected: {
-                Qt.quit()
             }
             Component.onCompleted: visible = false
         }
@@ -121,14 +120,22 @@ ApplicationWindow{
             fileMode: FileDialog.SaveFile
             currentFolder: standardLocations(StandardPaths.HomeLocation)[0]
             onAccepted: {
-                var pathfile = Julia.singleFile(fileDialog.selectedFile)
-                var resultado = Julia.calcAAS(pathfile, areainv.text, areaparc.text, alpha.text, ear    )
-                Julia.saveFile(resultado, saveDialog.selectedFile)
-            }
-            onRejected: {
-                Qt.quit()
+                if (!ear.text || ear.text.trim() === "") {
+                    testedialog.open()
+                } else {
+                    var pathfile = Julia.singleFile(fileDialog.selectedFile)
+                    var resultado = Julia.calcAAS(pathfile, areainv.text, areaparc.text, alpha.text, ear.text)
+                    Julia.saveFile(resultado, saveDialog.selectedFile)
+                }
             }
             Component.onCompleted: visible = false
+        }
+
+        MessageDialog {
+            id: testedialog
+            title: "Dados insuficientes para processamento dos dados"
+            buttons: MessageDialog.Ok
+            text: "Nenhum valor informado para EAR"
         }
     }
 }

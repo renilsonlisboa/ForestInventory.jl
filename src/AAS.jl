@@ -76,12 +76,10 @@ export CalcAAS
             Observação = "Diante do exposto, conclui-se que os resultados obtidos na amostragem não satisfazem as exigências de
             precisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±10% da média  para confiabilidade designada. 
             O erro estimado foi maior que o limite fixado, sendo recomendado incluir mais unidades amostrais no inventário."
-            println(Observação)
         else
             Observação  = "Diante do exposto, conclui-se que os resultados obtidos na amostragem satisfazem as exigências de
             precisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±10% da média para confiabilidade designada. 
             O erro estimado foi menor que o limite fixado, assim as unidades amostrais são suficientes para o inventário."
-            println(Observação)
         end
 
         Resultados = DataFrames.DataFrame(Variáveis=["Média (m³/ha)", "Limite inferior do intervalo de confiança para média (m³/ha)", 
