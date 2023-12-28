@@ -2,7 +2,7 @@ module AAS
 
 import DataFrames: DataFrame
 import Statistics: mean, var, std
-import Distributions: TDist
+import Distributions: TDist, quantile
 import CSV: CSV.read
 
 export CalcAAS
@@ -76,23 +76,18 @@ export CalcAAS
         
         #Tabela com os resultados
         if ErroAmostRel > EAR
-            Observação = "Diante do exposto, conclui-se que os resultados obtidos na amostragem não satisfazem as exigências de
-            precisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±10% da média  para confiabilidade designada. 
-            O erro estimado foi maior que o limite fixado, sendo recomendado incluir mais unidades amostrais no inventário."
+            Observação = "Diante do exposto, conclui-se que os resultados obtidos na amostragem não satisfazem as exigências deprecisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±10% da média  para confiabilidade designada. \n\nO erro estimado foi maior que o limite fixado, sendo recomendado incluir mais unidades amostrais no inventário."
         else
-            Observação  = "Diante do exposto, conclui-se que os resultados obtidos na amostragem satisfazem as exigências de
-            precisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±10% da média para confiabilidade designada. 
-            O erro estimado foi menor que o limite fixado, assim as unidades amostrais são suficientes para o inventário."
+            Observação  = "Diante do exposto, conclui-se que os resultados obtidos na amostragem satisfazem as exigências de precisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±10% da média para confiabilidade designada. \n\nO erro estimado foi menor que o limite fixado, assim as unidades amostrais são suficientes para o inventário."
         end
 
-        Resultados = DataFrames.DataFrame(Variáveis=["Média (m³/ha)", "Limite inferior do intervalo de confiança para média (m³/ha)", 
+        Resultados = DataFrame(Variáveis=["Média (m³/ha)", "Limite inferior do intervalo de confiança para média (m³/ha)", 
         "Limite superior do intervalo de confiança para média (m³/ha)", "Total da população (m³)", "Limite inferior do intervalo de confiança para o total (m³)", 
         "Limite superior do intervalo de confiança para o total (m³)", "Erro padrão relativo (%)", "Área da população (ha)", "Erro da amostragem absoluto (m³/ha)", "Erro padrão (m³/ha)", "Desvio padrão (m³/ha)", 
         "Variância (m³/ha)²", "Variância da média (m³/ha)²", "Variância da média relativa (%)", "Coeficiente de variação (%)", "Limite de erro da amostragem requerido", "Estimativa mínima de confiança (m³/ha)",
         "Fator de correção", "Tamanho da amostra", "População", "Número total de unidades amostrais da população", 
         "Nível de significância (α)", "Observação"], Valores=[Media, LII, LIS, ValTotal, LIItotal, LIStotal, ErroPadRel, Area, ErroAmostAbs, ErroPad, DesvPad, Variancia, VarMed, VarMedRel, CV, LE, EAR, FatorCorr, Tamanho_da_amostra, População, N, α, Observação])
-
      
-        return Resultados
+        return [Resultados, População, Observação]
     end
 end

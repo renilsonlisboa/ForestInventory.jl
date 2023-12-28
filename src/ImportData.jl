@@ -1,14 +1,11 @@
 module ImportData
 
-
 import QML: QString
 import DataFrames: DataFrame
 import CSV: CSV.read
 
 export singlefile
     
-
-
     function singlefile(uri)
         
         if uri !== nothing
@@ -20,7 +17,7 @@ export singlefile
         # Remover o prefixo "file:///"
         cleaned_path = replace(uri_s, "file:///" => "")
     
-        Dados = CSV.read("$cleaned_path", DataFrame)
+        Dados = read("$cleaned_path", DataFrame)
 
         return Dados
 

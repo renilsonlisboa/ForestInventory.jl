@@ -2,7 +2,7 @@ module Save
         
     # Ativa os pacotes usados para a função saveFile funcionar
     import QML: QString
-    import DataFrames: DataFrame
+    import DataFrames: DataFrame, eachcol, names
     import CSV: CSV.read
     import XLSX: XLSX.writetable 
 
@@ -25,7 +25,7 @@ module Save
         cleaned_path = replace(uri_s, "file:///" => "")
 
         # Salva a tabela de resultado no PATH selecionado pelo usuário
-        XLSX.writetable("$(cleaned_path).xlsx",Resultados=(collect(DataFrames.eachcol(Dados)), DataFrames.names(Dados)), overwrite = true) #Exportar para o Excel
+        writetable("$(cleaned_path).xlsx",Resultados=(collect(eachcol(Dados)), names(Dados)), overwrite = true) #Exportar para o Excel
     
     end
 

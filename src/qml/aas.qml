@@ -16,7 +16,11 @@ ApplicationWindow{
     height: 520
     title: "Amostragem Aleatória Simples"
 
+    property string conclusionText: "" // Nova propriedade para armazenar o texto do resultado
+    property string popsizeText: "" // Nova propriedade para armazenar o texto do resultado
+
     Rectangle {
+        id: basebackground
         width: 480
         height: 520
 
@@ -73,7 +77,6 @@ ApplicationWindow{
         Grid {
             id: gridLayout
             columns: 1
-            anchors.centerIn: parent
             spacing: 10
 
             // Adicione 4 campos de entrada (TextField)
@@ -121,21 +124,42 @@ ApplicationWindow{
             currentFolder: standardLocations(StandardPaths.HomeLocation)[0]
             onAccepted: {
                 if (!ear.text || ear.text.trim() === "") {
-                    testedialog.open()
+                    emptyDialog.open()
                 } else {
+
                     var pathfile = Julia.singleFile(fileDialog.selectedFile)
                     var resultado = Julia.calcAAS(pathfile, areainv.text, areaparc.text, alpha.text, ear.text)
-                    Julia.saveFile(resultado, saveDialog.selectedFile)
+
+                    popsizeText = resultado[1];
+                    conclusionText = resultado[2];
+
+                    popsizeDialog.open();
+
+                    Julia.saveFile(resultado[0], saveDialog.selectedFile)
                 }
             }
             Component.onCompleted: visible = false
         }
-
         MessageDialog {
-            id: testedialog
+            id: popsizeDialog
+            title: "Tamanho da População"
+            buttons: MessageDialog.Ok
+            text: popsizeText
+            onButtonClicked: {
+                conclusionDialog.open();
+            }
+        }
+        MessageDialog {
+            id: conclusionDialog
+            title: "Conclusão do Processamento do Inventário"
+            buttons: MessageDialog.Ok
+            text: conclusionText
+        }
+        MessageDialog {
+            id: emptyDialog
             title: "Dados insuficientes para processamento dos dados"
             buttons: MessageDialog.Ok
-            text: "Nenhum valor informado para EAR"
+            text: "resultadoText"
         }
     }
 }
