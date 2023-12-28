@@ -77,6 +77,7 @@ ApplicationWindow{
         Grid {
             id: gridLayout
             columns: 1
+            anchors.centerIn: parent
             spacing: 10
 
             // Adicione 4 campos de entrada (TextField)
@@ -159,6 +160,7 @@ ApplicationWindow{
             id: emptyDialog
             title: "Dados insuficientes para processamento dos dados"
             buttons: MessageDialog.Ok
+
             text: "resultadoText"
         }
     }
