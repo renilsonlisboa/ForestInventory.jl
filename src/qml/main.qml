@@ -261,15 +261,13 @@ ApplicationWindow {
                                 emptyFields.push("Alpha");
                             }
                             
-                            
-
-
                             if (emptyFields.length > 0) {
                                 // Se houver campos vazios, exiba o diálogo
                                 emptyDialog.text = "Ausência de dados nos campos: " + emptyFields.join(", ");
                                 emptyDialog.open();
-                            } else if (selectedFileDialog.fileUrls.length > 0) 
-
+                            } else if (selectedFileDialog.currentFile === "") {
+                                emptySelectedFileDialog.open()
+                            } else {
                                 // Aqui você pode adicionar a lógica para processar os dados inseridos
                                 var resultados = Julia.calcAAS(Julia.singleFile(selectedFileDialog.currentFile), areainv.text, areaparc.text, alpha.text, ear.text)
 
@@ -278,8 +276,6 @@ ApplicationWindow {
                                 resultObs = resultados[2]
 
                                 saveFileDialog.open()
-                            } else {
-                                emptySelectedFileDialog.open()
                             }                    
                         }
                     }
