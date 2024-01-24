@@ -5,6 +5,7 @@ include(joinpath(@__DIR__, "src/AAS.jl"))
 include(joinpath(@__DIR__, "src/Save.jl"))
 include(joinpath(@__DIR__, "src/ImportData.jl"))
 
+
 import QML: QString, @qmlfunction, loadqml, exec
 
 # Exporta a função Inventory possibilitando ser chamada via terminal pelo usuário

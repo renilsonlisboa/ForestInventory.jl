@@ -1,167 +1,346 @@
-/*
-This is a UI file (.ui.qml) that is intended to be edited in Qt Design Studio only.
-It is supposed to be strictly declarative and only uses a subset of QML. If you edit
-this file manually, you might introduce QML code that is not supported by Qt Design Studio.
-Check out https://doc.qt.io/qtcreator/creator-quick-ui-forms.html for details on .ui.qml files.
-*/
-import QtQuick
-import QtQuick.Controls
-import QtQuick.Dialogs
-import QtQuick.Window
-import QtCore
+import QtQuick 6.5
+import QtQuick.Controls 6.5
+import QtQuick.Layouts 6.5
+import QtQuick.Dialogs 6.5
 import org.julialang
 
-ApplicationWindow{
-    width: 480
-    height: 520
+ApplicationWindow {
+    id: mainAppAAS
+    visible: false
+    width: 640
+    height: 480
     title: "Amostragem Aleatória Simples"
-
-    property string conclusionText: "" // Nova propriedade para armazenar o texto do resultado
-    property string popsizeText: "" // Nova propriedade para armazenar o texto do resultado
-
+    
     Rectangle {
-        id: basebackground
-        width: 480
-        height: 520
+        id: retangulo
+        visible: true
+        width: parent.width
+        height: parent.height
 
         Image {
             id: backgroundImage
-            source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
-            anchors.fill: parent
+            source: "images/wallpaper.jpg"
+            width: retangulo.width
+            height: retangulo.height // Substitua pelo caminho real da sua imagem
             fillMode: Image.Stretch
         }
 
-        Text {
-            text: qsTr("Selecione um arquivo .CSV com os dados a serem processados")
-            anchors.verticalCenterOffset: -200
+        ComboBox {
+            id: comboBox
             anchors.centerIn: parent
-        }
+            width: 480
+            height: 30
+            currentIndex: 0
 
-        Row {
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: -150
-
-            Button {
-                id: importdata
-                width: 120
-                anchors.horizontalCenterOffset: -60
-                text: qsTr("Importar dados")
-                onClicked: {
-                    fileDialog.open()
+            // Adicionar 10 opções ao ComboBox
+            model: ListModel {
+                id: model
+                ListElement {
+                    text: "Amostragem Aleatória Simples"
+                }
+                ListElement {
+                    text: "Amostragem Estratificada"
+                }
+                ListElement {
+                    text: "Amostragem Sistemática"
+                }
+                ListElement {
+                    text: "Amostragem em Dois Estágios"
+                }
+                ListElement {
+                    text: "Amostragem em Conglomerados"
+                }
+                ListElement {
+                    text: "Amostragem Sistemática com Múltiplos Inícios Aleatórios"
+                }
+                ListElement {
+                    text: "Amostragem Independente"
+                }
+                ListElement {
+                    text: "Amostragem com Repetição Total"
+                }
+                ListElement {
+                    text: "Amostragem Dupla"
+                }
+                ListElement {
+                    text: "Amostragem com Repetição Parcial"
                 }
             }
 
-            Button {
-                id: view
-                width: 120
-                anchors.horizontalCenterOffset: 60
-                text: qsTr("View")
-                onClicked: {
-                    testedialog.open()
+            contentItem: Text {
+                text: comboBox.currentText
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            delegate: ItemDelegate {
+                width: comboBox.width
+                height: comboBox.height
+
+                contentItem: Text {
+                    text: model.text
+                    anchors.centerIn: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    padding: 10
                 }
-            }
-        }
-
-        FileDialog {
-            id: fileDialog
-            title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
-            fileMode: FileDialog.OpenFile
-            nameFilters: ["CSV Files (*.csv)"]
-            currentFolder: standardLocations(StandardPaths.HomeLocation)[0]
-            onAccepted: {
-                Julia.singleFile(fileDialog.selectedFile)
-            }
-            Component.onCompleted: visible = false
-        }
-
-        Grid {
-            id: gridLayout
-            columns: 1
-            anchors.centerIn: parent
-            spacing: 10
-
-            // Adicione 4 campos de entrada (TextField)
-            TextField {
-                id: areainv
-                placeholderText: "Informe a área inventariada (ha)"
-                horizontalAlignment: Text.AlignHCenter
-                width: 250
-            }
-            TextField {
-                id: areaparc
-                placeholderText: "Informe a área da parcela (m²)"
-                horizontalAlignment: Text.AlignHCenter
-                width: 250
-            }
-            TextField {
-                id: ear
-                placeholderText: "Informe o erro relativo admitido (%)"
-                horizontalAlignment: Text.AlignHCenter
-                width: 250
-            }
-            TextField {
-                id: alpha
-                placeholderText: "Informe o valor de Alpha (0.01 à 0.99)"
-                horizontalAlignment: Text.AlignHCenter
-                width: 250
             }
         }
 
         Button {
-            id: execute
-            width: 250
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: 150
+            id: processInvent
             text: qsTr("Processar Inventário")
-            onClicked: {
-                saveDialog.open()
-            }
-        }
+            anchors.centerIn: parent
+            anchors.verticalCenterOffset: 100
 
-        FileDialog {
-            id: saveDialog
-            title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
-            fileMode: FileDialog.SaveFile
-            currentFolder: standardLocations(StandardPaths.HomeLocation)[0]
-            onAccepted: {
-                if (!ear.text || ear.text.trim() === "") {
-                    emptyDialog.open()
-                } else {
-
-                    var pathfile = Julia.singleFile(fileDialog.selectedFile)
-                    var resultado = Julia.calcAAS(pathfile, areainv.text, areaparc.text, alpha.text, ear.text)
-
-                    popsizeText = resultado[1];
-                    conclusionText = resultado[2];
-
-                    popsizeDialog.open();
-
-                    Julia.saveFile(resultado[0], saveDialog.selectedFile)
+            Connections {
+                target: processInvent
+                onClicked: {
+                    if (comboBox.currentIndex === 0) {
+                        inventAAS.visible = true
+                    } else if (comboBox.currentIndex === 1) {
+                        inventAES.visible = true
+                    } else if (comboBox.currentIndex === 2) {
+                        inventAS.visible = true
+                    } else if (comboBox.currentIndex === 3) {
+                        inventDE.visible = true
+                    } else if (comboBox.currentIndex === 4) {
+                        inventCON.visible = true
+                    } else if (comboBox.currentIndex === 5) {
+                        inventSMI.visible = true
+                    } else if (comboBox.currentIndex === 6) {
+                        inventIND.visible = true
+                    } else if (comboBox.currentIndex === 7) {
+                        inventRPT.visible = true
+                    } else if (comboBox.currentIndex === 8) {
+                        inventDP.visible = true
+                    } else if (comboBox.currentIndex === 9) {
+                        inventRP.visible = true
+                    } else {
+                        Qt.quit()
+                    }
                 }
             }
-            Component.onCompleted: visible = false
-        }
-        MessageDialog {
-            id: popsizeDialog
-            title: "Tamanho da População"
-            buttons: MessageDialog.Ok
-            text: popsizeText
-            onButtonClicked: {
-                conclusionDialog.open();
+
+            contentItem: Text {
+                text: processInvent.text
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
             }
         }
-        MessageDialog {
-            id: conclusionDialog
-            title: "Conclusão do Processamento do Inventário"
-            buttons: MessageDialog.Ok
-            text: conclusionText
-        }
-        MessageDialog {
-            id: emptyDialog
-            title: "Dados insuficientes para processamento dos dados"
-            buttons: MessageDialog.Ok
 
-            text: "resultadoText"
+        Window {
+            id: inventAAS
+            width: 840
+            height: 480
+            title: "Amostragem Aleatória Simples"
+            visible: false
+
+            Image {
+                source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
+                width: parent.width
+                height: parent.height
+                opacity: 0.8
+                fillMode: Image.Stretch
+            }
+
+            Row {
+                spacing: 10
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: -140
+
+                Button {
+                    id: importData
+                    text: qsTr("Importar Dados")
+
+                    Connections {
+                        target: importData
+                        onClicked: {
+                            busyIndicator.visible = true
+                            selectedFileDialog.open()
+                        }
+                    }
+                }
+
+                Button {
+                    id: viewData
+                    text: qsTr("Ver Dados")
+                }
+            }
+
+            Column {
+                id: columnsEnter
+                spacing: 15
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: 20
+
+                // Adicione 4 campos de entrada (TextField)
+                TextField {
+                    id: areainv
+                    placeholderText: "Informe a área inventariada (ha)"
+                    horizontalAlignment: Text.AlignHCenter
+                    width: 250
+                }
+                TextField {
+                    id: areaparc
+                    placeholderText: "Informe a área da parcela (m²)"
+                    horizontalAlignment: Text.AlignHCenter
+                    width: 250
+                }
+                TextField {
+                    id: ear
+                    placeholderText: "Informe o erro relativo admitido (%)"
+                    horizontalAlignment: Text.AlignHCenter
+                    width: 250
+                }
+                TextField {
+                    id: alpha
+                    placeholderText: "Informe o valor de Alpha (0.01 à 0.99)"
+                    horizontalAlignment: Text.AlignHCenter
+                    width: 250
+                }
+            }
+
+            Button {
+                id: processInventAAS
+                text: qsTr("Processar Inventário")
+                anchors.centerIn: columnsEnter
+                anchors.verticalCenterOffset: 140
+            }
+
+            BusyIndicator {
+                id: busyIndicator
+                width: 80
+                height: 80
+                visible: false
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: 240
+            }
+
+            FileDialog {
+                id: selectedFileDialog
+                title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
+                fileMode: FileDialog.OpenFile
+                nameFilters: ["CSV Files (*.csv)"]
+
+                Connections {
+                    onAccepted: {
+                        busyIndicator.visible = false
+                    }
+                }
+                Component.onCompleted: visible = false
+            }
+        }
+
+        Window {
+            id: inventAES
+            width: 760
+            height: 480
+            title: "Janela do Inventário Estratificado"
+            visible: false
+
+
+            Rectangle {
+                id: rectangleAES
+                color: "red"
+            }
+        }
+
+        Window {
+            id: inventAS
+            width: 760
+            height: 480
+            title: "Janela do Inventário Sistemático"
+            visible: false
+
+            Rectangle {
+                id: rectangleAS
+                color: "pink"
+            }
+        }
+        Window {
+            id: inventDE
+            width: 760
+            height: 480
+            title: "Janela do Inventário Dois Estágios"
+            visible: false
+
+            Rectangle {
+                id: rectangleDE
+                color: "green"
+            }
+        }
+        Window {
+            id: inventCON
+            width: 760
+            height: 480
+            title: "Janela do Inventário Conglomerados"
+            visible: false
+
+            Rectangle {
+                id: rectangleCON
+                color: "purple"
+            }
+        }
+        Window {
+            id: inventSMI
+            width: 760
+            height: 480
+            title: "Janela do Inventário Sistemático Multiplos Inícios"
+            visible: false
+
+            Rectangle {
+                id: rectangleSMI
+                color: "brown"
+            }
+        }
+        Window {
+            id: inventIND
+            width: 760
+            height: 480
+            title: "Janela do Inventário Independente"
+            visible: false
+
+            Rectangle {
+                id: rectangleIND
+                color: "yellow"
+            }
+        }
+        Window {
+            id: inventRPT
+            width: 760
+            height: 480
+            title: "Janela do Inventário Estratificado"
+            visible: false
+
+            Rectangle {
+                id: rectangleRPT
+                color: "green"
+            }
+        }
+        Window {
+            id: inventDP
+            width: 760
+            height: 480
+            title: "Janela do Inventário Dupla"
+            visible: false
+
+            Rectangle {
+                id: rectangleDP
+                color: "orange"
+            }
+        }
+        Window {
+            id: inventRP
+            width: 760
+            height: 480
+            title: "Janela do Inventário Parcial"
+            visible: false
+
+            Rectangle {
+                id: rectangleRP
+                color: "black"
+            }
         }
     }
 }
