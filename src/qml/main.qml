@@ -2,12 +2,15 @@ import QtQuick 6.5
 import QtQuick.Controls 6.5
 import QtQuick.Layouts 6.5
 import QtQuick.Dialogs 6.5
+import org.julialang
 
 ApplicationWindow {
     visible: true
     width: 640
     height: 480
     title: "Forest Inventory"
+
+    property string resultObs: ""
 
     Rectangle {
         id: retangulo
@@ -136,106 +139,145 @@ ApplicationWindow {
 
         Window {
             id: inventAAS
-            width: 840
-            height: 480
             title: "Amostragem Aleatória Simples"
+            width: 760
+            height: 640
             visible: false
 
-            Image {
-                source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
+            Rectangle {
                 width: parent.width
                 height: parent.height
-                opacity: 0.8
-                fillMode: Image.Stretch
-            }
+                visible: true
 
-            Row {
-                spacing: 10
-                anchors.centerIn: parent
-                anchors.verticalCenterOffset: -140
+                Image {
+                    source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
+                    width: parent.width
+                    height: parent.height
+                    opacity: 0.8
+                    fillMode: Image.Stretch
+                }
+
+                Row {
+                    spacing: 10
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -140
+
+                    Button {
+                        id: importData
+                        text: qsTr("Importar Dados")
+                        width: 180
+                        font.family: "Arial"
+                        font.pointSize: 14
+
+                        Connections {
+                            target: importData
+                            onClicked: {
+                                busyIndicator.visible = true
+                                selectedFileDialog.open()
+                            }
+                        }
+                    }
+
+                    Button {
+                        id: viewData
+                        text: qsTr("Ver Dados")
+                        font.pointSize: 14
+                        font.family: "Arial"
+                    }
+                }
+
+                Column {
+                    id: columnsEnter
+                    spacing: 15
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 20
+
+                    // Adicione 4 campos de entrada (TextField)
+                    TextField {
+                        id: areainv
+                        placeholderText: "Área inventariada (ha)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: areaparc
+                        placeholderText: "Área da parcela (m²)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: ear
+                        placeholderText: "Erro Relativo Admitido (%)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: alpha
+                        placeholderText: "Alpha (0.01 à 0.99)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                }
 
                 Button {
-                    id: importData
-                    text: qsTr("Importar Dados")
+                    id: processInventAAS
+                    text: qsTr("Processar Inventário")
+                    width: 300
+                    font.pointSize: 14
+                    font.family: "Arial"
+                    anchors.centerIn: columnsEnter
+                    anchors.verticalCenterOffset: 140
 
                     Connections {
-                        target: importData
+                        target: processInventAAS
                         onClicked: {
-                            busyIndicator.visible = true
-                            selectedFileDialog.open()
+                            var resultados = Julia.calcAAS(Julia.singleFile(selectedFileDialog.currentFile), areainv.text, areaparc.text, alpha.text, ear.text)
+
+                            resultObs = resultados[2]  
+
+                            conclusionDialog.open()
                         }
                     }
                 }
 
-                Button {
-                    id: viewData
-                    text: qsTr("Ver Dados")
+                BusyIndicator {
+                    id: busyIndicator
+                    width: 80
+                    height: 80
+                    visible: false
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 240
                 }
-            }
 
-            Column {
-                id: columnsEnter
-                spacing: 15
-                anchors.centerIn: parent
-                anchors.verticalCenterOffset: 20
+                FileDialog {
+                    id: selectedFileDialog
+                    title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
+                    fileMode: FileDialog.OpenFile
+                    nameFilters: ["CSV Files (*.csv)"]
 
-                // Adicione 4 campos de entrada (TextField)
-                TextField {
-                    id: areainv
-                    placeholderText: "Informe a área inventariada (ha)"
-                    horizontalAlignment: Text.AlignHCenter
-                    width: 250
-                }
-                TextField {
-                    id: areaparc
-                    placeholderText: "Informe a área da parcela (m²)"
-                    horizontalAlignment: Text.AlignHCenter
-                    width: 250
-                }
-                TextField {
-                    id: ear
-                    placeholderText: "Informe o erro relativo admitido (%)"
-                    horizontalAlignment: Text.AlignHCenter
-                    width: 250
-                }
-                TextField {
-                    id: alpha
-                    placeholderText: "Informe o valor de Alpha (0.01 à 0.99)"
-                    horizontalAlignment: Text.AlignHCenter
-                    width: 250
-                }
-            }
-
-            Button {
-                id: processInventAAS
-                text: qsTr("Processar Inventário")
-                anchors.centerIn: columnsEnter
-                anchors.verticalCenterOffset: 140
-            }
-
-            BusyIndicator {
-                id: busyIndicator
-                width: 80
-                height: 80
-                visible: false
-                anchors.centerIn: parent
-                anchors.verticalCenterOffset: 240
-            }
-
-            FileDialog {
-                id: selectedFileDialog
-                title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
-                fileMode: FileDialog.OpenFile
-                nameFilters: ["CSV Files (*.csv)"]
-
-                Connections {
-                    onAccepted: {
-                        busyIndicator.visible = false
+                    Connections {
+                        onAccepted: {
+                            busyIndicator.visible = false
+                        }
                     }
+                    Component.onCompleted: visible = false
                 }
-                Component.onCompleted: visible = false
+            }
+            MessageDialog {
+                id: conclusionDialog
+                title: "Inventário Processado com Sucesso"
+                text: resultObs
             }
         }
+
 
         Window {
             id: inventAES
@@ -296,7 +338,7 @@ ApplicationWindow {
 
             Rectangle {
                 id: rectangleSMI
-                color: brown
+                color: "brown"
             }
         }
         Window {
