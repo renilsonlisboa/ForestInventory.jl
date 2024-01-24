@@ -10,7 +10,9 @@ ApplicationWindow {
     height: 480
     title: "Forest Inventory"
 
+    property var resultVals: []
     property string resultObs: ""
+    property string resultPop: ""
 
     Rectangle {
         id: retangulo
@@ -239,11 +241,40 @@ ApplicationWindow {
                     Connections {
                         target: processInventAAS
                         onClicked: {
-                            var resultados = Julia.calcAAS(Julia.singleFile(selectedFileDialog.currentFile), areainv.text, areaparc.text, alpha.text, ear.text)
 
-                            resultObs = resultados[2]  
+                            var emptyFields = [];
 
-                            conclusionDialog.open()
+                            // Verifique se os campos estão vazios ou contêm apenas espaços em branco
+                            if (!areainv.text || areainv.text.trim() === "") {
+                                emptyFields.push("Área Inventariada");
+                            }
+
+                            if (!areaparc.text || areaparc.text.trim() === "") {
+                                emptyFields.push("Área da Parcela");
+                            }
+
+                            if (!ear.text || ear.text.trim() === "") {
+                                emptyFields.push("EAR");
+                            }
+
+                            if (!alpha.text || alpha.text.trim() === "") {
+                                emptyFields.push("Alpha");
+                            }
+
+                            if (emptyFields.length > 0) {
+                                // Se houver campos vazios, exiba o diálogo
+                                emptyDialog.text = "Ausência de dados nos campos: " + emptyFields.join(", ");
+                                emptyDialog.open();
+                            } else {
+                                // Aqui você pode adicionar a lógica para processar os dados inseridos
+                                var resultados = Julia.calcAAS(Julia.singleFile(selectedFileDialog.currentFile), areainv.text, areaparc.text, alpha.text, ear.text)
+
+                                resultVals = resultados[0]
+                                resultPop = resultados[1]
+                                resultObs = resultados[2]
+
+                                saveFileDialog.open()
+                            }                    
                         }
                     }
                 }
@@ -276,8 +307,31 @@ ApplicationWindow {
                 title: "Inventário Processado com Sucesso"
                 text: resultObs
             }
+            MessageDialog {
+                id: conclusionPopDialog
+                title: "Inventário Processado com Sucesso"
+                text: resultPop
+            }
+            FileDialog {
+                id: saveFileDialog
+                title: "Selecione o local para salvar o arquivo..."
+                fileMode: FileDialog.SaveFile
+                
+                Connections {
+                    target: saveFileDialog
+                    onAccepted: {
+                        Julia.saveFile(resultVals, saveFileDialog.selectedFile)
+                        conclusionDialog.open()
+                        conclusionPopDialog.open()
+                    }            
+                }
+            }
+            MessageDialog {
+                id: emptyDialog
+                title: "Dados insuficientes para Calibração"
+                buttons: MessageDialog.Ok
+            }
         }
-
 
         Window {
             id: inventAES
