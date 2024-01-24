@@ -281,8 +281,7 @@ ApplicationWindow {
                                 resultObs = resultados[1] + "\n\n" + resultados[2]
 
                                 saveFileDialog.open()
-                            }     
-                            busyIndicator.running = false               
+                            }                   
                         }
                     }
                 }
@@ -301,6 +300,7 @@ ApplicationWindow {
                     title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
                     fileMode: FileDialog.OpenFile
                     nameFilters: ["CSV Files (*.csv)"]
+                
                     Component.onCompleted: visible = false
                 }
             }
@@ -324,7 +324,8 @@ ApplicationWindow {
                     onAccepted: {
                         Julia.saveFile(resultVals, saveFileDialog.selectedFile)
                         conclusionDialog.open()
-                    }            
+                        onAccepted: busyIndicator.running = false 
+                    }
                 }
             }
             MessageDialog {
