@@ -12,7 +12,6 @@ ApplicationWindow {
 
     property var resultVals: []
     property string resultObs: ""
-    property string resultPop: ""
 
     Rectangle {
         id: retangulo
@@ -185,6 +184,11 @@ ApplicationWindow {
                         text: qsTr("Ver Dados")
                         font.pointSize: 14
                         font.family: "Arial"
+
+                        Connections {
+                            target: viewData
+                            onClicked: busyIndicator.visible = true
+                        }
                     }
                 }
 
@@ -242,6 +246,8 @@ ApplicationWindow {
                         target: processInventAAS
                         onClicked: {
 
+                            busyIndicator.running = true
+
                             var emptyFields = [];
 
                             // Verifique se os campos estão vazios ou contêm apenas espaços em branco
@@ -272,11 +278,11 @@ ApplicationWindow {
                                 var resultados = Julia.calcAAS(Julia.singleFile(selectedFileDialog.currentFile), areainv.text, areaparc.text, alpha.text, ear.text)
 
                                 resultVals = resultados[0]
-                                resultPop = resultados[1]
-                                resultObs = resultados[2]
+                                resultObs = resultados[1] + "\n\n" + resultados[2]
 
                                 saveFileDialog.open()
-                            }                    
+                            }     
+                            busyIndicator.running = false               
                         }
                     }
                 }
@@ -285,7 +291,7 @@ ApplicationWindow {
                     id: busyIndicator
                     width: 80
                     height: 80
-                    visible: false
+                    running: false
                     anchors.centerIn: parent
                     anchors.verticalCenterOffset: 240
                 }
@@ -295,12 +301,6 @@ ApplicationWindow {
                     title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
                     fileMode: FileDialog.OpenFile
                     nameFilters: ["CSV Files (*.csv)"]
-
-                    Connections {
-                        onAccepted: {
-                            busyIndicator.visible = false
-                        }
-                    }
                     Component.onCompleted: visible = false
                 }
             }
@@ -308,11 +308,6 @@ ApplicationWindow {
                 id: conclusionDialog
                 title: "Inventário Processado com Sucesso"
                 text: resultObs
-            }
-            MessageDialog {
-                id: conclusionPopDialog
-                title: "Inventário Processado com Sucesso"
-                text: resultPop
             }
             MessageDialog {
                 id: emptySelectedFileDialog
@@ -329,13 +324,12 @@ ApplicationWindow {
                     onAccepted: {
                         Julia.saveFile(resultVals, saveFileDialog.selectedFile)
                         conclusionDialog.open()
-                        conclusionPopDialog.open()
                     }            
                 }
             }
             MessageDialog {
                 id: emptyDialog
-                title: "Dados insuficientes para Calibração"
+                title: "Dados insuficientes para o processamento do inventário"
                 buttons: MessageDialog.Ok
             }
         }

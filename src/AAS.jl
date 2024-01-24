@@ -31,9 +31,9 @@ export CalcAAS
         t = quantile(TDist(length(Unidades)-1),1-α/2) #Valor de t
 
         if (1-(NumUni/N)) ≥ 0.98 #f maior ou igual a 0,98 população infinita
-            População = "é considerada infinita"   
+            População = "A população avaliada é considerada infinita"   
         elseif (1-(NumUni/N)) < 0.98 #f menor que 0,98 população finita
-            População = "é considerada finita"    
+            População = "A população avaliada é considerada finita"    
         end     
         
         Tamanho_da_amostra =   if (1-(NumUni/N)) ≥ 0.98 #f maior ou igual a 0,98 população infinita
