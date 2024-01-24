@@ -260,12 +260,16 @@ ApplicationWindow {
                             if (!alpha.text || alpha.text.trim() === "") {
                                 emptyFields.push("Alpha");
                             }
+                            
+                            
+
 
                             if (emptyFields.length > 0) {
                                 // Se houver campos vazios, exiba o diálogo
                                 emptyDialog.text = "Ausência de dados nos campos: " + emptyFields.join(", ");
                                 emptyDialog.open();
-                            } else {
+                            } else if (selectedFileDialog.fileUrls.length > 0) 
+
                                 // Aqui você pode adicionar a lógica para processar os dados inseridos
                                 var resultados = Julia.calcAAS(Julia.singleFile(selectedFileDialog.currentFile), areainv.text, areaparc.text, alpha.text, ear.text)
 
@@ -274,6 +278,8 @@ ApplicationWindow {
                                 resultObs = resultados[2]
 
                                 saveFileDialog.open()
+                            } else {
+                                emptySelectedFileDialog.open()
                             }                    
                         }
                     }
@@ -311,6 +317,11 @@ ApplicationWindow {
                 id: conclusionPopDialog
                 title: "Inventário Processado com Sucesso"
                 text: resultPop
+            }
+            MessageDialog {
+                id: emptySelectedFileDialog
+                title: "Falha ao tentar processar inventário"
+                text: "Selecione um arquivo com dados válidos para continuar"
             }
             FileDialog {
                 id: saveFileDialog
