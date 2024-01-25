@@ -1,11 +1,12 @@
 module AE
+# Amostragem Estratificada 
 
 export CalcAE
 
     using DataFrames, Statistics, Distributions, CSV, XLSX #Habilitar pacotes
 
-    function calcAE(Area::Float64, N::Float64, α::Float64, EAR::Float64, Área_da_Parcela::Float64, Conversor::Float64)
-        Dados = CSV.read("src/aas.csv", DataFrame)
+    function Estratificada(Estrato, Unidade, Volume) #Determina a função
+
         Volume = (Conversor.*Dados.Volume)
         Estrato = Dados.Estrato
         Unidade = Dados.Unidade
@@ -172,7 +173,7 @@ export CalcAE
         (round((area/(length(Unidade)))*nh2)*10)/N; 
         (round((area/(length(Unidade)))*nh3)*10)/
         N*Tabela.Variância))/N))))/Conversor) #Superior
-
+    
         if (((t*sqrt(((((((round((area/(length(Unidade)))*nh1)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
             ((((round((area/(length(Unidade)))*nh2)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
             ((((round((area/(length(Unidade)))*nh3)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade)))/
@@ -190,8 +191,10 @@ export CalcAE
                 Observação  = "Diante do exposto, conclui-se que os resultados obtidos na amostragem satisfazem as exigências de
                 precisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±10% da Média para confiabilidade designada. 
                 O erro estimado foi menor que o limite fixado, assim as Unidades amostrais são suficientes para o inventário."
-        end       
-        Resultados = DataFrames.DataFrame(Variáveis=["Média estratificada (m³/ha)", "Limite inferior do intervalo de confiança para Média (m³/ha)", 
+                    println(Observação)
+        end    
+
+        Resultados = DataFrame(Variáveis=["Média estratificada (m³/ha)", "Limite inferior do intervalo de confiança para Média (m³/ha)", 
         "Limite superior do intervalo de confiança para Média (m³/ha)", "Total da população (m³)", 
         "Limite inferior do intervalo de confiança para o total (m³)", "Limite superior do intervalo de confiança para o total (m³)", "Área da população (ha)",
         "Erro da amostragem relativo (%)", "Erro da amostragem absoluto (m³/ha)", "Erro padrão (m³/ha)", "Desvio padrão (m³/ha)", 
@@ -253,12 +256,6 @@ export CalcAE
         (round((area/(length(Unidade)))*nh1)*10)/N*(round(Finita)), 
         (round((area/(length(Unidade)))*nh2)*10)/N*(round(Finita)), 
         (round((area/(length(Unidade)))*nh3)*10)/N*(round(Finita)), Tamanho_da_amostra, População, Observação]) #Tabela de resultados    
-    
-        XLSX.writetable(("F:/Version_09_07_21/iflorestal.jl/02.xlsx"), Dados=(collect(DataFrames.eachcol(Dados)), 
-        DataFrames.names(Dados)), Informações_do_inventário=(collect(DataFrames.eachcol(Informações_do_inventário)), 
-        DataFrames.names(Informações_do_inventário)), Por_estrato=(collect(DataFrames.eachcol(Tabela)), DataFrames.names(Tabela)),  
-        Anova_da_estratificação=(collect(DataFrames.eachcol(Anova_da_estratificação)), 
-        DataFrames.names(Anova_da_estratificação)), Resultados=( collect(DataFrames.eachcol(Resultados)), 
-        DataFrames.names(Resultados))) #Export to Excel
+       
     end
 end

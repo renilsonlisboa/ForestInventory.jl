@@ -1,9 +1,10 @@
 module ForestInventory
 
 # Inclui os módulos auxiliares no projeto
-include(joinpath(@__DIR__, "AAS.jl"))
-include(joinpath(@__DIR__, "Save.jl"))
-include(joinpath(@__DIR__, "ImportData.jl"))
+include(joinpath(@__DIR__, "src/AAS.jl"))
+include(joinpath(@__DIR__, "src/SIST.jl"))
+include(joinpath(@__DIR__, "src/Save.jl"))
+include(joinpath(@__DIR__, "src/ImportData.jl"))
 
 
 import QML: QString, @qmlfunction, loadqml, exec
@@ -26,14 +27,19 @@ export Inventory
         AAS.calcAAS(Dados, Area, AreaParc, α, EAR)
     end
 
+    # processamento do Inventário por meio da amostragem aleatória simples
+    function calcSIST(Dados, Area, AreaParc, α, EAR)
+        SIST.calcSIST(Dados, Area, AreaParc, α, EAR)
+    end
+    
     # Ativa o programa em QML
     function Inventory()
         
-        @qmlfunction singleFile saveFile calcAAS
+        @qmlfunction singleFile saveFile calcAAS calcSIST
 
         current_directory = dirname(@__FILE__)
 
-        loadqml(joinpath(current_directory, "qml", "main.qml"))
+        loadqml(joinpath(current_directory, "src/qml", "main.qml"))
 
         exec()
 
