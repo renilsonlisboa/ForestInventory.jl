@@ -16,16 +16,9 @@
 
 ####### Tela Inicial ############
 
-#-> Centralizar Valor Inicial do combobox
-#-> Melhorar visual do botão de Iniciar Processamento
 #-> Definir um icone para a janela do APP
 
 ####### AAS ############
 
-#-> Programar o botão VIEW para apresentar o DataFrame que foi importado
-#-> Ajustar o botão de aviso quando não foi informado algum dos valores (front + back (qml + julia))
-#-> Inserir uma barra de carregamento abaixo do botão processar que acomapnhe o tempo para processar e concluir o processamento
-#-> Apresentar uma janela com os resultados básicos do inventário 
-#-> Inserir uma barra de carregamento ao lado do botão de importar dados ou então alterar a cor do botão se importado com sucesso
-#-> No aviso de saida apresentar o caminho onde foi salvo o arquivo de saida
+#-> Adicionar laço de verificação para Variáveis de entrada (All Float64?)
 #-> Corrigir WARNINGS do QML (Estão funcionando mas gerando avisos)

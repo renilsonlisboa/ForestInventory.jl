@@ -8,7 +8,7 @@ import CSV: CSV.read
 export CalcAAS
 
     function calcAAS(Dados, Area, AreaParc, α, EAR)
-
+        
         Area = Float64(Meta.parse(Area))
         AreaParc = Float64(Meta.parse(AreaParc))
         α = Float64(Meta.parse(α))
@@ -74,9 +74,9 @@ export CalcAAS
         
         #Tabela com os resultados
         if ErroAmostRel > EAR
-            Observação = "Diante do exposto, conclui-se que os resultados obtidos na amostragem não satisfazem as exigências deprecisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±10% da média  para confiabilidade designada. \n\nO erro estimado foi maior que o limite fixado, sendo recomendado incluir mais unidades amostrais no inventário."
+            Observação = "Diante do exposto, conclui-se que os resultados obtidos na amostragem não satisfazem as exigências deprecisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±$(EAR)% da média  para confiabilidade designada. \n\nO erro estimado foi maior que o limite fixado, sendo recomendado incluir mais unidades amostrais no inventário."
         else
-            Observação  = "Diante do exposto, conclui-se que os resultados obtidos na amostragem satisfazem as exigências de precisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±10% da média para confiabilidade designada. \n\nO erro estimado foi menor que o limite fixado, assim as unidades amostrais são suficientes para o inventário."
+            Observação  = "Diante do exposto, conclui-se que os resultados obtidos na amostragem satisfazem as exigências de precisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±$(EAR)% da média para confiabilidade designada. \n\nO erro estimado foi menor que o limite fixado, assim as unidades amostrais são suficientes para o inventário."
         end
 
         Resultados = DataFrame(Variáveis=["Média (m³/ha)", "Limite inferior do intervalo de confiança para média (m³/ha)", 
