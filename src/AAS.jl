@@ -15,8 +15,9 @@ export CalcAAS
         EAR = Float64(Meta.parse(EAR))
 
         N = (Area*10000)/AreaParc
-        Conversor = 1/AreaParc
- 
+
+        Conversor = 10000/AreaParc
+        
         Volume = (Conversor.*Dados.Volume)
         Unidades = Dados.Unidades
         

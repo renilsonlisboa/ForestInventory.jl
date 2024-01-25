@@ -2,7 +2,10 @@ module SIST
 
 export calcSIST
 
-    using DataFrames, Statistics, Distributions, CSV, XLSX #Habilitar pacotes
+    import DataFrames: DataFrame, transform, AsTable, ByRow
+    import Statistics: mean, var, std
+    import Distributions: TDist, quantile
+    import CSV: CSV.read
 
     function calcSIST(Dados, Area, AreaParc, α, EAR) #Determinar função
 
@@ -12,15 +15,12 @@ export calcSIST
         EAR = Float64(Meta.parse(EAR))
 
         N = (Area*10000)/AreaParc
-        Conversor = 1/AreaParc
+
+        Conversor = 10000/AreaParc
 
         Conjunto_de_dados = (Conversor.*Dados)
         #Tabela com estatítica descritiva por unidade secundária/bloco
         Tabela=transform(Conjunto_de_dados, AsTable(:) .=> ByRow.([I -> count(!ismissing, I), sum, mean, var]).=>[:n, :Soma, :Média, :Variância])
-
-        m=length(Tabela.n) #Número de faixas
-        nj=first(unique((Tabela.n))) #Número de unidades
-        n=(length(Tabela.n)*first(unique((Tabela.n)))) #Número de unidades amostrais totais
         
         if (1-((length(Tabela.n)*first(unique((Tabela.n))))/N)) ≥ 0.98 #f maior ou igual a 0,98 população infinita
             População = "A população avalaida é considerada infinita"   
