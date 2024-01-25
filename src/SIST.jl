@@ -23,9 +23,9 @@ export calcSIST
         n=(length(Tabela.n)*first(unique((Tabela.n)))) #Número de unidades amostrais totais
         
         if (1-((length(Tabela.n)*first(unique((Tabela.n))))/N)) ≥ 0.98 #f maior ou igual a 0,98 população infinita
-            População = "é considerada infinita"   
+            População = "A população avalaida é considerada infinita"   
         elseif (1-((length(Tabela.n)*first(unique((Tabela.n))))/N)) < 0.98 #f menor que 0,98 população finita
-            População = "é considerada finita"    
+            População = "A população avaliada é considerada finita"    
         end
         
         g=Matrix(Dados)
