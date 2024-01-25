@@ -64,8 +64,8 @@ export CalcAAS
         ErroAmostRel = ErroAmostAbs/Media*100 #Relativo
             
         #Limite do intervalo de confiança para média 
-        LII = (Media-(t*DesvPad)/sqrt(NumUni))*sqrt((1-(NumUni/N))) #Inferior
-        LIS = (Media+(t*DesvPad)/sqrt(NumUni))*sqrt((1-(NumUni/N))) #Superior
+        LII = (mean(Volume)-(t*(sqrt(var(Volume))/sqrt(length(Unidades)))*sqrt((1-(length(Unidades)/N))))) #Inferior
+        LIS = (mean(Volume)+(t*(sqrt(var(Volume))/sqrt(length(Unidades)))*sqrt((1-(length(Unidades)/N))))) #Superior
         ValTotal =  ((N*mean(Volume))/Conversor) #Total da população
         
         #Limite do intervalo de confiança para o total   

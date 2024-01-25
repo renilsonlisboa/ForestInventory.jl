@@ -569,6 +569,7 @@ ApplicationWindow {
                 text: "Você deve selecionar um arquivo .CSV para prosseguir"
             }
         }
+
         Window {
             id: inventDE
             width: 760
@@ -577,10 +578,218 @@ ApplicationWindow {
             visible: false
 
             Rectangle {
-                id: rectangleDE
-                color: "green"
+                width: parent.width
+                height: parent.height
+                visible: true
+
+                Image {
+                    source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
+                    width: parent.width
+                    height: parent.height
+                    fillMode: Image.Stretch
+                    visible: true
+                }
+
+                Row {
+                    spacing: 10
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -180
+
+                    Button {
+                        id: importDataDE
+                        text: qsTr("Importar Dados")
+                        width: 250
+                        font.family: "Arial"
+                        font.pointSize: 14
+
+                        Connections {
+                            target: importDataDE
+                            onClicked: {
+                                selectedFileDialogDE.open()
+                            }
+                        }
+                    }
+
+                    Image {
+                        id: correctDE
+                        source: "images/correct.png" // Substitua pelo caminho real da sua imagem
+                        width: 50
+                        height: 40
+                        visible: false
+                    }
+
+                    Image {
+                        id: errorDE
+                        source: "images/errado.png" // Substitua pelo caminho real da sua imagem
+                        width: 50
+                        height: 40
+                        visible: true
+                    }
+                }
+
+                Column {
+                    id: columnsEnterDE
+                    spacing: 15
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 20
+
+                    // Adicione 4 campos de entrada (TextField)
+                    TextField {
+                        id: areainvDE
+                        placeholderText: "Área inventariada (ha)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 400
+                    }
+                    TextField {
+                        id: areaparcDE
+                        placeholderText: "Área da parcela (m²)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 400
+                    }
+                    TextField {
+                        id: potencialDE
+                        placeholderText: "Número Potencial de Unidades Secundárias"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 400
+                    }
+                    TextField {
+                        id: earDE
+                        placeholderText: "Erro Relativo Admitido (%)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 400
+                    }
+                    TextField {
+                        id: alphaDE
+                        placeholderText: "Alpha (0.01 à 0.99)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 400
+                    }
+
+                    Button {
+                        id: processInventDE
+                        text: qsTr("Processar Inventário")
+                        width: 400
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        anchors.centerIn: columnsEnter
+                        anchors.verticalCenterOffset: 140
+
+                        Connections {
+                            target: processInventDE
+                            onClicked: {
+                                var emptyFieldsDE = []
+
+                                // Verifique se os campos estão vazios ou contêm apenDE espaços em branco
+                                if (!areainvDE.text || areainvDE.text.trim() === "") {
+                                    emptyFieldsDE.push("Área Inventariada")
+                                }
+
+                                if (!areaparcDE.text || areaparcDE.text.trim() === "") {
+                                    emptyFieldsDE.push("Área da Parcela")
+                                }
+
+                                if (!potencialDE.text || potencialDE.text.trim() === "") {
+                                    emptyFieldsDE.push(
+                                                "Número Potencial de Unidades Secundárias")
+                                }
+
+                                if (!earDE.text || earDE.text.trim() === "") {
+                                    emptyFieldsDE.push("EAR")
+                                }
+
+                                if (!alphaDE.text || alphaDE.text.trim() === "") {
+                                    emptyFieldsDE.push("Alpha")
+                                }
+
+                                if (emptyFieldsDE.length > 0) {
+                                    // Se houver campos vazios, exiba o diálogo
+                                    emptyDialogDE.text = "Ausência de dados nos campos: " + emptyFieldsDE.join(
+                                                ", ")
+                                    emptyDialogDE.open()
+                                } else if (errorDE.visible === true) {
+                                    emptySelectedDialogDE.open()
+                                } else {
+                                    // Aqui você pode adicionar a lógica para processar os dados inseridos
+                                    var resultados = Julia.calcDE(
+                                                Julia.singleFile(
+                                                    selectedFileDialogDE.currentFile),
+                                                areainvDE.text, areaparcDE.text,
+                                                alphaDE.text, earDE.text, potencialDE.text)
+
+                                    resultVals = resultados[0]
+                                    resultObs = resultados[1] + "\n\n" + resultados[2]
+
+                                    saveFileDialogDE.open()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            FileDialog {
+                id: selectedFileDialogDE
+                title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
+                fileMode: FileDialog.OpenFile
+                nameFilters: ["CSV Files (*.csv)"]
+                Component.onCompleted: visible = false
+
+                Connections {
+                    target: selectedFileDialogDE
+                    onAccepted: {
+                        correctDE.visible = true
+                        errorDE.visible = false
+                    }
+
+                    onRejected: {
+                        errorDE.visible = true
+                        console.log("deu ruim")
+                    }
+                }
+            }
+
+            MessageDialog {
+                id: conclusionDialogDE
+                title: "Inventário Processado com Sucesso"
+                text: resultObs
+            }
+
+            FileDialog {
+                id: saveFileDialogDE
+                title: "Selecione o local para salvar o arquivo..."
+                fileMode: FileDialog.SaveFile
+
+                Connections {
+                    target: saveFileDialogDE
+                    onAccepted: {
+                        Julia.saveFile(resultVals, saveFileDialogDE.selectedFile)
+                        conclusionDialogDE.open()
+                    }
+                }
+            }
+            MessageDialog {
+                id: emptyDialogDE
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+            }
+            MessageDialog {
+                id: emptySelectedDialogDE
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+                text: "Você deve selecionar um arquivo .CSV para prosseguir"
             }
         }
+
         Window {
             id: inventCON
             width: 760
