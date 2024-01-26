@@ -106,7 +106,7 @@ ApplicationWindow {
                     if (comboBox.currentIndex === 0) {
                         inventAAS.visible = true
                     } else if (comboBox.currentIndex === 1) {
-                        inventAES.visible = true
+                        inventESTRAT.visible = true
                     } else if (comboBox.currentIndex === 2) {
                         inventSIST.visible = true
                     } else if (comboBox.currentIndex === 3) {
@@ -118,11 +118,11 @@ ApplicationWindow {
                     } else if (comboBox.currentIndex === 6) {
                         inventIND.visible = true
                     } else if (comboBox.currentIndex === 7) {
-                        inventRPT.visible = true
+                        inventART.visible = true
                     } else if (comboBox.currentIndex === 8) {
-                        inventDP.visible = true
+                        inventAD.visible = true
                     } else if (comboBox.currentIndex === 9) {
-                        inventRP.visible = true
+                        inventARP.visible = true
                     } else {
                         Qt.quit()
                     }
@@ -350,16 +350,209 @@ ApplicationWindow {
         }
 
         Window {
-            id: inventAES
+            id: inventESTRAT
             width: 760
             height: 480
             title: "Janela do Inventário Estratificado"
             visible: false
 
-
             Rectangle {
-                id: rectangleAES
-                color: "red"
+                width: parent.width
+                height: parent.height
+                visible: true
+
+                Image {
+                    source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
+                    width: parent.width
+                    height: parent.height
+                    fillMode: Image.Stretch
+                    visible: true
+                }
+
+                Row {
+                    spacing: 10
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -140
+
+                    Button {
+                        id: importDataESTRAT
+                        text: qsTr("Importar Dados")
+                        width: 180
+                        font.family: "Arial"
+                        font.pointSize: 14
+
+                        Connections {
+                            target: importDataESTRAT
+                            onClicked: {
+                                selectedFileDialogESTRAT.open()
+                            }
+                        }
+                    }
+
+                    Image {
+                        id: correctESTRAT
+                        source: "images/correct.png" // Substitua pelo caminho real da sua imagem
+                        width: 50
+                        height: 40
+                        visible: false
+                    }
+
+                    Image {
+                        id: errorESTRAT
+                        source: "images/errado.png" // Substitua pelo caminho real da sua imagem
+                        width: 50
+                        height: 40
+                        visible: true
+                    }
+                }
+
+                Column {
+                    id: columnsEnterESTRAT
+                    spacing: 15
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 20
+
+                    // Adicione 4 campos de entrada (TextField)
+                    TextField {
+                        id: areainvESTRAT
+                        placeholderText: "Área inventariada (ha)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: areaparcESTRAT
+                        placeholderText: "Área da parcela (m²)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: earESTRAT
+                        placeholderText: "Erro Relativo Admitido (%)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: alphaESTRAT
+                        placeholderText: "Alpha (0.01 à 0.99)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                
+
+                    Button {
+                        id: processInventESTRAT
+                        text: qsTr("Processar Inventário")
+                        width: 300
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        anchors.centerIn: columnsEnterESTRAT
+                        anchors.verticalCenterOffset: 140
+
+                        Connections {
+                            target: processInventESTRAT
+                            onClicked: {
+                                var emptyFieldsESTRAT = []
+
+                                // Verifique se os campos estão vazios ou contêm apenESTRAT espaços em branco
+                                if (!areainvESTRAT.text || areainvESTRAT.text.trim() === "") {
+                                    emptyFieldsESTRAT.push("Área Inventariada")
+                                }
+
+                                if (!areaparcESTRAT.text || areaparcESTRAT.text.trim() === "") {
+                                    emptyFieldsESTRAT.push("Área da Parcela")
+                                }
+
+                                if (!earESTRAT.text || earESTRAT.text.trim() === "") {
+                                    emptyFieldsESTRAT.push("EAR")
+                                }
+
+                                if (!alphaESTRAT.text || alphaESTRAT.text.trim() === "") {
+                                    emptyFieldsESTRAT.push("Alpha")
+                                }
+
+                                if (emptyFieldsESTRAT.length > 0) {
+                                    // Se houver campos vazios, exiba o diálogo
+                                    emptyDialogESTRAT.text = "Ausência de dados nos campos: " + emptyFieldsESTRAT.join(", ")
+                                    emptyDialogESTRAT.open()
+                                } else if (errorESTRAT.visible === true) {
+                                    emptySelectedDialogESTRAT.open()
+                                } else {
+                                    // Aqui você pode adicionar a lógica para processar os dados inseridos
+                                    var resultados = Julia.calcESTRAT(Julia.singleFile(selectedFileDialogESTRAT.currentFile), areainvESTRAT.text, areaparcESTRAT.text, alphaESTRAT.text, earESTRAT.text)
+
+                                    resultVals = resultados[0]
+                                    resultObs = resultados[1] + "\n\n" + resultados[2]
+
+                                    saveFileDialogESTRAT.open()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            FileDialog {
+                id: selectedFileDialogESTRAT
+                title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
+                fileMode: FileDialog.OpenFile
+                nameFilters: ["CSV Files (*.csv)"]
+                Component.onCompleted: visible = false
+
+                Connections {
+                    target: selectedFileDialogESTRAT
+                    onAccepted: {
+                        correctESTRAT.visible = true
+                        errorESTRAT.visible = false
+                    }
+
+                    onRejected: {
+                        errorESTRAT.visible = true
+                    }
+                }
+            }
+
+            MessageDialog {
+                id: conclusionDialogESTRAT
+                title: "Inventário Processado com Sucesso"
+                text: resultObs
+            }
+            MessageDialog {
+                id: emptySelectedFileDialogESTRAT
+                title: "Falha ao tentar processar inventário"
+                text: "Selecione um arquivo com dados válidos para continuar" + "\n"
+                    + selectedFileDialogESTRAT.currentFile
+            }
+            FileDialog {
+                id: saveFileDialogESTRAT
+                title: "Selecione o local para salvar o arquivo..."
+                fileMode: FileDialog.SaveFile
+
+                Connections {
+                    target: saveFileDialogESTRAT
+                    onAccepted: {
+                        Julia.saveFile(resultVals, saveFileDialogESTRAT.selectedFile)
+                        conclusionDialogESTRAT.open()
+                    }
+                }
+            }
+            MessageDialog {
+                id: emptyDialogESTRAT
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+            }
+            MessageDialog {
+                id: emptySelectedDialogESTRAT
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+                text: "Você deve selecionar um arquivo .CSV para prosseguir"
             }
         }
 
@@ -467,7 +660,6 @@ ApplicationWindow {
                         width: 300
                         font.pointSize: 14
                         font.family: "Arial"
-                        anchors.centerIn: columnsEnter
                         anchors.verticalCenterOffset: 140
 
                         Connections {
@@ -681,7 +873,7 @@ ApplicationWindow {
                         width: 400
                         font.pointSize: 14
                         font.family: "Arial"
-                        anchors.centerIn: columnsEnter
+                        anchors.centerIn: columnsEnterDE
                         anchors.verticalCenterOffset: 140
 
                         Connections {
@@ -894,7 +1086,6 @@ ApplicationWindow {
                         width: 300
                         font.pointSize: 14
                         font.family: "Arial"
-                        anchors.centerIn: columnsEnter
                         anchors.verticalCenterOffset: 140
 
                         Connections {
