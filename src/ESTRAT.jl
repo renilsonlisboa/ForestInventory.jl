@@ -8,41 +8,57 @@ export calcESTRAT
     import Distributions: TDist, quantile
     import CSV: CSV.read
 
-    function calcESTRAT(Dados, Area, AreaParc, α, EAR, Nestratos, nh) #Determinar função
+    function calcESTRAT(Dados, Area, AreaParc, α, EAR, estratos, nh) #Determinar função
+        Uni
+        Area = Float64(Meta.parse(Area))
+        AreaParc = Float64(Meta.parse(AreaParc))
+        α = Float64(Meta.parse(α))
+        EAR = Float64(Meta.parse(EAR))
+        Nestratos = Int64(Meta.parse(estratos))
+        nh = Int64(Meta.parse(nh))
+
+        N = (Area*10000)/AreaParc
+
+        Conversor = 10000/AreaParc
 
         Volume = (Conversor.*Dados.Volume)
         Estrato = Dados.Estrato
         Unidade = Dados.Unidade
-        Conjunto_de_dados = DataFrame(Estrato = Estrato, Unidade = Unidade, Volume = Volume)
-            length(unique(Estrato)) #Número de estratos
-        length(Unidade) #Número de Unidades 
-        #Número potencial de Unidades de estratos
 
-        for i in 1:Nestratos
-            (round((area/(length(Unidade)))*nh[i])*10) #Estrato I
-            (round((area/(length(Unidade)))*nh[i])*10)/N
+        Conjunto_de_dados = DataFrame(Estrato = Estrato, Unidade = Unidade, Volume = Volume)
+
+        NEstratos = length(unique(Estrato)) #Número de estratos
+        NUnidade = length(Unidade) #Número de Unidades 
+        
+        #Número potencial de Unidades de estratos
+        for i in 1:estratos
+            UniPoten[i] = (round((area/(length(Unidade)))*nh[i])*10)/N
         end
 
         Informações_do_inventário = DataFrames.DataFrame(Variáveis=["Área da população (ha)", 
         "Número total potencial de Unidades da população", "Nível de significância (α)", "Número de Unidades amostradas no estrato I", 
         "Número de Unidades amostradas no estrato II", "Número de Unidades amostradas no estrato III", 
         "Número de estratos", "Número de Unidades totais", "Número potencial de Unidades do estrato I", 
-        "Número potencial de Unidades do estrato II", "Número potencial de Unidades do estrato III"], 
+        "Número potencial de Unidades do estrato II", "Número potencial de Unidades do estrato III"],
         Valores=[area, N, alpha, nh1, nh2, nh3, length(unique(Estrato)), length(Unidade), 
         (round((area/(length(Unidade)))*nh1)*10), (round((area/(length(Unidade)))*nh2)*10), 
         (round((area/(length(Unidade)))*nh3)*10)/N]) #Tabela de resultados
         #Tabela com estatítica descritiva pro estrato
+        
         Tabela= combine(groupby(Conjunto_de_dados, :Estrato)) do df
         (Unidade=length(unique(df.Unidade)), Total= sum(df.Volume), Média= mean(df.Volume), Variância= var(df.Volume), 
         Erro_padrão= sqrt(var(df.Volume)))
         end
-        mean(Volume) #Média estratificada
-        mean(Tabela.Variância) #Variância estratificada
-        sqrt(mean(Tabela.Variância)) #Desvio padrão estratificado
+
+        μestrat = mean(Volume) #Média estratificada
+        var_estrat = mean(Tabela.Variância) #Variância estratificada
+        desv_pad = sqrt(mean(Tabela.Variância)) #Desvio padrão estratificado
+        
         #Análise de Variância da estratificação 
-        length(unique(Estrato))-1 #Grau de liberdade entre os estratos
-        length(Unidade)-length(unique(Estrato)) #Grau de liberdade dentro dos estratos
-        length(Unidade)-1 #Grau de liberdade total
+        gl_entre = length(unique(Estrato))-1 #Grau de liberdade entre os estratos
+        gl_dentro = length(Unidade)-length(unique(Estrato)) #Grau de liberdade dentro dos estratos
+        gl_total = length(Unidade)-1 #Grau de liberdade total
+        
         sum(Tabela.Unidade.*(Tabela.Média.-mean(Volume)).^2)
         sum((Volume.-mean(Volume)).^2)
         sum((Volume.-mean(Volume)).^2)-sum(Tabela.Unidade.*(Tabela.Média.-mean(Volume)).^2)
@@ -54,6 +70,7 @@ export calcESTRAT
         ((sum(Tabela.Unidade.*(Tabela.Média.-mean(Volume)).^2))/(length(unique(Estrato))-1))/
         ((sum((Volume.-mean(Volume)).^2)-sum(Tabela.Unidade.*(Tabela.Média.-mean(Volume)).^2))/
         (length(Unidade)-length(unique(Estrato))))
+        
         Anova_da_estratificação = DataFrame(Fontes_de_variação=["Entre estratos", "Dentro dos estratos", "Total"], 
         gl=[length(unique(Estrato))-1 , length(Unidade)-length(unique(Estrato)), length(Unidade)-1], 
         SQ=[sum(Tabela.Unidade.*(Tabela.Média.-mean(Volume)).^2), 
@@ -76,37 +93,31 @@ export calcESTRAT
         (0.1*mean(Volume)) #Limite de erro da amostragem requerido
         t=quantile(TDist(length(Unidade)-1),1-alpha/2) #Valor de t 
         (1-(length(Unidade)/N)) #Fator de correção
+        
         if (1-(length(Unidade)/N)) ≥ 0.98 #f maior ou igual a 0,98 população infinita
-            População = "é considerada infinita"   
-                println(População)
-            elseif (1-(length(Unidade)/N)) < 0.98 #f menor que 0,98 população finita
-            População = "é considerada finita"    
-                println(População)
-                end
-        Tamanho_da_amostra = if (1-(length(Unidade)/N)) ≥ 0.98
-        #População infinita. O tamanho da amostra é calculado pela seguinte equação:
-        Infinita=(((t)^2)*sum(((round((area/(length(Unidade)))*nh1)*10)/N; 
-        (round((area/(length(Unidade)))*nh2)*10)/N; 
-        (round((area/(length(Unidade)))*nh3)*10)/N*Tabela.Variância)))/(((0.1*mean(Volume)))^2)
-        round(Infinita)
-        elseif (1-(length(Unidade)/N)) < 0.98
-        #População finita. O tamanho da amostra é calculado pela seguinte equação:
-        Finita=(((t)^2)*sum(((round((area/(length(Unidade)))*nh1)*10)/N; 
-        (round((area/(length(Unidade)))*nh2)*10)/N; 
-        (round((area/(length(Unidade)))*nh3)*10)/N*Tabela.Variância)))/
-        (((0.1*mean(Volume)))^2)+((t)^2)*(sum(((round((area/(length(Unidade)))*nh1)*10)/N; 
-        (round((area/(length(Unidade)))*nh2)*10)/N; 
-        (round((area/(length(Unidade)))*nh3)*10)/N*Tabela.Variância))/N)
-        round(Finita)
+            População = "A população avalada é considerada infinita"   
+        elseif (1-(length(Unidade)/N)) < 0.98 #f menor que 0,98 população finita
+            População = "A população avaliada é considerada finita"    
         end
+        
+        Tamanho_da_amostra = if (1-(length(Unidade)/N)) ≥ 0.98
+            #População infinita. O tamanho da amostra é calculado pela seguinte equação:
+            Infinita=(((t)^2)*sum(((round((area/(length(Unidade)))*nh1)*10)/N; (round((area/(length(Unidade)))*nh2)*10)/N; (round((area/(length(Unidade)))*nh3)*10)/N*Tabela.Variância)))/(((0.1*mean(Volume)))^2)
+        elseif (1-(length(Unidade)/N)) < 0.98
+            #População finita. O tamanho da amostra é calculado pela seguinte equação:
+            Finita=(((t)^2)*sum(((round((area/(length(Unidade)))*nh1)*10)/N; (round((area/(length(Unidade)))*nh2)*10)/N; (round((area/(length(Unidade)))*nh3)*10)/N*Tabela.Variância)))/(((0.1*mean(Volume)))^2)+((t)^2)*(sum(((round((area/(length(Unidade)))*nh1)*10)/N; (round((area/(length(Unidade)))*nh2)*10)/N; (round((area/(length(Unidade)))*nh3)*10)/N*Tabela.Variância))/N)
+        end
+
         #Dados necessários para calcular o tamanho da amostra em amostragem estratificada
         (round((area/(length(Unidade)))*nh1)*10)/N*(round(Finita))
         (round((area/(length(Unidade)))*nh2)*10)/N*(round(Finita))
         (round((area/(length(Unidade)))*nh3)*10)/N*(round(Finita))
+
         #Variância em cada estrato
         ((((round((area/(length(Unidade)))*nh1)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))
         ((((round((area/(length(Unidade)))*nh2)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))
         ((((round((area/(length(Unidade)))*nh3)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))
+
         #Variância estratificada
         ((((((round((area/(length(Unidade)))*nh1)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
         ((((round((area/(length(Unidade)))*nh2)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
@@ -114,6 +125,7 @@ export calcESTRAT
         length(unique(Estrato)))-(sum(((round((area/(length(Unidade)))*nh1)*10)/N; 
         (round((area/(length(Unidade)))*nh2)*10)/N; 
         (round((area/(length(Unidade)))*nh3)*10)/N*Tabela.Variância))/N)
+
         #Erro padrão
         sqrt(((((((round((area/(length(Unidade)))*nh1)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
         ((((round((area/(length(Unidade)))*nh2)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
@@ -121,10 +133,12 @@ export calcESTRAT
         length(unique(Estrato)))-(sum(((round((area/(length(Unidade)))*nh1)*10)/N; 
         (round((area/(length(Unidade)))*nh2)*10)/N; 
         (round((area/(length(Unidade)))*nh3)*10)/N*Tabela.Variância))/N))
+
         #Grau de liberdade
         ((round((area/(length(Unidade)))*nh1)*10)*((round((area/(length(Unidade)))*nh1)*10)-nh1))/nh1
         ((round((area/(length(Unidade)))*nh2)*10)*((round((area/(length(Unidade)))*nh2)*10)-nh2))/nh2
         ((round((area/(length(Unidade)))*nh3)*10)*((round((area/(length(Unidade)))*nh3)*10)-nh3))/nh3
+
         #Erro da amostragem
         (t*sqrt(((((((round((area/(length(Unidade)))*nh1)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
         ((((round((area/(length(Unidade)))*nh2)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
@@ -132,6 +146,7 @@ export calcESTRAT
         length(unique(Estrato)))-(sum(((round((area/(length(Unidade)))*nh1)*10)/N; 
         (round((area/(length(Unidade)))*nh2)*10)/N; 
         (round((area/(length(Unidade)))*nh3)*10)/N*Tabela.Variância))/N))) #Absoluto
+
         (((t*sqrt(((((((round((area/(length(Unidade)))*nh1)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
         ((((round((area/(length(Unidade)))*nh2)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
         ((((round((area/(length(Unidade)))*nh3)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade)))/
@@ -139,6 +154,7 @@ export calcESTRAT
         (round((area/(length(Unidade)))*nh2)*10)/N; 
         (round((area/(length(Unidade)))*nh3)*10)/N*Tabela.Variância))/N)))/
         mean(Volume))*100) #Relativo
+
         #Limite do intervalo de confiança para média
         (mean(Volume)-(t*sqrt(((((((round((area/(length(Unidade)))*nh1)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
         ((((round((area/(length(Unidade)))*nh2)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
@@ -147,6 +163,7 @@ export calcESTRAT
         (round((area/(length(Unidade)))*nh2)*10)/N; 
         (round((area/(length(Unidade)))*nh3)*10)/
         N*Tabela.Variância))/N)))) #Inferior 
+
         (mean(Volume)+(t*sqrt(((((((round((area/(length(Unidade)))*nh1)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
         ((((round((area/(length(Unidade)))*nh2)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
         ((((round((area/(length(Unidade)))*nh3)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade)))/
@@ -154,11 +171,14 @@ export calcESTRAT
         (round((area/(length(Unidade)))*nh2)*10)/N; 
         (round((area/(length(Unidade)))*nh3)*10)/
         N*Tabela.Variância))/N)))) #Superior
+
         #Total por estrato
         (round((area/(length(Unidade)))*nh1)*10); (round((area/(length(Unidade)))*nh2)*10); 
         (round((area/(length(Unidade)))*nh3)*10).*Tabela.Média
+
         #Total da população
         ((N*mean(Volume))/Conversor)
+
         #Limite do intervalo de confiança para o total 
         (((N*mean(Volume))-N*(t*sqrt(((((((round((area/(length(Unidade)))*nh1)*10)/N)^2)*
         sum(Tabela.Variância/Tabela.Unidade))+
@@ -168,6 +188,7 @@ export calcESTRAT
         (round((area/(length(Unidade)))*nh2)*10)/N; 
         (round((area/(length(Unidade)))*nh3)*10)/
         N*Tabela.Variância))/N))))/Conversor) #Inferior
+
         (((N*mean(Volume))+N*(t*sqrt(((((((round((area/(length(Unidade)))*nh1)*10)/N)^2)*
         sum(Tabela.Variância/Tabela.Unidade))+
         ((((round((area/(length(Unidade)))*nh2)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
@@ -185,16 +206,11 @@ export calcESTRAT
             Observação = "Diante do exposto, conclui-se que os resultados obtidos na amostragem não satisfazem as exigências de
             precisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±10% da Média  para confiabilidade designada. 
             O erro estimado foi maior que o limite fixado, sendo recomendado incluir mais Unidades amostrais no inventário."
-            println(Observação)
-            elseif (((t*sqrt(((((((round((area/(length(Unidade)))*nh1)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
-                ((((round((area/(length(Unidade)))*nh2)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
-                ((((round((area/(length(Unidade)))*nh3)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade)))/
-                length(unique(Estrato)))-(sum(((round((area/(length(Unidade)))*nh1)*10)/N; (round((area/(length(Unidade)))*nh2)*10)/N; 
-                (round((area/(length(Unidade)))*nh3)*10)/N*Tabela.Variância))/N)))/mean(Volume))*100) ≤ EAR
-                Observação  = "Diante do exposto, conclui-se que os resultados obtidos na amostragem satisfazem as exigências de
-                precisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±10% da Média para confiabilidade designada. 
-                O erro estimado foi menor que o limite fixado, assim as Unidades amostrais são suficientes para o inventário."
-                    println(Observação)
+        elseif (((t*sqrt(((((((round((area/(length(Unidade)))*nh1)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+((((round((area/(length(Unidade)))*nh2)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade))+
+            ((((round((area/(length(Unidade)))*nh3)*10)/N)^2)*sum(Tabela.Variância/Tabela.Unidade)))/
+            length(unique(Estrato)))-(sum(((round((area/(length(Unidade)))*nh1)*10)/N; (round((area/(length(Unidade)))*nh2)*10)/N; 
+            (round((area/(length(Unidade)))*nh3)*10)/N*Tabela.Variância))/N)))/mean(Volume))*100) ≤ EAR
+            Observação  = "Diante do exposto, conclui-se que os resultados obtidos na amostragem satisfazem as exigências de precisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±$(Int(EAR))% da média para confiabilidade designada. \n\nO erro estimado foi menor que o limite fixado, assim as unidades amostrais são suficientes para o inventário."
         end    
 
         Resultados = DataFrame(Variáveis=["Média estratificada (m³/ha)", "Limite inferior do intervalo de confiança para Média (m³/ha)", 
