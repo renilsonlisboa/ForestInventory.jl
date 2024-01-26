@@ -798,10 +798,205 @@ ApplicationWindow {
             visible: false
 
             Rectangle {
-                id: rectangleCON
-                color: "purple"
+                width: parent.width
+                height: parent.height
+                visible: true
+
+                Image {
+                    source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
+                    width: parent.width
+                    height: parent.height
+                    fillMode: Image.Stretch
+                    visible: true
+                }
+
+                Row {
+                    spacing: 10
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -140
+
+                    Button {
+                        id: importDataCONGL
+                        text: qsTr("Importar Dados")
+                        width: 180
+                        font.family: "Arial"
+                        font.pointSize: 14
+
+                        Connections {
+                            target: importDataCONGL
+                            onClicked: {
+                                selectedFileDialogCONGL.open()
+                            }
+                        }
+                    }
+
+                    Image {
+                        id: correctCONGL
+                        source: "images/correct.png" // Substitua pelo caminho real da sua imagem
+                        width: 50
+                        height: 40
+                        visible: false
+                    }
+
+                    Image {
+                        id: errorCONGL
+                        source: "images/errado.png" // Substitua pelo caminho real da sua imagem
+                        width: 50
+                        height: 40
+                        visible: true
+                    }
+                }
+
+                Column {
+                    id: columnsEnterCONGL
+                    spacing: 15
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 20
+
+                    // Adicione 4 campos de entrada (TextField)
+                    TextField {
+                        id: areainvCONGL
+                        placeholderText: "Área inventariada (ha)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: areaparcCONGL
+                        placeholderText: "Área da parcela (m²)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: earCONGL
+                        placeholderText: "Erro Relativo Admitido (%)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: alphaCONGL
+                        placeholderText: "Alpha (0.01 à 0.99)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                
+
+                    Button {
+                        id: processInventCONGL
+                        text: qsTr("Processar Inventário")
+                        width: 300
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        anchors.centerIn: columnsEnter
+                        anchors.verticalCenterOffset: 140
+
+                        Connections {
+                            target: processInventCONGL
+                            onClicked: {
+                                var emptyFieldsCONGL = []
+
+                                // Verifique se os campos estão vazios ou contêm apenCONGL espaços em branco
+                                if (!areainvCONGL.text || areainvCONGL.text.trim() === "") {
+                                    emptyFieldsCONGL.push("Área Inventariada")
+                                }
+
+                                if (!areaparcCONGL.text || areaparcCONGL.text.trim() === "") {
+                                    emptyFieldsCONGL.push("Área da Parcela")
+                                }
+
+                                if (!earCONGL.text || earCONGL.text.trim() === "") {
+                                    emptyFieldsCONGL.push("EAR")
+                                }
+
+                                if (!alphaCONGL.text || alphaCONGL.text.trim() === "") {
+                                    emptyFieldsCONGL.push("Alpha")
+                                }
+
+                                if (emptyFieldsCONGL.length > 0) {
+                                    // Se houver campos vazios, exiba o diálogo
+                                    emptyDialogCONGL.text = "Ausência de dados nos campos: " + emptyFieldsCONGL.join(", ")
+                                    emptyDialogCONGL.open()
+                                } else if (errorCONGL.visible === true) {
+                                    emptySelectedDialogCONGL.open()
+                                } else {
+                                    // Aqui você pode adicionar a lógica para processar os dados inseridos
+                                    var resultados = Julia.calcCONGL(Julia.singleFile(selectedFileDialogCONGL.currentFile), areainvCONGL.text, areaparcCONGL.text, alphaCONGL.text, earCONGL.text)
+
+                                    resultVals = resultados[0]
+                                    resultObs = resultados[1] + "\n\n" + resultados[2]
+
+                                    saveFileDialogCONGL.open()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            FileDialog {
+                id: selectedFileDialogCONGL
+                title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
+                fileMode: FileDialog.OpenFile
+                nameFilters: ["CSV Files (*.csv)"]
+                Component.onCompleted: visible = false
+
+                Connections {
+                    target: selectedFileDialogCONGL
+                    onAccepted: {
+                        correctCONGL.visible = true
+                        errorCONGL.visible = false
+                    }
+
+                    onRejected: {
+                        errorCONGL.visible = true
+                    }
+                }
+            }
+
+            MessageDialog {
+                id: conclusionDialogCONGL
+                title: "Inventário Processado com Sucesso"
+                text: resultObs
+            }
+            MessageDialog {
+                id: emptySelectedFileDialogCONGL
+                title: "Falha ao tentar processar inventário"
+                text: "Selecione um arquivo com dados válidos para continuar" + "\n"
+                    + selectedFileDialogCONGL.currentFile
+            }
+            FileDialog {
+                id: saveFileDialogCONGL
+                title: "Selecione o local para salvar o arquivo..."
+                fileMode: FileDialog.SaveFile
+
+                Connections {
+                    target: saveFileDialogCONGL
+                    onAccepted: {
+                        Julia.saveFile(resultVals, saveFileDialogCONGL.selectedFile)
+                        conclusionDialogCONGL.open()
+                    }
+                }
+            }
+            MessageDialog {
+                id: emptyDialogCONGL
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+            }
+            MessageDialog {
+                id: emptySelectedDialogCONGL
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+                text: "Você deve selecionar um arquivo .CSV para prosseguir"
             }
         }
+
         Window {
             id: inventSMI
             width: 760
