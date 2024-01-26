@@ -1,20 +1,20 @@
 module ForestInventory
 
-# Inclui os módulos auxiliares no projeto
-include(joinpath(@__DIR__, "src/AAS.jl"))
-include(joinpath(@__DIR__, "src/ESTRAT.jl"))
-include(joinpath(@__DIR__, "src/SIST.jl"))
-include(joinpath(@__DIR__, "src/DE.jl"))
-include(joinpath(@__DIR__, "src/CONGL.jl"))
-include(joinpath(@__DIR__, "src/MULTI.jl"))
-include(joinpath(@__DIR__, "src/IND.jl"))
-include(joinpath(@__DIR__, "src/ART.jl"))
-include(joinpath(@__DIR__, "src/AD.jl"))
-include(joinpath(@__DIR__, "src/ARP.jl")) 
-include(joinpath(@__DIR__, "src/Save.jl"))
-include(joinpath(@__DIR__, "src/ImportData.jl"))
+# Inclui os módulos auxiliares ao escopo principal do projeto
+include(joinpath(@__DIR__, "src/AAS.jl")) # Amostragem Aleatória Simples
+include(joinpath(@__DIR__, "src/ESTRAT.jl")) # Amostragem Estratificada
+include(joinpath(@__DIR__, "src/SIST.jl")) # Amostragem Sistemática
+include(joinpath(@__DIR__, "src/DE.jl")) # Amostragem Dois Estágios
+include(joinpath(@__DIR__, "src/CONGL.jl")) # Amostragem em Conglomerados
+include(joinpath(@__DIR__, "src/MULTI.jl")) # Amostragem co Multíplos Inicios Aleatórios
+include(joinpath(@__DIR__, "src/IND.jl")) # Amostragem Individual
+include(joinpath(@__DIR__, "src/ART.jl")) # Amostragem com Repetição Total
+include(joinpath(@__DIR__, "src/AD.jl")) # Amostragem Dupla
+include(joinpath(@__DIR__, "src/ARP.jl"))  # Amostragem com Repetição Parcial
+include(joinpath(@__DIR__, "src/Save.jl")) # Função para salvar arquivos de resultados
+include(joinpath(@__DIR__, "src/ImportData.jl")) # Função para importar dados .CSV
 
-
+# Importar as funções utilizadas provenientes do pacote QML
 import QML: QString, @qmlfunction, loadqml, exec
 
 # Exporta a função Inventory possibilitando ser chamada via terminal pelo usuário

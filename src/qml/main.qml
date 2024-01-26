@@ -161,28 +161,31 @@ ApplicationWindow {
                     visible: true
                 }
 
+                Button {
+                    id: importDataAAS
+                    text: qsTr("Importar Dados")
+                    width: 300
+                    font.family: "Arial"
+                    font.pointSize: 14
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+
+                    Connections {
+                        target: importDataAAS
+                        onClicked: {
+                            selectedFileDialogAAS.open()
+                        }
+                    }
+                }
+
                 Row {
                     spacing: 10
                     anchors.centerIn: parent
-                    anchors.verticalCenterOffset: -140
-
-                    Button {
-                        id: importData
-                        text: qsTr("Importar Dados")
-                        width: 180
-                        font.family: "Arial"
-                        font.pointSize: 14
-
-                        Connections {
-                            target: importData
-                            onClicked: {
-                                selectedFileDialog.open()
-                            }
-                        }
-                    }
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
 
                     Image {
-                        id: correct
+                        id: correctAAS
                         source: "images/correct.png" // Substitua pelo caminho real da sua imagem
                         width: 50
                         height: 40
@@ -190,7 +193,7 @@ ApplicationWindow {
                     }
 
                     Image {
-                        id: error
+                        id: errorAAS
                         source: "images/errado.png" // Substitua pelo caminho real da sua imagem
                         width: 50
                         height: 40
@@ -199,14 +202,14 @@ ApplicationWindow {
                 }
 
                 Column {
-                    id: columnsEnter
+                    id: columnsEnterAAS
                     spacing: 15
                     anchors.centerIn: parent
                     anchors.verticalCenterOffset: 20
 
                     // Adicione 4 campos de entrada (TextField)
                     TextField {
-                        id: areainv
+                        id: areainvAAS
                         placeholderText: "Área inventariada (ha)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
@@ -214,7 +217,7 @@ ApplicationWindow {
                         width: 300
                     }
                     TextField {
-                        id: areaparc
+                        id: areaparcAAS
                         placeholderText: "Área da parcela (m²)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
@@ -222,7 +225,7 @@ ApplicationWindow {
                         width: 300
                     }
                     TextField {
-                        id: ear
+                        id: earAAS
                         placeholderText: "Erro Relativo Admitido (%)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
@@ -230,125 +233,129 @@ ApplicationWindow {
                         width: 300
                     }
                     TextField {
-                        id: alpha
+                        id: alphaAAS
                         placeholderText: "Alpha (0.01 à 0.99)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
                     }
-                }
 
-                Button {
-                    id: processInventAAS
-                    text: qsTr("Processar Inventário")
-                    width: 300
-                    font.pointSize: 14
-                    font.family: "Arial"
-                    anchors.centerIn: columnsEnter
-                    anchors.verticalCenterOffset: 140
+                    Button {
+                        id: processInventAAS
+                        text: qsTr("Processar Inventário")
+                        width: 300
+                        font.pointSize: 14
+                        font.family: "Arial"
 
-                    Connections {
-                        target: processInventAAS
-                        onClicked: {
-                            var emptyFields = []
+                        Connections {
+                            target: processInventAAS
+                            onClicked: {
+                                var emptyFieldsAAS = []
 
-                            // Verifique se os campos estão vazios ou contêm apenas espaços em branco
-                            if (!areainv.text || areainv.text.trim() === "") {
-                                emptyFields.push("Área Inventariada")
-                            }
+                                // Verifique se os campos estão vazios ou contêm apenas espaços em branco
+                                if (!areainvAAS.text || areainvAAS.text.trim() === "") {
+                                    emptyFieldsAAS.push("Área Inventariada")
+                                }
 
-                            if (!areaparc.text || areaparc.text.trim() === "") {
-                                emptyFields.push("Área da Parcela")
-                            }
+                                if (!areaparcAAS.text || areaparcAAS.text.trim() === "") {
+                                    emptyFieldsAAS.push("Área da Parcela")
+                                }
 
-                            if (!ear.text || ear.text.trim() === "") {
-                                emptyFields.push("EAR")
-                            }
+                                if (!earAAS.text || earAAS.text.trim() === "") {
+                                    emptyFieldsAAS.push("EAR")
+                                }
 
-                            if (!alpha.text || alpha.text.trim() === "") {
-                                emptyFields.push("Alpha")
-                            }
+                                if (!alphaAAS.text || alphaAAS.text.trim() === "") {
+                                    emptyFieldsAAS.push("Alpha")
+                                }
 
-                            if (emptyFields.length > 0) {
-                                // Se houver campos vazios, exiba o diálogo
-                                emptyDialog.text = "Ausência de dados nos campos: " + emptyFields.join(
-                                            ", ")
-                                emptyDialog.open()
-                            } else if (error.visible === true) {
-                                emptySelectedDialog.open()
-                            } else {
-                                // Aqui você pode adicionar a lógica para processar os dados inseridos
-                                var resultados = Julia.calcAAS(
-                                            Julia.singleFile(
-                                                selectedFileDialog.currentFile),
-                                            areainv.text, areaparc.text,
-                                            alpha.text, ear.text)
+                                if (emptyFieldsAAS.length > 0) {
+                                    // Se houver campos vazios, exiba o diálogo
+                                    emptyDialogAAS.text = "Ausência de dados nos campos: " + emptyFieldsAAS.join(", ")
+                                    emptyDialogAAS.open()
+                                } else if (errorAAS.visible === true) {
+                                    emptySelectedDialogAAS.open()
+                                } else {
 
-                                resultVals = resultados[0]
-                                resultObs = resultados[1] + "\n\n" + resultados[2]
+                                    busyIndicatorAAS.running = true
 
-                                saveFileDialog.open()
+                                    // Aqui você pode adicionar a lógica para processar os dados inseridos
+                                    var resultados = Julia.calcAAS(Julia.singleFile(selectedFileDialogAAS.currentFile), areainvAAS.text, areaparcAAS.text, alphaAAS.text, earAAS.text)
+
+                                    resultVals = resultados[0]
+                                    resultObs = resultados[1] + "\n\n" + resultados[2]
+
+                                    saveFileDialogAAS.open()
+                                }
                             }
                         }
                     }
                 }
             }
-
+            BusyIndicator {
+                id: busyIndicatorAAS
+                width: 120
+                height: 120
+                running: false
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: 250
+            }
             FileDialog {
-                id: selectedFileDialog
+                id: selectedFileDialogAAS
                 title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
                 fileMode: FileDialog.OpenFile
                 nameFilters: ["CSV Files (*.csv)"]
                 Component.onCompleted: visible = false
 
                 Connections {
-                    target: selectedFileDialog
+                    target: selectedFileDialogAAS
                     onAccepted: {
-                        correct.visible = true
-                        error.visible = false
+                        correctAAS.visible = true
+                        errorAAS.visible = false
                     }
-
                     onRejected: {
-                        error.visible = true
+                        errorAAS.visible = true
                     }
                 }
             }
-
             MessageDialog {
-                id: conclusionDialog
+                id: conclusionDialogAAS
                 title: "Inventário Processado com Sucesso"
                 text: resultObs
             }
-            MessageDialog {
-                id: emptySelectedFileDialog
-                title: "Falha ao tentar processar inventário"
-                text: "Selecione um arquivo com dados válidos para continuar" + "\n"
-                    + selectedFileDialog.currentFile
-            }
             FileDialog {
-                id: saveFileDialog
+                id: saveFileDialogAAS
                 title: "Selecione o local para salvar o arquivo..."
                 fileMode: FileDialog.SaveFile
-
                 Connections {
-                    target: saveFileDialog
+                    target: saveFileDialogAAS
                     onAccepted: {
-                        Julia.saveFile(resultVals, saveFileDialog.selectedFile)
-                        conclusionDialog.open()
+                        Julia.saveFile(resultVals, saveFileDialogAAS.selectedFile)
+                        conclusionDialogAAS.open()
+                        busyIndicatorAAS.running = false
+                    }
+                    onRejected: {
+                        busyIndicatorAAS.running = false
                     }
                 }
             }
             MessageDialog {
-                id: emptyDialog
-                title: "Dados insuficientes para o processamento do inventário"
-                buttons: MessageDialog.Ok
-            }
-            MessageDialog {
-                id: emptySelectedDialog
+                id: emptySelectedDialogAAS
                 title: "Dados insuficientes para o processamento do inventário"
                 buttons: MessageDialog.Ok
                 text: "Você deve selecionar um arquivo .CSV para prosseguir"
+            }
+            Connections {
+                target: inventAAS
+                onClosing:{
+                    areainvAAS.text = ""
+                    areaparcAAS.text = ""
+                    earAAS.text = ""
+                    alphaAAS.text = ""
+                    correctAAS.visible = false
+                    errorAAS.visible = true
+                }
             }
         }
 
@@ -365,8 +372,6 @@ ApplicationWindow {
                 width: parent.width
                 height: parent.height
                 visible: true
-
-
 
                 Image {
                     source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
@@ -1434,7 +1439,6 @@ ApplicationWindow {
                         width: 300
                         font.pointSize: 14
                         font.family: "Arial"
-                        anchors.centerIn: columnsEnter
                         anchors.verticalCenterOffset: 140
 
                         Connections {
