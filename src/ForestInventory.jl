@@ -50,15 +50,19 @@ export Inventory
         MULTI.calcMULTI(Dados, Area, AreaParc, α, EAR)
     end
     
-    # Ativa o programa em QML
+    # Função de inicialização do programa em QML
     function Inventory()
         
+        # Exporta as funções do Julia para o QML
         @qmlfunction singleFile saveFile calcAAS calcSIST calcDE calcCONGL calcMULTI
 
+        # Obtém o diretório atual
         current_directory = dirname(@__FILE__)
 
+        # Localiza e carrega o arquivo de base QML
         loadqml(joinpath(current_directory, "src/qml", "main.qml"))
 
+        # Executa o arquivo QML carregado no comando anterior
         exec()
 
     end
