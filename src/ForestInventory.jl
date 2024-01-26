@@ -1,12 +1,13 @@
 module ForestInventory
 
 # Inclui os módulos auxiliares no projeto
-include(joinpath(@__DIR__, "AAS.jl"))
-include(joinpath(@__DIR__, "SIST.jl"))
-include(joinpath(@__DIR__, "DE.jl"))
-include(joinpath(@__DIR__, "CONGL.jl"))
-include(joinpath(@__DIR__, "Save.jl"))
-include(joinpath(@__DIR__, "ImportData.jl"))
+include(joinpath(@__DIR__, "src/AAS.jl"))
+include(joinpath(@__DIR__, "src/SIST.jl"))
+include(joinpath(@__DIR__, "src/DE.jl"))
+include(joinpath(@__DIR__, "src/CONGL.jl"))
+include(joinpath(@__DIR__, "src/MULTI.jl"))
+include(joinpath(@__DIR__, "src/Save.jl"))
+include(joinpath(@__DIR__, "src/ImportData.jl"))
 
 
 import QML: QString, @qmlfunction, loadqml, exec
@@ -43,15 +44,20 @@ export Inventory
     function calcCONGL(Dados, Area, AreaParc, α, EAR)
         CONGL.calcCONGL(Dados, Area, AreaParc, α, EAR)
     end
+
+    # processamento do Inventário por meio da amostragem em conglomerados
+    function calcMULTI(Dados, Area, AreaParc, α, EAR)
+        MULTI.calcMULTI(Dados, Area, AreaParc, α, EAR)
+    end
     
     # Ativa o programa em QML
     function Inventory()
         
-        @qmlfunction singleFile saveFile calcAAS calcSIST calcDE calcCONGL
+        @qmlfunction singleFile saveFile calcAAS calcSIST calcDE calcCONGL calcMULTI
 
         current_directory = dirname(@__FILE__)
 
-        loadqml(joinpath(current_directory, "qml", "main.qml"))
+        loadqml(joinpath(current_directory, "src/qml", "main.qml"))
 
         exec()
 

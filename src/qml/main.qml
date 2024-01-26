@@ -112,9 +112,9 @@ ApplicationWindow {
                     } else if (comboBox.currentIndex === 3) {
                         inventDE.visible = true
                     } else if (comboBox.currentIndex === 4) {
-                        inventCON.visible = true
+                        inventCONGL.visible = true
                     } else if (comboBox.currentIndex === 5) {
-                        inventSMI.visible = true
+                        inventMULTI.visible = true
                     } else if (comboBox.currentIndex === 6) {
                         inventIND.visible = true
                     } else if (comboBox.currentIndex === 7) {
@@ -791,7 +791,7 @@ ApplicationWindow {
         }
 
         Window {
-            id: inventCON
+            id: inventCONGL
             width: 760
             height: 480
             title: "Janela do Inventário Conglomerados"
@@ -998,17 +998,212 @@ ApplicationWindow {
         }
 
         Window {
-            id: inventSMI
+            id: inventMULTI
             width: 760
             height: 480
             title: "Janela do Inventário Sistemático Multiplos Inícios"
             visible: false
 
             Rectangle {
-                id: rectangleSMI
-                color: "brown"
+                width: parent.width
+                height: parent.height
+                visible: true
+
+                Image {
+                    source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
+                    width: parent.width
+                    height: parent.height
+                    fillMode: Image.Stretch
+                    visible: true
+                }
+
+                Row {
+                    spacing: 10
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -140
+
+                    Button {
+                        id: importDataMULTI
+                        text: qsTr("Importar Dados")
+                        width: 180
+                        font.family: "Arial"
+                        font.pointSize: 14
+
+                        Connections {
+                            target: importDataMULTI
+                            onClicked: {
+                                selectedFileDialogMULTI.open()
+                            }
+                        }
+                    }
+
+                    Image {
+                        id: correctMULTI
+                        source: "images/correct.png" // Substitua pelo caminho real da sua imagem
+                        width: 50
+                        height: 40
+                        visible: false
+                    }
+
+                    Image {
+                        id: errorMULTI
+                        source: "images/errado.png" // Substitua pelo caminho real da sua imagem
+                        width: 50
+                        height: 40
+                        visible: true
+                    }
+                }
+
+                Column {
+                    id: columnsEnterMULTI
+                    spacing: 15
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 20
+
+                    // Adicione 4 campos de entrada (TextField)
+                    TextField {
+                        id: areainvMULTI
+                        placeholderText: "Área inventariada (ha)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: areaparcMULTI
+                        placeholderText: "Área da parcela (m²)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: earMULTI
+                        placeholderText: "Erro Relativo Admitido (%)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: alphaMULTI
+                        placeholderText: "Alpha (0.01 à 0.99)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                
+
+                    Button {
+                        id: processInventMULTI
+                        text: qsTr("Processar Inventário")
+                        width: 300
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        anchors.centerIn: columnsEnter
+                        anchors.verticalCenterOffset: 140
+
+                        Connections {
+                            target: processInventMULTI
+                            onClicked: {
+                                var emptyFieldsMULTI = []
+
+                                // Verifique se os campos estão vazios ou contêm apenMULTI espaços em branco
+                                if (!areainvMULTI.text || areainvMULTI.text.trim() === "") {
+                                    emptyFieldsMULTI.push("Área Inventariada")
+                                }
+
+                                if (!areaparcMULTI.text || areaparcMULTI.text.trim() === "") {
+                                    emptyFieldsMULTI.push("Área da Parcela")
+                                }
+
+                                if (!earMULTI.text || earMULTI.text.trim() === "") {
+                                    emptyFieldsMULTI.push("EAR")
+                                }
+
+                                if (!alphaMULTI.text || alphaMULTI.text.trim() === "") {
+                                    emptyFieldsMULTI.push("Alpha")
+                                }
+
+                                if (emptyFieldsMULTI.length > 0) {
+                                    // Se houver campos vazios, exiba o diálogo
+                                    emptyDialogMULTI.text = "Ausência de dados nos campos: " + emptyFieldsMULTI.join(", ")
+                                    emptyDialogMULTI.open()
+                                } else if (errorMULTI.visible === true) {
+                                    emptySelectedDialogMULTI.open()
+                                } else {
+                                    // Aqui você pode adicionar a lógica para processar os dados inseridos
+                                    var resultados = Julia.calcMULTI(Julia.singleFile(selectedFileDialogMULTI.currentFile), areainvMULTI.text, areaparcMULTI.text, alphaMULTI.text, earMULTI.text)
+
+                                    resultVals = resultados[0]
+                                    resultObs = resultados[1] + "\n\n" + resultados[2]
+
+                                    saveFileDialogMULTI.open()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            FileDialog {
+                id: selectedFileDialogMULTI
+                title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
+                fileMode: FileDialog.OpenFile
+                nameFilters: ["CSV Files (*.csv)"]
+                Component.onCompleted: visible = false
+
+                Connections {
+                    target: selectedFileDialogMULTI
+                    onAccepted: {
+                        correctMULTI.visible = true
+                        errorMULTI.visible = false
+                    }
+
+                    onRejected: {
+                        errorMULTI.visible = true
+                    }
+                }
+            }
+
+            MessageDialog {
+                id: conclusionDialogMULTI
+                title: "Inventário Processado com Sucesso"
+                text: resultObs
+            }
+            MessageDialog {
+                id: emptySelectedFileDialogMULTI
+                title: "Falha ao tentar processar inventário"
+                text: "Selecione um arquivo com dados válidos para continuar" + "\n"
+                    + selectedFileDialogMULTI.currentFile
+            }
+            FileDialog {
+                id: saveFileDialogMULTI
+                title: "Selecione o local para salvar o arquivo..."
+                fileMode: FileDialog.SaveFile
+
+                Connections {
+                    target: saveFileDialogMULTI
+                    onAccepted: {
+                        Julia.saveFile(resultVals, saveFileDialogMULTI.selectedFile)
+                        conclusionDialogMULTI.open()
+                    }
+                }
+            }
+            MessageDialog {
+                id: emptyDialogMULTI
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+            }
+            MessageDialog {
+                id: emptySelectedDialogMULTI
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+                text: "Você deve selecionar um arquivo .CSV para prosseguir"
             }
         }
+        
         Window {
             id: inventIND
             width: 760
