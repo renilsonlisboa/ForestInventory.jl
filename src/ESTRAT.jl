@@ -8,7 +8,7 @@ export calcESTRAT
     import Distributions: TDist, quantile
     import CSV: CSV.read
 
-    function calcESTRAT(Dados, Area, AreaParc, α, EAR, Nestrat) #Determinar função
+    function calcESTRAT(Dados, Area, AreaParc, α, EAR, Nestratos, nh) #Determinar função
 
         Volume = (Conversor.*Dados.Volume)
         Estrato = Dados.Estrato
@@ -17,12 +17,12 @@ export calcESTRAT
             length(unique(Estrato)) #Número de estratos
         length(Unidade) #Número de Unidades 
         #Número potencial de Unidades de estratos
-        (round((area/(length(Unidade)))*nh1)*10) #Estrato I
-        (round((area/(length(Unidade)))*nh2)*10) #Estrato II
-        (round((area/(length(Unidade)))*nh3)*10) #Estrato III
-        (round((area/(length(Unidade)))*nh1)*10)/N
-        (round((area/(length(Unidade)))*nh2)*10)/N
-        (round((area/(length(Unidade)))*nh3)*10)/N
+
+        for i in 1:Nestratos
+            (round((area/(length(Unidade)))*nh[i])*10) #Estrato I
+            (round((area/(length(Unidade)))*nh[i])*10)/N
+        end
+
         Informações_do_inventário = DataFrames.DataFrame(Variáveis=["Área da população (ha)", 
         "Número total potencial de Unidades da população", "Nível de significância (α)", "Número de Unidades amostradas no estrato I", 
         "Número de Unidades amostradas no estrato II", "Número de Unidades amostradas no estrato III", 

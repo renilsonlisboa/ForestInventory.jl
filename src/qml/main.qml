@@ -12,6 +12,7 @@ ApplicationWindow {
 
     property var resultVals: []
     property string resultObs: ""
+    property int subestratosOK: 0
 
     Rectangle {
         id: retangulo
@@ -30,7 +31,7 @@ ApplicationWindow {
         ComboBox {
             id: comboBox
             anchors.centerIn: parent
-            width: 480
+            width: 500
             height: 30
             currentIndex: 0
 
@@ -143,6 +144,8 @@ ApplicationWindow {
             title: "Amostragem Aleatória Simples"
             width: 760
             height: 640
+            x: (Screen.width - width) / 2  // Centralizar horizontalmente
+            y: (Screen.height - height) / 2  // Centralizar verticalmente
             visible: false
 
             Rectangle {
@@ -355,11 +358,15 @@ ApplicationWindow {
             height: 480
             title: "Janela do Inventário Estratificado"
             visible: false
-
+            x: (Screen.width - width) / 2  // Centralizar horizontalmente
+            y: (Screen.height - height) / 2  // Centralizar verticalmente
+            
             Rectangle {
                 width: parent.width
                 height: parent.height
                 visible: true
+
+
 
                 Image {
                     source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
@@ -372,7 +379,7 @@ ApplicationWindow {
                 Row {
                     spacing: 10
                     anchors.centerIn: parent
-                    anchors.verticalCenterOffset: -140
+                    anchors.verticalCenterOffset: -200
 
                     Button {
                         id: importDataESTRAT
@@ -445,7 +452,22 @@ ApplicationWindow {
                         font.family: "Arial"
                         width: 300
                     }
-                
+                    TextField {
+                        id: estratosESTRAT
+                        placeholderText: "Número de Estratos"
+                        validator: IntValidator {}
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+
+                        Connections {
+                            target: estratosESTRAT
+                            onTextChanged: {
+                                enterNumSubEstratos.visible = true
+                            }
+                        }
+                    }
 
                     Button {
                         id: processInventESTRAT
@@ -453,7 +475,6 @@ ApplicationWindow {
                         width: 300
                         font.pointSize: 14
                         font.family: "Arial"
-                        anchors.centerIn: columnsEnterESTRAT
                         anchors.verticalCenterOffset: 140
 
                         Connections {
@@ -462,11 +483,13 @@ ApplicationWindow {
                                 var emptyFieldsESTRAT = []
 
                                 // Verifique se os campos estão vazios ou contêm apenESTRAT espaços em branco
-                                if (!areainvESTRAT.text || areainvESTRAT.text.trim() === "") {
+                                if (!areainvESTRAT.text || areainvESTRAT.text.trim(
+                                            ) === "") {
                                     emptyFieldsESTRAT.push("Área Inventariada")
                                 }
 
-                                if (!areaparcESTRAT.text || areaparcESTRAT.text.trim() === "") {
+                                if (!areaparcESTRAT.text || areaparcESTRAT.text.trim(
+                                            ) === "") {
                                     emptyFieldsESTRAT.push("Área da Parcela")
                                 }
 
@@ -478,15 +501,29 @@ ApplicationWindow {
                                     emptyFieldsESTRAT.push("Alpha")
                                 }
 
+                                if (!estratosESTRAT.text || estratosESTRAT.text.trim(
+                                            ) === "") {
+                                    emptyFieldsESTRAT.push("Número de Estratos")
+                                }
+
+                                if (subestratosOK === 0) {
+                                    emptyFieldsESTRAT.push("Número de Sub-Estratos")
+                                }
+
                                 if (emptyFieldsESTRAT.length > 0) {
                                     // Se houver campos vazios, exiba o diálogo
-                                    emptyDialogESTRAT.text = "Ausência de dados nos campos: " + emptyFieldsESTRAT.join(", ")
+                                    emptyDialogESTRAT.text = "Ausência de dados nos campos: "
+                                            + emptyFieldsESTRAT.join(", ")
                                     emptyDialogESTRAT.open()
                                 } else if (errorESTRAT.visible === true) {
                                     emptySelectedDialogESTRAT.open()
                                 } else {
                                     // Aqui você pode adicionar a lógica para processar os dados inseridos
-                                    var resultados = Julia.calcESTRAT(Julia.singleFile(selectedFileDialogESTRAT.currentFile), areainvESTRAT.text, areaparcESTRAT.text, alphaESTRAT.text, earESTRAT.text)
+                                    var resultados = Julia.calcESTRAT(
+                                                Julia.singleFile(
+                                                    selectedFileDialogESTRAT.currentFile),
+                                                areainvESTRAT.text, areaparcESTRAT.text,
+                                                alphaESTRAT.text, earESTRAT.text)
 
                                     resultVals = resultados[0]
                                     resultObs = resultados[1] + "\n\n" + resultados[2]
@@ -495,64 +532,162 @@ ApplicationWindow {
                                 }
                             }
                         }
+
+                        Button {
+                            id: enterNumSubEstratos
+                            text: qsTr("Sub-estratos")
+                            anchors.centerIn: parent
+                            anchors.verticalCenterOffset: -55
+                            anchors.horizontalCenterOffset: 230
+                            visible: false
+
+                            Connections {
+                                target: enterNumSubEstratos
+                                onClicked: {
+                                    windowSubEstratos.visible = true
+                                }
+                            }
+                        }
                     }
                 }
-            }
 
-            FileDialog {
-                id: selectedFileDialogESTRAT
-                title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
-                fileMode: FileDialog.OpenFile
-                nameFilters: ["CSV Files (*.csv)"]
-                Component.onCompleted: visible = false
+                Window {
+                    id: windowSubEstratos
+                    width: 840
+                    height: 640
+                    visible: false
+                    x: (Screen.width - width) / 2  // Centralizar horizontalmente
+                    y: (Screen.height - height) / 2  // Centralizar verticalmente
 
-                Connections {
-                    target: selectedFileDialogESTRAT
-                    onAccepted: {
-                        correctESTRAT.visible = true
-                        errorESTRAT.visible = false
+                    Rectangle {
+                        width: parent.width
+                        height: parent.height
+
+                        Image {
+                            source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
+                            width: parent.width
+                            height: parent.height
+                            fillMode: Image.Stretch
+                            visible: true
+                        }
+
+                        Grid {
+                            id: gridLayout
+                            anchors.centerIn: parent
+                            spacing: 10
+
+                            Repeater {
+                                model: estratosESTRAT.text
+                                TextField {
+                                    placeholderText: "SubEstrato" + (index + 1)
+                                    horizontalAlignment: Text.AlignHCenter
+                                    validator: IntValidator {}
+                                    width: 120
+                                    height: 30
+                                    font.family: "Arial"
+                                    font.pointSize: 10
+                                }
+                            }
+                        }
+
+                        Button {
+                            id: closeSubEstratos
+                            width: 200
+                            text: qsTr("Confirmar")
+                            font.pointSize: 14
+                            font.family: "Arial"
+                            anchors.centerIn: parent
+                            anchors.verticalCenterOffset: 200
+
+                            Connections {
+                                target: closeSubEstratos
+                                onClicked: {
+                                    var vector = [] // Criar vetor vazio
+                                    var contNull = 0
+
+                                    for (var i = 0; i < gridLayout.children.length; ++i) {
+                                        var textField = gridLayout.children[i]
+
+                                        if (textField.text === "") {
+                                            contNull = contNull + 1
+                                        } else {
+                                            vector.push(textField.text) // Adicionar texto de cada campo ao vetor
+                                        }
+                                    }
+                                    if (contNull === 0) {
+                                        windowSubEstratos.close()
+                                        subestratosOK = 1
+                                    } else {
+                                        emptySubEstratos.open()
+                                        subestratosOK = 0
+                                    }
+                                }
+                            }
+                        }
                     }
 
-                    onRejected: {
-                        errorESTRAT.visible = true
+                    MessageDialog {
+                        id: emptySubEstratos
+                        title: "Número de SubEstratos Insuficiente"
+                        buttons: MessageDialog.Ok
                     }
                 }
-            }
 
-            MessageDialog {
-                id: conclusionDialogESTRAT
-                title: "Inventário Processado com Sucesso"
-                text: resultObs
-            }
-            MessageDialog {
-                id: emptySelectedFileDialogESTRAT
-                title: "Falha ao tentar processar inventário"
-                text: "Selecione um arquivo com dados válidos para continuar" + "\n"
-                    + selectedFileDialogESTRAT.currentFile
-            }
-            FileDialog {
-                id: saveFileDialogESTRAT
-                title: "Selecione o local para salvar o arquivo..."
-                fileMode: FileDialog.SaveFile
+                FileDialog {
+                    id: selectedFileDialogESTRAT
+                    title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
+                    fileMode: FileDialog.OpenFile
+                    nameFilters: ["CSV Files (*.csv)"]
+                    Component.onCompleted: visible = false
 
-                Connections {
-                    target: saveFileDialogESTRAT
-                    onAccepted: {
-                        Julia.saveFile(resultVals, saveFileDialogESTRAT.selectedFile)
-                        conclusionDialogESTRAT.open()
+                    Connections {
+                        target: selectedFileDialogESTRAT
+                        onAccepted: {
+                            correctESTRAT.visible = true
+                            errorESTRAT.visible = false
+                        }
+
+                        onRejected: {
+                            errorESTRAT.visible = true
+                        }
                     }
                 }
-            }
-            MessageDialog {
-                id: emptyDialogESTRAT
-                title: "Dados insuficientes para o processamento do inventário"
-                buttons: MessageDialog.Ok
-            }
-            MessageDialog {
-                id: emptySelectedDialogESTRAT
-                title: "Dados insuficientes para o processamento do inventário"
-                buttons: MessageDialog.Ok
-                text: "Você deve selecionar um arquivo .CSV para prosseguir"
+
+                MessageDialog {
+                    id: conclusionDialogESTRAT
+                    title: "Inventário Processado com Sucesso"
+                    text: resultObs
+                }
+                MessageDialog {
+                    id: emptySelectedFileDialogESTRAT
+                    title: "Falha ao tentar processar inventário"
+                    text: "Selecione um arquivo com dados válidos para continuar" + "\n"
+                        + selectedFileDialogESTRAT.currentFile
+                }
+                FileDialog {
+                    id: saveFileDialogESTRAT
+                    title: "Selecione o local para salvar o arquivo..."
+                    fileMode: FileDialog.SaveFile
+
+                    Connections {
+                        target: saveFileDialogESTRAT
+                        onAccepted: {
+                            Julia.saveFile(resultVals, saveFileDialogESTRAT.selectedFile)
+                            conclusionDialogESTRAT.open()
+                        }
+                    }
+                }
+                MessageDialog {
+                    id: emptyDialogESTRAT
+                    title: "Dados insuficientes para o processamento do inventário"
+                    buttons: MessageDialog.Ok
+                }
+                MessageDialog {
+                    id: emptySelectedDialogESTRAT
+                    title: "Dados insuficientes para o processamento do inventário"
+                    buttons: MessageDialog.Ok
+                    text: "Você deve selecionar um arquivo .CSV para prosseguir"
+                }
             }
         }
 
@@ -562,6 +697,8 @@ ApplicationWindow {
             height: 480
             title: "Janela do Inventário Sistemático"
             visible: false
+            x: (Screen.width - width) / 2  // Centralizar horizontalmente
+            y: (Screen.height - height) / 2  // Centralizar verticalmente
 
             Rectangle {
                 width: parent.width
@@ -768,6 +905,8 @@ ApplicationWindow {
             height: 480
             title: "Janela do Inventário Dois Estágios"
             visible: false
+            x: (Screen.width - width) / 2  // Centralizar horizontalmente
+            y: (Screen.height - height) / 2  // Centralizar verticalmente
 
             Rectangle {
                 width: parent.width
@@ -873,7 +1012,6 @@ ApplicationWindow {
                         width: 400
                         font.pointSize: 14
                         font.family: "Arial"
-                        anchors.centerIn: columnsEnterDE
                         anchors.verticalCenterOffset: 140
 
                         Connections {
@@ -988,6 +1126,8 @@ ApplicationWindow {
             height: 480
             title: "Janela do Inventário Conglomerados"
             visible: false
+            x: (Screen.width - width) / 2  // Centralizar horizontalmente
+            y: (Screen.height - height) / 2  // Centralizar verticalmente
 
             Rectangle {
                 width: parent.width
@@ -1194,6 +1334,8 @@ ApplicationWindow {
             height: 480
             title: "Janela do Inventário Sistemático Multiplos Inícios"
             visible: false
+            x: (Screen.width - width) / 2  // Centralizar horizontalmente
+            y: (Screen.height - height) / 2  // Centralizar verticalmente
 
             Rectangle {
                 width: parent.width
@@ -1401,6 +1543,8 @@ ApplicationWindow {
             height: 480
             title: "Janela do Inventário Independente"
             visible: false
+            x: (Screen.width - width) / 2  // Centralizar horizontalmente
+            y: (Screen.height - height) / 2  // Centralizar verticalmente
 
             Rectangle {
                 id: rectangleIND
@@ -1413,6 +1557,8 @@ ApplicationWindow {
             height: 480
             title: "Janela do Inventário Estratificado"
             visible: false
+            x: (Screen.width - width) / 2  // Centralizar horizontalmente
+            y: (Screen.height - height) / 2  // Centralizar verticalmente
 
             Rectangle {
                 id: rectangleRPT
@@ -1425,6 +1571,8 @@ ApplicationWindow {
             height: 480
             title: "Janela do Inventário Dupla"
             visible: false
+            x: (Screen.width - width) / 2  // Centralizar horizontalmente
+            y: (Screen.height - height) / 2  // Centralizar verticalmente
 
             Rectangle {
                 id: rectangleDP
@@ -1437,6 +1585,8 @@ ApplicationWindow {
             height: 480
             title: "Janela do Inventário Parcial"
             visible: false
+            x: (Screen.width - width) / 2  // Centralizar horizontalmente
+            y: (Screen.height - height) / 2  // Centralizar verticalmente
 
             Rectangle {
                 id: rectangleRP
