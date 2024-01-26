@@ -1,11 +1,14 @@
-module AE
+module ESTRAT
 # Amostragem Estratificada 
 
-export CalcAE
+export calcESTRAT
 
-    using DataFrames, Statistics, Distributions, CSV, XLSX #Habilitar pacotes
+    import DataFrames: DataFrame, transform, AsTable, ByRow
+    import Statistics: mean, var, std
+    import Distributions: TDist, quantile
+    import CSV: CSV.read
 
-    function Estratificada(Estrato, Unidade, Volume) #Determina a função
+    function calcESTRAT(Dados, Area, AreaParc, α, EAR, Nestrat) #Determinar função
 
         Volume = (Conversor.*Dados.Volume)
         Estrato = Dados.Estrato

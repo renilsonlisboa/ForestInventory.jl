@@ -2,10 +2,15 @@ module ForestInventory
 
 # Inclui os módulos auxiliares no projeto
 include(joinpath(@__DIR__, "src/AAS.jl"))
+include(joinpath(@__DIR__, "src/ESTRAT.jl"))
 include(joinpath(@__DIR__, "src/SIST.jl"))
 include(joinpath(@__DIR__, "src/DE.jl"))
 include(joinpath(@__DIR__, "src/CONGL.jl"))
 include(joinpath(@__DIR__, "src/MULTI.jl"))
+include(joinpath(@__DIR__, "src/IND.jl"))
+include(joinpath(@__DIR__, "src/ART.jl"))
+include(joinpath(@__DIR__, "src/AD.jl"))
+include(joinpath(@__DIR__, "src/ARP.jl")) 
 include(joinpath(@__DIR__, "src/Save.jl"))
 include(joinpath(@__DIR__, "src/ImportData.jl"))
 
@@ -45,7 +50,7 @@ export Inventory
         CONGL.calcCONGL(Dados, Area, AreaParc, α, EAR)
     end
 
-    # processamento do Inventário por meio da amostragem em conglomerados
+    # processamento do Inventário por meio da amostragem sistemática com múltiplos inícios aleatórios
     function calcMULTI(Dados, Area, AreaParc, α, EAR)
         MULTI.calcMULTI(Dados, Area, AreaParc, α, EAR)
     end

@@ -1,10 +1,13 @@
-module AAS
+module IND
 
-export CalcAAS
+export calcIND
 
-    using DataFrames, Statistics, Distributions, CSV, XLSX #Habilitar pacotes
+    import DataFrames: DataFrame, transform, AsTable, ByRow
+    import Statistics: mean, var, std
+    import Distributions: TDist, quantile
+    import CSV: CSV.read
 
-    function calcAAS(Area::Float64, N::Float64, α::Float64, EAR::Float64, Área_da_Parcela::Float64, Conversor::Float64)
+    function calcIND(Area::Float64, N::Float64, α::Float64, EAR::Float64, Área_da_Parcela::Float64, Conversor::Float64)
         Dados = CSV.read("src/aas.csv", DataFrame)
         Volume = (Conversor.*Dados.Volume)
         Unidades = Dados.Unidades
