@@ -13,6 +13,7 @@ ApplicationWindow {
     property var resultVals: []
     property string resultObs: ""
     property int subestratosOK: 0
+    property bool verifySelected: false
 
     Rectangle {
         id: retangulo
@@ -178,27 +179,26 @@ ApplicationWindow {
                     }
                 }
 
-                Row {
-                    spacing: 10
+                Image {
+                    id: correctAAS
                     anchors.centerIn: parent
                     anchors.verticalCenterOffset: -120
                     anchors.horizontalCenterOffset: 185
+                    source: "images/correct.png" // Substitua pelo caminho real da sua imagem
+                    width: 50
+                    height: 40
+                    visible: false
+                }
 
-                    Image {
-                        id: correctAAS
-                        source: "images/correct.png" // Substitua pelo caminho real da sua imagem
-                        width: 50
-                        height: 40
-                        visible: false
-                    }
-
-                    Image {
-                        id: errorAAS
-                        source: "images/errado.png" // Substitua pelo caminho real da sua imagem
-                        width: 50
-                        height: 40
-                        visible: true
-                    }
+                Image {
+                    id: errorAAS
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
+                    source: "images/errado.png" // Substitua pelo caminho real da sua imagem
+                    width: 50
+                    height: 40
+                    visible: false
                 }
 
                 Column {
@@ -274,7 +274,7 @@ ApplicationWindow {
                                     // Se houver campos vazios, exiba o diálogo
                                     emptyDialogAAS.text = "Ausência de dados nos campos: " + emptyFieldsAAS.join(", ")
                                     emptyDialogAAS.open()
-                                } else if (errorAAS.visible === true) {
+                                } else if (verifySelected === false) {
                                     emptySelectedDialogAAS.open()
                                 } else {
 
@@ -293,6 +293,7 @@ ApplicationWindow {
                     }
                 }
             }
+
             BusyIndicator {
                 id: busyIndicatorAAS
                 width: 120
@@ -301,6 +302,7 @@ ApplicationWindow {
                 anchors.centerIn: parent
                 anchors.verticalCenterOffset: 250
             }
+
             FileDialog {
                 id: selectedFileDialogAAS
                 title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
@@ -313,17 +315,22 @@ ApplicationWindow {
                     onAccepted: {
                         correctAAS.visible = true
                         errorAAS.visible = false
+                        verifySelected = true
                     }
                     onRejected: {
+                        correctAAS.visible = false
                         errorAAS.visible = true
+                        verifySelected = false 
                     }
                 }
             }
+
             MessageDialog {
                 id: conclusionDialogAAS
                 title: "Inventário Processado com Sucesso"
                 text: resultObs
             }
+
             FileDialog {
                 id: saveFileDialogAAS
                 title: "Selecione o local para salvar o arquivo..."
@@ -340,12 +347,20 @@ ApplicationWindow {
                     }
                 }
             }
+
             MessageDialog {
                 id: emptySelectedDialogAAS
                 title: "Dados insuficientes para o processamento do inventário"
                 buttons: MessageDialog.Ok
                 text: "Você deve selecionar um arquivo .CSV para prosseguir"
             }
+
+            MessageDialog {
+                id: emptyDialogAAS
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+            }
+
             Connections {
                 target: inventAAS
                 onClosing:{
