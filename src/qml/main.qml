@@ -374,6 +374,8 @@ ApplicationWindow {
             }
         }
 
+        // Até aqui funcionou 100%
+
         Window {
             id: inventESTRAT
             width: 760

@@ -9,7 +9,7 @@ export calcESTRAT
     import CSV: CSV.read
 
     function calcESTRAT(Dados, Area, AreaParc, α, EAR, estratos, nh) #Determinar função
-        Uni
+        
         Area = Float64(Meta.parse(Area))
         AreaParc = Float64(Meta.parse(AreaParc))
         α = Float64(Meta.parse(α))
