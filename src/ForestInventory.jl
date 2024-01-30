@@ -65,7 +65,7 @@ export Inventory
         current_directory = dirname(@__FILE__)
 
         # Localiza e carrega o arquivo de base QML
-        loadqml(joinpath(current_directory, "src/qml", "main.qml"))
+        loadqml(joinpath(current_directory, "qml", "main.qml"))
 
         # Executa o arquivo QML carregado no comando anterior
         exec()
