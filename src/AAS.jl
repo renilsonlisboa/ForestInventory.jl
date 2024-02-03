@@ -43,8 +43,7 @@ export CalcAAS
             round(Infinita)
         elseif (1-(NumUni/N)) < 0.98 #f menor que 0,98 população finita
             #População finita. O tamanho da amostra é calculado pela seguinte equação:
-            Finita=(N*((t)^2)*Variancia)/((N*(((0.1*Media))^2))+(((
-                t)^2)*Variancia))
+            Finita=(N*((t)^2)*Variancia)/((N*(((0.1*Media))^2))+(((t)^2)*Variancia))
             round(Finita)
         end 
     

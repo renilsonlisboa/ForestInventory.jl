@@ -13,9 +13,8 @@ nh = [7, 8, 7]
 nh1 = 7
 nh2 = 8
 nh3 = 7
-resultstring = ["Número de Unidades amostradas no estrato I", 
-"Número de Unidades amostradas no estrato II", 
-"Número de Unidades amostradas no estrato III"]
+calc2 = for i in 1:3 (round((Area/(length(Unidade)))*nh[i])*10) end
+
 function toRoman(n)
 
     roman_numerals = Dict(
@@ -32,33 +31,37 @@ function toRoman(n)
         end
     end
 
-    return ["Número de Unidades Amostradas no Estrato $result" "Número potencial de Unidades do estrato $result"]
+    return "Número de Unidades Amostradas no Estrato $result", "Número potencial de Unidades do estrato $result"
+end
+
+
+aux_inv = Matrix{String}(undef, size(nh,1), 2)
+fill!(aux_inv, "")
+
+for i in 1:(size(nh,1))
+    aux_inv[i,:] .= toRoman(i)
 end
 
 Informações_do_inventário = (
     DataFrame(
-        Variáveis = [
+        Variáveis = vcat(
             "Área da população (ha)", 
             "Número total potencial de Unidades da população", 
             "Nível de significância (α)",
-            
-            "Número de estratos", "Número de Unidades totais", 
-            "Número potencial de Unidades do estrato I", 
-            "Número potencial de Unidades do estrato II", 
-            "Número potencial de Unidades do estrato III"
-        ],
-        Valores = [
+            aux_inv[:,1],
+            "Número de estratos", "Número de Unidades totais",
+            aux_inv[:,2]
+        ),
+        Valores = vcat(
             Area, 
             N, 
             alpha, 
-            for i in 1:3
-                mm = nh[i]
-            end,
+            nh,
             length(unique(Estrato)), 
             length(Unidade), 
             (round((Area/(length(Unidade)))*nh1)*10), 
             (round((Area/(length(Unidade)))*nh2)*10), 
             (round((Area/(length(Unidade)))*nh3)*10)/N
-        ]
+        )
     )
 )
