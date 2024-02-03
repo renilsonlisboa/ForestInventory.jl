@@ -338,7 +338,7 @@ ApplicationWindow {
                 Connections {
                     target: saveFileDialogAAS
                     onAccepted: {
-                        Julia.saveFile(resultVals, saveFileDialogAAS.selectedFile)
+                        Julia.saveFile(resultVals, saveFileDialogAAS.selectedFile, comboBox.currentIndex)
                         conclusionDialogAAS.open()
                         busyIndicatorAAS.running = false
                     }
@@ -694,7 +694,7 @@ ApplicationWindow {
                     Connections {
                         target: saveFileDialogESTRAT
                         onAccepted: {
-                            Julia.saveFile(resultVals, saveFileDialogESTRAT.selectedFile)
+                            Julia.saveFile(resultVals, saveFileDialogESTRAT.selectedFile, comboBox.currentIndex)
                             conclusionDialogESTRAT.open()
                         }
                     }
@@ -903,7 +903,7 @@ ApplicationWindow {
                 Connections {
                     target: saveFileDialogSIST
                     onAccepted: {
-                        Julia.saveFile(resultVals, saveFileDialogSIST.selectedFile)
+                        Julia.saveFile(resultVals, saveFileDialogSIST.selectedFile, comboBox.currentIndex)
                         conclusionDialogSIST.open()
                     }
                 }
@@ -1124,7 +1124,7 @@ ApplicationWindow {
                 Connections {
                     target: saveFileDialogDE
                     onAccepted: {
-                        Julia.saveFile(resultVals, saveFileDialogDE.selectedFile)
+                        Julia.saveFile(resultVals, saveFileDialogDE.selectedFile, comboBox.currentIndex)
                         conclusionDialogDE.open()
                     }
                 }
@@ -1332,7 +1332,7 @@ ApplicationWindow {
                 Connections {
                     target: saveFileDialogCONGL
                     onAccepted: {
-                        Julia.saveFile(resultVals, saveFileDialogCONGL.selectedFile)
+                        Julia.saveFile(resultVals, saveFileDialogCONGL.selectedFile, comboBox.currentIndex)
                         conclusionDialogCONGL.open()
                     }
                 }
@@ -1540,7 +1540,7 @@ ApplicationWindow {
                 Connections {
                     target: saveFileDialogMULTI
                     onAccepted: {
-                        Julia.saveFile(resultVals, saveFileDialogMULTI.selectedFile)
+                        Julia.saveFile(resultVals, saveFileDialogMULTI.selectedFile, comboBox.currentIndex)
                         conclusionDialogMULTI.open()
                     }
                 }
@@ -1558,20 +1558,238 @@ ApplicationWindow {
             }
         }
         
+        // Amostragem Independente
         Window {
             id: inventIND
+            title: "Amostragem Independente"
             width: 760
-            height: 480
-            title: "Janela do Inventário Independente"
-            visible: false
+            height: 640
             x: (Screen.width - width) / 2  // Centralizar horizontalmente
             y: (Screen.height - height) / 2  // Centralizar verticalmente
+            visible: false
 
             Rectangle {
-                id: rectangleIND
-                color: "yellow"
+                width: parent.width
+                height: parent.height
+                visible: true
+
+                Image {
+                    source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
+                    width: parent.width
+                    height: parent.height
+                    fillMode: Image.Stretch
+                    visible: true
+                }
+
+                Button {
+                    id: importDataIND
+                    text: qsTr("Importar Dados")
+                    width: 300
+                    font.family: "Arial"
+                    font.pointSize: 14
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+
+                    Connections {
+                        target: importDataIND
+                        onClicked: {
+                            selectedFileDialogIND.open()
+                        }
+                    }
+                }
+
+                Image {
+                    id: correctIND
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
+                    source: "images/correct.png" // Substitua pelo caminho real da sua imagem
+                    width: 50
+                    height: 40
+                    visible: false
+                }
+
+                Image {
+                    id: errorIND
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
+                    source: "images/errado.png" // Substitua pelo caminho real da sua imagem
+                    width: 50
+                    height: 40
+                    visible: false
+                }
+
+                Column {
+                    id: columnsEnterIND
+                    spacing: 15
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 20
+
+                    // Adicione 4 campos de entrada (TextField)
+                    TextField {
+                        id: areaparcIND
+                        placeholderText: "Área da Parcela (ha)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: areainvOc1IND
+                        placeholderText: "Área Inventáriada na Ocasião 1 (ha)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: areainvOc2IND
+                        placeholderText: "Área Inventáriada na Ocasião 1 (ha)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: alphaIND
+                        placeholderText: "Alpha (0.01 à 0.99)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+
+                    Button {
+                        id: processInventIND
+                        text: qsTr("Processar Inventário")
+                        width: 300
+                        font.pointSize: 14
+                        font.family: "Arial"
+
+                        Connections {
+                            target: processInventIND
+                            onClicked: {
+                                var emptyFieldsIND = []
+
+                                // Verifique se os campos estão vazios ou contêm apenas espaços em branco
+                                if (!areaparcIND.text || areaparcIND.text.trim() === "") {
+                                    emptyFieldsIND.push("Área da Parcela")
+                                }
+
+                                if (!areainvOc1IND.text || areainvOc1IND.text.trim() === "") {
+                                    emptyFieldsIND.push("Área Inventáriada na Ocasião 1")
+                                }
+
+                                if (!areainvOc2IND.text || areainvOc2IND.text.trim() === "") {
+                                    emptyFieldsIND.push("Área Inventariada na Ocasião 2")
+                                }
+
+                                if (!alphaIND.text || alphaIND.text.trim() === "") {
+                                    emptyFieldsIND.push("Alpha")
+                                }
+
+                                if (emptyFieldsIND.length > 0) {
+                                    // Se houver campos vazios, exiba o diálogo
+                                    emptyDialogIND.text = "Ausência de dados nos campos: " + emptyFieldsIND.join(", ")
+                                    emptyDialogIND.open()
+                                } else if (verifySelected === false) {
+                                    emptySelectedDialogIND.open()
+                                } else {
+
+                                    busyIndicatorIND.running = true
+
+                                    // Aqui você pode adicionar a lógica para processar os dados inseridos
+                                    var resultados = Julia.calcIND(Julia.singleFile(selectedFileDialogIND.currentFile), areaparcIND.text, areainvOc1IND.text, areainvOc2IND.text, alphaIND.text)
+
+                                    resultVals = resultados[0]
+                                    resultObs = resultados[1] + "\n\n" + resultados[2]
+
+                                    saveFileDialogIND.open()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            BusyIndicator {
+                id: busyIndicatorIND
+                width: 120
+                height: 120
+                running: false
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: 250
+            }
+
+            FileDialog {
+                id: selectedFileDialogIND
+                title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
+                fileMode: FileDialog.OpenFile
+                nameFilters: ["CSV Files (*.csv)"]
+                Component.onCompleted: visible = false
+
+                Connections {
+                    target: selectedFileDialogIND
+                    onAccepted: {
+                        correctIND.visible = true
+                        errorIND.visible = false
+                        verifySelected = true
+                    }
+                    onRejected: {
+                        correctIND.visible = false
+                        errorIND.visible = true
+                        verifySelected = false 
+                    }
+                }
+            }
+
+            MessageDialog {
+                id: conclusionDialogIND
+                title: "Inventário Processado com Sucesso"
+                text: resultObs
+            }
+
+            FileDialog {
+                id: saveFileDialogIND
+                title: "Selecione o local para salvar o arquivo..."
+                fileMode: FileDialog.SaveFile
+                Connections {
+                    target: saveFileDialogIND
+                    onAccepted: {
+                        Julia.saveFile(resultVals, saveFileDialogIND.selectedFile, comboBox.currentIndex)
+                        conclusionDialogIND.open()
+                        busyIndicatorIND.running = false
+                    }
+                    onRejected: {
+                        busyIndicatorIND.running = false
+                    }
+                }
+            }
+
+            MessageDialog {
+                id: emptySelectedDialogIND
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+                text: "Você deve selecionar um arquivo .CSV para prosseguir"
+            }
+
+            MessageDialog {
+                id: emptyDialogIND
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+            }
+
+            Connections {
+                target: inventIND
+                onClosing:{
+                    correctIND.visible = false
+                    errorIND.visible = true
+                }
             }
         }
+
+        // Amostragem com Repetição Total
         Window {
             id: inventRPT
             width: 760
@@ -1586,6 +1804,8 @@ ApplicationWindow {
                 color: "green"
             }
         }
+
+        // Amostragem Dupla
         Window {
             id: inventDP
             width: 760
@@ -1600,6 +1820,8 @@ ApplicationWindow {
                 color: "orange"
             }
         }
+
+       // Amostragem com Repetição Parcial
         Window {
             id: inventRP
             width: 760

@@ -10,7 +10,7 @@ module Save
     export saveFile
 
     # Define a função  saveFile usada para salvar o arquivo de resultado
-    function saveFile(Dados, uri)
+    function saveFile(Dados, uri, i)
         
         if uri !== nothing
             uri_s = QString(uri)
@@ -25,7 +25,15 @@ module Save
         cleaned_path = replace(uri_s, "file:///" => "")
 
         # Salva a tabela de resultado no PATH selecionado pelo usuário
-        writetable("$(cleaned_path).xlsx",Resultados=(collect(eachcol(Dados)), names(Dados)), overwrite = true) #Exportar para o Excel
+        if i in 0:5
+            writetable("$(cleaned_path).xlsx",Resultados=(collect(eachcol(Dados)), names(Dados)), overwrite = true) #Exportar para o Excel
+        elseif i in 6:10
+            XLSX.writetable(("$(cleaned_path).xlsx"), Dados=(collect(DataFrames.eachcol(Independente)), 
+            DataFrames.names(Independente)), Primeira_ocasião=(collect(DataFrames.eachcol(Primeira_ocasião)), 
+            DataFrames.names(Primeira_ocasião)), Segunda_ocasião=(collect(DataFrames.eachcol(Segunda_ocasião)), 
+            DataFrames.names(Segunda_ocasião)), Crescimento_ou_mudança=(collect(DataFrames.eachcol(Mudança_crescimento)),   
+            DataFrames.names(Mudança_crescimento))) #Exportar para o Excel
+        end
     
     end
 

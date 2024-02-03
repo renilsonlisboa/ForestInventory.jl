@@ -9,8 +9,6 @@ export calcCONGL
 
     function calcCONGL(Dados, Area, AreaParc, α, EAR) #Determinar função
 
-        População = "TESTANDO"
-
         Area = Float64(Meta.parse(Area))
         println(Area)
         AreaParc = Float64(Meta.parse(AreaParc))
