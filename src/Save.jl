@@ -17,7 +17,7 @@ module Save
         else
             return 0
         end
-
+            
         # Converte a entrada em QString do QML em String do Julia
         uri_s = QString(uri)
 
@@ -35,7 +35,7 @@ module Save
             names(Dados[2])), Segunda_ocasião=(collect(eachcol(Dados[3])), 
             names(Dados[3])), Crescimento_ou_mudança=(collect(eachcol(Dados[4])),   
             names(Dados[4])), overwrite = true) #Exportar para o Excel
-        elseif i === 9
+        elseif i in 9:9
             Dados = convert.(DataFrame, Dados)
 
             writetable(("$(cleaned_path).xlsx"), Dados=(collect(eachcol(Dados[1])), 
@@ -45,7 +45,7 @@ module Save
             names(Dados[4])), Crescimento_ou_mudança=(collect(eachcol(Dados[5])), 
             names(Dados[5])), overwrite = true) #Exportar para o Excel
         else
-           println("Deu ruim") 
+           println("$(i)") 
         end
     end
 

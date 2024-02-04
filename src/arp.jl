@@ -14,9 +14,10 @@ export calcARP
 
         ###Primeira ocasião####
         Unidades = Dados[!,1]
-        Ocasião_1 = (Conversor.*Dados[!,2])
-        Ocasião_2 = (Conversor.*Dados[!,3])
-        ARP = DataFrame(Unidades = Unidades, Ocasião_1 = Ocasião_1, Ocasião_2 = Ocasião_2)
+        SubAmostra = Dados[!,2]
+        Ocasião_1 = (Conversor.*Dados[!,3])
+        Ocasião_2 = (Conversor.*Dados[!,4])
+        ARP = DataFrame(Unidades = Unidades, SubAmostra = SubAmostra, Ocasião_1 = Ocasião_1, Ocasião_2 = Ocasião_2)
 
         Informações_do_inventário = DataFrame(Variáveis=["Área da população (ha)", "Número total de unidades", 
         "Número de unidades da primeira ocasião", "Número de unidades da segunda ocasião", "Número de subamostras temporárias", 
