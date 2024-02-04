@@ -60,11 +60,21 @@ export Inventory
         IND.calcIND(Dados, AreaParc, α, N1, N2)
     end
 
+    # processamento do Inventário por meio da amostragem sistemática com múltiplos inícios aleatórios
+    function calcART(Dados, AreaParc, α, N1, N2)
+        ART.calcART(Dados, AreaParc, α, N1, N2)
+    end
+
+    # processamento do Inventário por meio da amostragem sistemática com múltiplos inícios aleatórios
+    function calcAD(Dados, AreaParc, N, α)
+        AD.calcAD(Dados, AreaParc, N, α)
+    end
+    
     # Função de inicialização do programa em QML
     function Inventory()
         
         # Exporta as funções do Julia para o QML
-        @qmlfunction singleFile saveFile calcAAS calcSIST calcDE calcCONGL calcMULTI calcIND
+        @qmlfunction singleFile saveFile calcAAS calcSIST calcDE calcCONGL calcMULTI calcIND calcART calcAD
 
         # Obtém o diretório atual
         current_directory = dirname(@__FILE__)

@@ -90,9 +90,9 @@ export calcIND
         (1-((length(Ocasião_2))/N2)))), (((sum((Ocasião_1.-mean(Ocasião_1)).^2)/length(Ocasião_1)-1)/length(Ocasião_1))*(1-(length(Ocasião_1)/N1)))+
         (((sum((Ocasião_2.-(mean(Ocasião_2))).^2)/length(Ocasião_2)-1)/(length(Ocasião_2)))*(1-((length(Ocasião_2))/N2)))]) #Tabela de resultados  
 
-        Resultados = [Primeira_ocasião, Segunda_ocasião, Mudança_crescimento]
+        Resultados = [Independente, Primeira_ocasião, Segunda_ocasião, Mudança_crescimento]
         
-        return [Resultados, População, Observação]
+        return [Resultados]
 
     end
 end

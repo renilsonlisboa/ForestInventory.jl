@@ -28,13 +28,16 @@ module Save
         if i in 0:5
             writetable("$(cleaned_path).xlsx",Resultados=(collect(eachcol(Dados)), names(Dados)), overwrite = true) #Exportar para o Excel
         elseif i in 6:10
-            XLSX.writetable(("$(cleaned_path).xlsx"), Dados=(collect(DataFrames.eachcol(Independente)), 
-            DataFrames.names(Independente)), Primeira_ocasião=(collect(DataFrames.eachcol(Primeira_ocasião)), 
-            DataFrames.names(Primeira_ocasião)), Segunda_ocasião=(collect(DataFrames.eachcol(Segunda_ocasião)), 
-            DataFrames.names(Segunda_ocasião)), Crescimento_ou_mudança=(collect(DataFrames.eachcol(Mudança_crescimento)),   
-            DataFrames.names(Mudança_crescimento))) #Exportar para o Excel
+            Dados = convert.(DataFrame, Dados)
+            show(Dados)
+            writetable("$(cleaned_path).xlsx", Dados=(collect(eachcol(Dados[1])), 
+            names(Dados[1])), Primeira_ocasião=(collect(eachcol(Dados[2])), 
+            names(Dados[2])), Segunda_ocasião=(collect(eachcol(Dados[3])), 
+            names(Dados[3])), Crescimento_ou_mudança=(collect(eachcol(Dados[4])),   
+            names(Dados[4])), overwrite = true) #Exportar para o Excel
+        else
+           println("Deu ruim") 
         end
-    
     end
 
 end

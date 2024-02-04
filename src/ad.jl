@@ -4,89 +4,289 @@ export calcAD
 
     using DataFrames, Statistics, Distributions, CSV, XLSX #Habilitar pacotes
 
-    function calcAD(Area::Float64, N::Float64, α::Float64, EAR::Float64, Área_da_Parcela::Float64, Conversor::Float64)
-        Dados = CSV.read("src/aas.csv", DataFrame)
-        Volume = (Conversor.*Dados.Volume)
-        Unidades = Dados.Unidades
-        
-        AAS = DataFrame(Unidades = Unidades, Volume= Volume)
-        
-        Media = mean(Volume) #Média
-        NumUni = (length(Unidades)) #Número de unidades
-        Variancia = var(Volume) #Variância 
-        DesvPad = std(Volume) #Desvio padrão
-        FatorCorr = (1-(length(Unidades)/N)) #Fator de correção
-        LE = (0.1*Media) #Limite de erro da amostragem requerido
-        t = quantile(TDist(length(Unidades)-1),1-α/2) #Valor de t
+    function calcAD(Dados, AreaParc, N, α)
 
-        if (1-(NumUni/N)) ≥ 0.98 #f maior ou igual a 0,98 população infinita
-        População = "é considerada infinita"   
-            println(População)
-        elseif (1-(NumUni/N)) < 0.98 #f menor que 0,98 população finita
-        População = "é considerada finita"    
-            println(População)
-        end     
+        AreaParc = Float64(Meta.parse(AreaParc))
+        α = Float64(Meta.parse(α))
+        N = Int64(Meta.parse(N))
+
+        Conversor=1/AreaParc
+
+        ###Primeira ocasião####
+        Unidades = Dados[!,1]
+        Ocasião_1 = (Conversor.*Dados[!,2])
+        Ocasião_2 = (Conversor.*Dados[!,3])
+        AD = DataFrame(Unidades = Unidades, Ocasião_1 = Ocasião_1, Ocasião_2 = Ocasião_2)
+
+        #Média de unidades temporárias
+        j=AD[!, [:Ocasião_1]]
+        g=Matrix(j)
+        matriz=transpose(g)
         
-        Tamanho_da_amostra =   if (1-(NumUni/N)) ≥ 0.98 #f maior ou igual a 0,98 população infinita
-            #População infinita. O tamanho da amostra é calculado pela seguinte equação:
-            Infinita=(((t)^2)*Variancia)/(((0.1*Media))^2) 
-            round(Infinita)
-        elseif (1-(NumUni/N)) < 0.98 #f menor que 0,98 população finita
-            #População finita. O tamanho da amostra é calculado pela seguinte equação:
-            Finita=(N*((t)^2)*Variancia)/((N*(((0.1*Media))^2))+(((
-                t)^2)*Variancia))
-            round(Finita)
+        global Xu = 0
+        
+        for i in 1:(length(Unidades)-(length(unique(Ocasião_2))))
+            global Xu += matriz[i]/(length(Unidades)-(length(unique(Ocasião_2))))
         end 
-    
-        VarMed = (Variancia/NumUni)*(1-(NumUni/N)) #Variância média
 
-        ErroPad = (DesvPad/sqrt(NumUni))*sqrt((1-(NumUni/N))) #Erro padrão
-
-        ErroPadRel = ErroPad/mean(Volume)*100 #Erro padrão relativo
-
-
-        CV = (DesvPad/Media)*100 #Coeficiente de variação
-
-        VarMedRel = (((((sqrt(Variancia)/Media)*100))^2)/(NumUni))*(1-(NumUni/N)) #Variância média relativa
+        #Média de unidades permanentes
+        global Xm = 0
         
-        #Erro de amostragem
-        ErroAmostAbs = ((t*(DesvPad))/sqrt(NumUni))*sqrt((1-(NumUni/N))) #Absoluto
-        ErroAmostRel = ErroAmostAbs/Media*100 #Relativo
-            
-        #Limite do intervalo de confiança para média 
-        LII = (Media-(t*DesvPad)/sqrt(NumUni))*sqrt((1-(NumUni/N))) #Inferior
-        LIS = (Media+(t*DesvPad)/sqrt(NumUni))*sqrt((1-(NumUni/N))) #Superior
-        ValTotal =  ((N*mean(Volume))/Conversor) #Total da população
+        for i in ((length(Unidades)-(length(unique(Ocasião_2))))+1):length(Unidades)
+            global Xm += matriz[i]/(length(unique(Ocasião_2)))
+        end 
+
+        global a = 0
+        global Sxu² = 0
         
-        #Limite do intervalo de confiança para o total   
-        LIItotal = ((N*Media)-N*(t*(DesvPad/sqrt(NumUni))*sqrt((1-(NumUni/N)))))/Conversor #Inferior
-        LIStotal = ((N*Media)+N*(t*(DesvPad/sqrt(NumUni))*sqrt((1-(NumUni/N))))) #Inferior
-        ConfMin = Media-(t*(DesvPad/sqrt(NumUni))*sqrt((1-(NumUni/N)))) #Estimativa mínima de confiança
+        for i in 1:(length(Unidades)-(length(unique(Ocasião_2))))
+            global a += ((matriz[i].-Xu).^2)
+            global Sxu² = a/((length(Unidades)-(length(unique(Ocasião_2))))-1)
+        end
         
-        #Tabela com os resultados
-        if ErroAmostRel > EAR
-            Observação = "Diante do exposto, conclui-se que os resultados obtidos na amostragem não satisfazem as exigências de
-            precisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±10% da média  para confiabilidade designada. 
-            O erro estimado foi maior que o limite fixado, sendo recomendado incluir mais unidades amostrais no inventário."
-            println(Observação)
-        else
-            Observação  = "Diante do exposto, conclui-se que os resultados obtidos na amostragem satisfazem as exigências de
-            precisão estabelecidas para o inventário, ou seja, um erro de amostragem máximo de ±10% da média para confiabilidade designada. 
-            O erro estimado foi menor que o limite fixado, assim as unidades amostrais são suficientes para o inventário."
-            println(Observação)
+        #Variância das unidades permanentes
+        global b = 0
+        global Sxm² = 0
+        
+        for i in ((length(Unidades)-(length(unique(Ocasião_2))))+1):length(Unidades)
+            global b += ((matriz[i].-Xm).^2)
+            global Sxm² = b/((length(unique(Ocasião_2)))-1)
         end
 
-        Resultados = DataFrames.DataFrame(Variáveis=["Média (m³/ha)", "Limite inferior do intervalo de confiança para média (m³/ha)", 
+        Sxu=sqrt(Sxu²) #Desvio padrão das unidades temporárias
+        Sxm=sqrt(Sxm²) #Desvio padrão das unidades permanentes
+        Sx1=sqrt(sum((Ocasião_1.-((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))).^2)/
+        ((length(Unidades))-1)) #Desvio padrão das unidades totais 
+
+        Primeira_ocasião = DataFrame(Variáveis=["Média das unidades amostrais totais (m³/ha)", "Média das unidades amostrais temporárias (m³/ha)", 
+        "Média das unidades amostrais permanentes (m³/ha)", "Limite inferior do intervalo de confiança para média (m³/ha)", "Limite superior do intervalo de confiança para média (m³/ha)", 
+        "Total da população (m³)", "Limite inferior do intervalo de confiança para o total (m³)", "Limite superior do intervalo de confiança para o total (m³)", 
+        "Área da população (ha)", "Erro da amostragem relativo (%)", "Erro da amostragem absoluto (m³/ha)", "Erro padrão (m³/ha)", 
+        "Desvio padrão das unidades amostrais totais (m³/ha)", "Desvio padrão das unidades amostrais temporárias (m³/ha)", "Desvio padrão das unidades amostrais permanentes (m³/ha)", 
+        "Variância das unidades amostrais totais (m³/ha)²", "Variância das unidades amostrais temporárias (m³/ha)²", "Variância das unidades amostrais permanentes (m³/ha)²", 
+        "Variância da média (m³/ha)²", "Limite do erro de amostragem requerido", "Tamanho da amostra", "Número total de unidades amostradas", 
+        "Unidades temporárias", "Unidades permanentes", "Proporção ótima da subamostra temporária e substituída na segunda ocasião", 
+        "Proporção ótima da subamostra permanente e remedida na segunda ocasião", "Nível de de significância (α)"], Valores=[(((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm), Xu, Xm, ((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm)-((quantile(TDist((length(Unidades))-1),1-α/2))*
+        (sqrt(((sum((Ocasião_1.-((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))).^2)/((length(Unidades))-1))/
+        (length(Unidades)))*(1-((length(Unidades))/N)))))), ((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm)+((quantile(TDist((length(Unidades))-1),1-α/2))*
+        (sqrt(((sum((Ocasião_1.-((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))).^2)/((length(Unidades))-1))/(length(Unidades)))*(1-((length(Unidades))/N)))))), 
+        (N*(((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm)/Conversor), 
+        (((N*(((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))-N*((quantile(TDist((length(Unidades))-1),1-α/2))*
+        (sqrt(((sum((Ocasião_1.-((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))).^2)/((length(Unidades))-1))/
+        (length(Unidades)))*(1-((length(Unidades))/N))))))/Conversor), (((N*(((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))+N*((quantile(TDist((length(Unidades))-1),1-α/2))*
+        (sqrt(((sum((Ocasião_1.-((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))).^2)/((length(Unidades))-1))/(length(Unidades)))*(1-((length(Unidades))/N))))))/Conversor), 
+        N, (((quantile(TDist((length(Unidades))-1),1-α/2))*(sqrt(((sum((Ocasião_1.-(((length(Unidades)-
+        (length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm)).^2)/((length(Unidades))-1))/
+        (length(Unidades)))*(1-((length(Unidades))/N)))))/(((length(Unidades)-(length(unique(Ocasião_2))))/
+        (length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))*100, ((quantile(TDist((length(Unidades))-1),1-α/2))*(sqrt(((sum((Ocasião_1.-(((length(Unidades)-
+        (length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm)).^2)/((length(Unidades))-1))/
+        (length(Unidades)))*(1-((length(Unidades))/N))))), sqrt(((sum((Ocasião_1.-((((length(Unidades)-(length(unique(Ocasião_2))))/
+        (length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))).^2)/
+        ((length(Unidades))-1))/(length(Unidades)))*(1-((length(Unidades))/N))), sqrt(sum((Ocasião_1.-((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))).^2)/((length(Unidades))-1)), sqrt(Sxu²), sqrt(Sxm²), sum((Ocasião_1.-((((length(Unidades)-(length(unique(Ocasião_2))))/
+        (length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))).^2)/((length(Unidades))-1), Sxu², Sxm², ((sum((Ocasião_1.-((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))).^2)/((length(Unidades))-1))/(length(Unidades)))*(1-((length(Unidades))/N)), 
+        (0.05*(((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm)), 
+        ((((quantile(TDist((length(Unidades))-1),1-α/2)))^2)*(sum((Ocasião_1.-((((length(Unidades)-
+        (length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))).^2)/((length(Unidades))-1)))/
+        (((((0.05*(((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))))^2)+
+        (((((quantile(TDist((length(Unidades))-1),1-α/2)))^2)*(sum((Ocasião_1.-((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))).^2)/((length(Unidades))-1)))/N)), length(Unidades), length(Unidades)-(length(unique(Ocasião_2))), 
+        length(unique(Ocasião_2)), (length(Unidades)-(length(unique(Ocasião_2))))/length(Unidades), (length(unique(Ocasião_2)))/length(Unidades), 
+        α]) #Tabela de resultados
+            
+        ###Segunda ocasião###
+        j=AD[!, [:Ocasião_1]]
+        g=Matrix(j)
+        matriz=transpose(g)
+        a = [(matriz[i].- Xm) for i in ((length(Unidades)-(length(unique(Ocasião_2))))+1):length(Unidades)]
+        h = (skipmissing(Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))))
+        c = sum(a.*h)
+        Sxy=c/((length(unique(Ocasião_2)))-1)
+        
+        #Variância da regressão
+        z=[(matriz[i].^2) for i in ((length(Unidades)-(length(unique(Ocasião_2))))+1):length(Unidades)]
+        
+        Syx²=(1/((length(unique(Ocasião_2))-2))*((sum(skipmissing(Ocasião_2.^2)))-
+        (((sum(skipmissing(Ocasião_1.*Ocasião_2))^2)/sum(z))))) 
+
+        Segunda_ocasião = DataFrame(Variáveis=["Média das unidades amostrais permanentes", "Volume médio estimado se a segunda ocasião houvesse todas unidades amostrais", 
+        "Limite inferior do intervalo de confiança para média (m³/ha)", "Limite superior do intervalo de confiança para média (m³/ha)", "Total da população (m³)", 
+        "Limite inferior do intervalo de confiança para o total (m³)", "Limite superior do intervalo de confiança para o total (m³)", 
+        "Área da população (ha)", "Erro da amostragem relativo (%)","Erro da amostragem absoluto (m³/ha)", "Erro padrão (m³/ha)", "Desvio padrão (m³/ha)", 
+        "Variância (m³/ha)²", "Variância da regressão (m³/ha)²", "Variância da média (m³/ha)²", "Limite do erro de amostragem requerido", 
+        "Tamanho da amostra", "Número total de unidades amostradas", "Nível de significância (α)"], Valores=[sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))), 
+        (sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm), 
+        ((sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm))-((quantile(TDist((length(unique(Ocasião_2)))-1),1-α/2))*(sqrt((Syx²/(length(unique(Ocasião_2)))+
+        (((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))))-Syx²)/(length(Unidades))))))), 
+        ((sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm))+
+        ((quantile(TDist((length(unique(Ocasião_2)))-1),1-α/2))*(sqrt((Syx²/(length(unique(Ocasião_2)))+
+        (((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))))-Syx²)/
+        (length(Unidades))))))), (N*((sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-(length(unique(Ocasião_2))))/
+        (length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm))/Conversor), 
+        (((N*((sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-
+        (length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm)))-N*
+        ((quantile(TDist((length(unique(Ocasião_2)))-1),1-α/2))*(sqrt((Syx²/(length(unique(Ocasião_2)))+
+        (((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1))))-Syx²)/(length(Unidades))))))))/Conversor), (((N*((sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm)))+N*((quantile(TDist((length(unique(Ocasião_2)))-1),1-α/2))*(sqrt((Syx²/(length(unique(Ocasião_2)))+
+        (((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1))))-Syx²)/(length(Unidades))))))))/Conversor), N, (((quantile(TDist((length(unique(Ocasião_2)))-1),1-α/2))*(sqrt((Syx²/(length(unique(Ocasião_2)))+
+        (((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1))))-Syx²)/(length(Unidades)))))))/((sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))))*((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-
+        (length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm)))*100, 
+        (quantile(TDist((length(unique(Ocasião_2)))-1),1-α/2))*
+        (sqrt((Syx²/(length(unique(Ocasião_2)))+(((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))))-Syx²)/(length(Unidades)))))), sqrt((Syx²/(length(unique(Ocasião_2)))+(((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))))-Syx²)/(length(Unidades))))), 
+        sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))), 
+        sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))), 
+        Syx², (Syx²/(length(unique(Ocasião_2)))+(((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))))-Syx²)/(length(Unidades)))), 
+        (0.05*((sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm))), ((((quantile(TDist((length(unique(Ocasião_2)))-1),1-α/2)))^2)*((length(Unidades))*(Syx²)+((length(Unidades))-
+        (length(Unidades)-(length(unique(Ocasião_2)))))*((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))))-Syx²)))/((length(Unidades))*((((0.05*((sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm)))))^2)), length(unique(Ocasião_2)), α]) #Tabela de resultados
+
+        Mudança_crescimento = DataFrame(Variáveis=["Crescimento médio (m³/ha)", "Limite inferior do intervalo de confiança para média (m³/ha)", 
         "Limite superior do intervalo de confiança para média (m³/ha)", "Total da população (m³)", "Limite inferior do intervalo de confiança para o total (m³)", 
-        "Limite superior do intervalo de confiança para o total (m³)", "Erro padrão relativo (%)", "Área da população (ha)", "Erro da amostragem absoluto (m³/ha)", "Erro padrão (m³/ha)", "Desvio padrão (m³/ha)", 
-        "Variância (m³/ha)²", "Variância da média (m³/ha)²", "Variância da média relativa (%)", "Coeficiente de variação (%)", "Limite de erro da amostragem requerido", "Estimativa mínima de confiança (m³/ha)",
-        "Fator de correção", "Tamanho da amostra", "População", "Número total de unidades amostrais da população", 
-        "Nível de significância (α)", "Observação"], Valores=[Media, LII, LIS, ValTotal, LIItotal, LIStotal, ErroPadRel, Area, ErroAmostAbs, ErroPad, DesvPad, Variancia, VarMed, VarMedRel, CV, LE, EAR, FatorCorr, Tamanho_da_amostra, População, N, α, Observação])
-
-       
-        XLSX.writetable(("02.xlsx"), Dados=(collect(DataFrames.eachcol(AAS)), 
-        DataFrames.names(AAS)), Resultados=(collect(DataFrames.eachcol(Resultados)),
-        DataFrames.names(Resultados)), overwrite = true) #Exportar para o Excel
-
+        "Limite superior do intervalo de confiança para o total (m³)", "Área da população (ha)", "Erro da amostragem relativo (%)", 
+        "Erro da amostragem absoluto (m³/ha)", "Erro padrão (m³/ha)", "Variância média (m³/ha)²"], Valores=[((sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-(length(unique(Ocasião_2))))/
+        (length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm))-((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm)), (((sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm))-((((length(Unidades)-
+        (length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm)))-((quantile(TDist(((((length(Unidades))-1)+
+        (length(unique(Ocasião_2))-1)))-1),1-α/2))*(sqrt(((((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1))))-Syx²)*((1+(Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))-2))/
+        (((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))))))))^2)))/(length(Unidades)))+
+        (Syx²/(length(unique(Ocasião_2))))))), (((sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm))-((((length(Unidades)-
+        (length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm)))+((quantile(TDist(((((length(Unidades))-1)+
+        (length(unique(Ocasião_2))-1)))-1),1-α/2))*(sqrt(((((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))))-Syx²)*
+        ((1+(Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))))-2))/(((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))))))))^2)))/(length(Unidades)))+
+        (Syx²/(length(unique(Ocasião_2))))))), N*(((sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-(length(unique(Ocasião_2))))/
+        (length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm))-((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))), ((N*(((sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-
+        (length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm))-((((length(Unidades)-
+        (length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))))-N*((quantile(TDist(((((length(Unidades))-1)+
+        (length(unique(Ocasião_2))-1)))-1),1-α/2))*
+        (sqrt(((((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1))))-Syx²)*((1+(Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))-2))/
+        (((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))))))))^2)))/(length(Unidades)))+
+        (Syx²/(length(unique(Ocasião_2)))))))), ((N*(((sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-
+        (length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm))-((((length(Unidades)-
+        (length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))))+N*((quantile(TDist(((((length(Unidades))-1)+
+        (length(unique(Ocasião_2))-1)))-1),1-α/2))*
+        (sqrt(((((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1))))-Syx²)*((1+(Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))-2))/
+        (((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))))))))^2)))/(length(Unidades)))+
+        (Syx²/(length(unique(Ocasião_2)))))))), N, (((quantile(TDist(((((length(Unidades))-1)+(length(unique(Ocasião_2))-1)))-1),1-α/2))*
+        (sqrt(((((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1))))-Syx²)*((1+(Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))-2))/
+        (((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))))))))^2)))/(length(Unidades)))+
+        (Syx²/(length(unique(Ocasião_2)))))))/(((sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2))))+
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((sqrt(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))/Sxm))*(((((length(Unidades)-(length(unique(Ocasião_2))))/(length(Unidades))*Xu)+
+        ((length(unique(Ocasião_2)))/length(Unidades))*Xm))-Xm))-((((length(Unidades)-
+        (length(unique(Ocasião_2))))/(length(Unidades))*Xu)+((length(unique(Ocasião_2)))/length(Unidades))*Xm))))*100, 
+        (quantile(TDist(((((length(Unidades))-1)+(length(unique(Ocasião_2))-1)))-1),1-α/2))*
+        (sqrt(((((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1))))-Syx²)*((1+(Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))))-2))/(((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))))))))^2)))/(length(Unidades)))+
+        (Syx²/(length(unique(Ocasião_2)))))), sqrt(((((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1))))-Syx²)*((1+(Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))-2))/(((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))))))))^2)))/(length(Unidades)))+
+        (Syx²/(length(unique(Ocasião_2))))), ((((sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1))))-Syx²)*((1+(Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1)))))))*
+        ((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/(length(unique(Ocasião_2)))))).^2)/
+        ((length(unique(Ocasião_2))-1)))))))-2))/(((Sxy/(sqrt(Sxm²*(sum((skipmissing((Ocasião_2.-(sum(skipmissing(Ocasião_2))/
+        (length(unique(Ocasião_2)))))).^2)/((length(unique(Ocasião_2))-1))))))))^2)))/(length(Unidades)))+
+        (Syx²/(length(unique(Ocasião_2))))]) #Tabela de resultados
+        
+        Resultados = [AD, Primeira_ocasião, Segunda_ocasião, Mudança_crescimento]
+        
+        return [Resultados]
     end
 end

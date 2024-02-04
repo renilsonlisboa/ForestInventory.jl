@@ -1703,7 +1703,6 @@ ApplicationWindow {
                                     var resultados = Julia.calcIND(Julia.singleFile(selectedFileDialogIND.currentFile), areaparcIND.text, areainvOc1IND.text, areainvOc2IND.text, alphaIND.text)
 
                                     resultVals = resultados[0]
-                                    resultObs = resultados[1] + "\n\n" + resultados[2]
 
                                     saveFileDialogIND.open()
                                 }
@@ -1747,7 +1746,7 @@ ApplicationWindow {
             MessageDialog {
                 id: conclusionDialogIND
                 title: "Inventário Processado com Sucesso"
-                text: resultObs
+                text: "O inventário foi processado com sucesso, o arquivo de resultado está disponível em: \n" + saveFileDialogIND.selectedFile
             }
 
             FileDialog {
@@ -1791,33 +1790,449 @@ ApplicationWindow {
 
         // Amostragem com Repetição Total
         Window {
-            id: inventRPT
+            id: inventART
+            title: "Amostragem com Repetição Total"
             width: 760
-            height: 480
-            title: "Janela do Inventário Estratificado"
-            visible: false
+            height: 640
             x: (Screen.width - width) / 2  // Centralizar horizontalmente
             y: (Screen.height - height) / 2  // Centralizar verticalmente
+            visible: false
 
             Rectangle {
-                id: rectangleRPT
-                color: "green"
+                width: parent.width
+                height: parent.height
+                visible: true
+
+                Image {
+                    source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
+                    width: parent.width
+                    height: parent.height
+                    fillMode: Image.Stretch
+                    visible: true
+                }
+
+                Button {
+                    id: importDataART
+                    text: qsTr("Importar Dados")
+                    width: 300
+                    font.family: "Arial"
+                    font.pointSize: 14
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+
+                    Connections {
+                        target: importDataART
+                        onClicked: {
+                            selectedFileDialogART.open()
+                        }
+                    }
+                }
+
+                Image {
+                    id: correctART
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
+                    source: "images/correct.png" // Substitua pelo caminho real da sua imagem
+                    width: 50
+                    height: 40
+                    visible: false
+                }
+
+                Image {
+                    id: errorART
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
+                    source: "images/errado.png" // Substitua pelo caminho real da sua imagem
+                    width: 50
+                    height: 40
+                    visible: false
+                }
+
+                Column {
+                    id: columnsEnterART
+                    spacing: 15
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 20
+
+                    // Adicione 4 campos de entrada (TextField)
+                    TextField {
+                        id: areaparcART
+                        placeholderText: "Área da Parcela (ha)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: areainvOc1ART
+                        placeholderText: "Área Inventáriada na Ocasião 1 (ha)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: areainvOc2ART
+                        placeholderText: "Área Inventáriada na Ocasião 1 (ha)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: alphaART
+                        placeholderText: "Alpha (0.01 à 0.99)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+
+                    Button {
+                        id: processInventART
+                        text: qsTr("Processar Inventário")
+                        width: 300
+                        font.pointSize: 14
+                        font.family: "Arial"
+
+                        Connections {
+                            target: processInventART
+                            onClicked: {
+                                var emptyFieldsART = []
+
+                                // Verifique se os campos estão vazios ou contêm apenas espaços em branco
+                                if (!areaparcART.text || areaparcART.text.trim() === "") {
+                                    emptyFieldsART.push("Área da Parcela")
+                                }
+
+                                if (!areainvOc1ART.text || areainvOc1ART.text.trim() === "") {
+                                    emptyFieldsART.push("Área Inventáriada na Ocasião 1")
+                                }
+
+                                if (!areainvOc2ART.text || areainvOc2ART.text.trim() === "") {
+                                    emptyFieldsART.push("Área Inventariada na Ocasião 2")
+                                }
+
+                                if (!alphaART.text || alphaART.text.trim() === "") {
+                                    emptyFieldsART.push("Alpha")
+                                }
+
+                                if (emptyFieldsART.length > 0) {
+                                    // Se houver campos vazios, exiba o diálogo
+                                    emptyDialogART.text = "Ausência de dados nos campos: " + emptyFieldsART.join(", ")
+                                    emptyDialogART.open()
+                                } else if (verifySelected === false) {
+                                    emptySelectedDialogART.open()
+                                } else {
+
+                                    busyIndicatorART.running = true
+
+                                    // Aqui você pode adicionar a lógica para processar os dados inseridos
+                                    var resultados = Julia.calcART(Julia.singleFile(selectedFileDialogART.currentFile), areaparcART.text, areainvOc1ART.text, areainvOc2ART.text, alphaART.text)
+
+                                    resultVals = resultados[0]
+                                    
+                                    saveFileDialogART.open()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            BusyIndicator {
+                id: busyIndicatorART
+                width: 120
+                height: 120
+                running: false
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: 250
+            }
+
+            FileDialog {
+                id: selectedFileDialogART
+                title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
+                fileMode: FileDialog.OpenFile
+                nameFilters: ["CSV Files (*.csv)"]
+                Component.onCompleted: visible = false
+
+                Connections {
+                    target: selectedFileDialogART
+                    onAccepted: {
+                        correctART.visible = true
+                        errorART.visible = false
+                        verifySelected = true
+                    }
+                    onRejected: {
+                        correctART.visible = false
+                        errorART.visible = true
+                        verifySelected = false 
+                    }
+                }
+            }
+
+            MessageDialog {
+                id: conclusionDialogART
+                title: "Inventário Processado com Sucesso"
+                text: "O inventário foi processado com sucesso, o arquivo de resultado está disponível em: \n" + saveFileDialogART.selectedFile
+            }
+
+            FileDialog {
+                id: saveFileDialogART
+                title: "Selecione o local para salvar o arquivo..."
+                fileMode: FileDialog.SaveFile
+                Connections {
+                    target: saveFileDialogART
+                    onAccepted: {
+                        Julia.saveFile(resultVals, saveFileDialogART.selectedFile, comboBox.currentIndex)
+                        conclusionDialogART.open()
+                        busyIndicatorART.running = false
+                    }
+                    onRejected: {
+                        busyIndicatorART.running = false
+                    }
+                }
+            }
+
+            MessageDialog {
+                id: emptySelectedDialogART
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+                text: "Você deve selecionar um arquivo .CSV para prosseguir"
+            }
+
+            MessageDialog {
+                id: emptyDialogART
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+            }
+
+            Connections {
+                target: inventART
+                onClosing:{
+                    correctART.visible = false
+                    errorART.visible = true
+                }
             }
         }
 
         // Amostragem Dupla
         Window {
-            id: inventDP
+            id: inventAD
+            title: "Amostragem Dupla"
             width: 760
-            height: 480
-            title: "Janela do Inventário Dupla"
-            visible: false
+            height: 640
             x: (Screen.width - width) / 2  // Centralizar horizontalmente
             y: (Screen.height - height) / 2  // Centralizar verticalmente
+            visible: false
 
             Rectangle {
-                id: rectangleDP
-                color: "orange"
+                width: parent.width
+                height: parent.height
+                visible: true
+
+                Image {
+                    source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
+                    width: parent.width
+                    height: parent.height
+                    fillMode: Image.Stretch
+                    visible: true
+                }
+
+                Button {
+                    id: importDataAD
+                    text: qsTr("Importar Dados")
+                    width: 300
+                    font.family: "Arial"
+                    font.pointSize: 14
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+
+                    Connections {
+                        target: importDataAD
+                        onClicked: {
+                            selectedFileDialogAD.open()
+                        }
+                    }
+                }
+
+                Image {
+                    id: correctAD
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
+                    source: "images/correct.png" // Substitua pelo caminho real da sua imagem
+                    width: 50
+                    height: 40
+                    visible: false
+                }
+
+                Image {
+                    id: errorAD
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
+                    source: "images/errado.png" // Substitua pelo caminho real da sua imagem
+                    width: 50
+                    height: 40
+                    visible: false
+                }
+
+                Column {
+                    id: columnsEnterAD
+                    spacing: 15
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 20
+
+                    // Adicione 4 campos de entrada (TextField)
+                    TextField {
+                        id: areaparcAD
+                        placeholderText: "Área da Parcela (ha)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: areainvAD
+                        placeholderText: "Área da população (ha)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: alphaAD
+                        placeholderText: "Alpha (0.01 à 0.99)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+
+                    Button {
+                        id: processInventAD
+                        text: qsTr("Processar Inventário")
+                        width: 300
+                        font.pointSize: 14
+                        font.family: "Arial"
+
+                        Connections {
+                            target: processInventAD
+                            onClicked: {
+                                var emptyFieldsAD = []
+
+                                // Verifique se os campos estão vazios ou contêm apenas espaços em branco
+                                if (!areaparcAD.text || areaparcAD.text.trim() === "") {
+                                    emptyFieldsAD.push("Área da Parcela")
+                                }
+
+                                if (!areainvAD.text || areainvAD.text.trim() === "") {
+                                    emptyFieldsAD.push("Área da População (ha)")
+                                }
+
+                                if (!alphaAD.text || alphaAD.text.trim() === "") {
+                                    emptyFieldsAD.push("Alpha")
+                                }
+
+                                if (emptyFieldsAD.length > 0) {
+                                    // Se houver campos vazios, exiba o diálogo
+                                    emptyDialogAD.text = "Ausência de dados nos campos: " + emptyFieldsAD.join(", ")
+                                    emptyDialogAD.open()
+                                } else if (verifySelected === false) {
+                                    emptySelectedDialogAD.open()
+                                } else {
+
+                                    busyIndicatorAD.running = true
+
+                                    // Aqui você pode adicionar a lógica para processar os dados inseridos
+                                    var resultados = Julia.calcAD(Julia.singleFile(selectedFileDialogAD.currentFile), areaparcAD.text, areainvAD.text, alphaAD.text)
+
+                                    resultVals = resultados[0]
+                                    
+                                    saveFileDialogAD.open()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            BusyIndicator {
+                id: busyIndicatorAD
+                width: 120
+                height: 120
+                running: false
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: 250
+            }
+
+            FileDialog {
+                id: selectedFileDialogAD
+                title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
+                fileMode: FileDialog.OpenFile
+                nameFilters: ["CSV Files (*.csv)"]
+                Component.onCompleted: visible = false
+
+                Connections {
+                    target: selectedFileDialogAD
+                    onAccepted: {
+                        correctAD.visible = true
+                        errorAD.visible = false
+                        verifySelected = true
+                    }
+                    onRejected: {
+                        correctAD.visible = false
+                        errorAD.visible = true
+                        verifySelected = false 
+                    }
+                }
+            }
+
+            MessageDialog {
+                id: conclusionDialogAD
+                title: "Inventário Processado com Sucesso"
+                text: "O inventário foi processado com sucesso, o arquivo de resultado está disponível em: \n" + saveFileDialogAD.selectedFile
+            }
+
+            FileDialog {
+                id: saveFileDialogAD
+                title: "Selecione o local para salvar o arquivo..."
+                fileMode: FileDialog.SaveFile
+                Connections {
+                    target: saveFileDialogAD
+                    onAccepted: {
+                        Julia.saveFile(resultVals, saveFileDialogAD.selectedFile, comboBox.currentIndex)
+                        conclusionDialogAD.open()
+                        busyIndicatorAD.running = false
+                    }
+                    onRejected: {
+                        busyIndicatorAD.running = false
+                    }
+                }
+            }
+
+            MessageDialog {
+                id: emptySelectedDialogAD
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+                text: "Você deve selecionar um arquivo .CSV para prosseguir"
+            }
+
+            MessageDialog {
+                id: emptyDialogAD
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+            }
+
+            Connections {
+                target: inventAD
+                onClosing:{
+                    correctAD.visible = false
+                    errorAD.visible = true
+                }
             }
         }
 
