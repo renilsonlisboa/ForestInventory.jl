@@ -2238,17 +2238,219 @@ ApplicationWindow {
 
        // Amostragem com Repetição Parcial
         Window {
-            id: inventRP
+            id: inventARP
+            title: "Amostragem com Repetição Parcial"
             width: 760
-            height: 480
-            title: "Janela do Inventário Parcial"
-            visible: false
+            height: 640
             x: (Screen.width - width) / 2  // Centralizar horizontalmente
             y: (Screen.height - height) / 2  // Centralizar verticalmente
+            visible: false
 
             Rectangle {
-                id: rectangleRP
-                color: "black"
+                width: parent.width
+                height: parent.height
+                visible: true
+
+                Image {
+                    source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
+                    width: parent.width
+                    height: parent.height
+                    fillMode: Image.Stretch
+                    visible: true
+                }
+
+                Button {
+                    id: importDataARP
+                    text: qsTr("Importar Dados")
+                    width: 300
+                    font.family: "Arial"
+                    font.pointSize: 14
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+
+                    Connections {
+                        target: importDataARP
+                        onClicked: {
+                            selectedFileDialogARP.open()
+                        }
+                    }
+                }
+
+                Image {
+                    id: correctARP
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
+                    source: "images/correct.png" // Substitua pelo caminho real da sua imagem
+                    width: 50
+                    height: 40
+                    visible: false
+                }
+
+                Image {
+                    id: errorARP
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
+                    source: "images/errado.png" // Substitua pelo caminho real da sua imagem
+                    width: 50
+                    height: 40
+                    visible: false
+                }
+
+                Column {
+                    id: columnsEnterARP
+                    spacing: 15
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 20
+
+                    // Adicione 4 campos de entrada (TextField)
+                    TextField {
+                        id: areaparcARP
+                        placeholderText: "Área da Parcela (ha)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: areainvARP
+                        placeholderText: "Área da população (ha)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+                    TextField {
+                        id: alphaARP
+                        placeholderText: "Alpha (0.01 à 0.99)"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: 14
+                        font.family: "Arial"
+                        width: 300
+                    }
+
+                    Button {
+                        id: processInventARP
+                        text: qsTr("Processar Inventário")
+                        width: 300
+                        font.pointSize: 14
+                        font.family: "Arial"
+
+                        Connections {
+                            target: processInventARP
+                            onClicked: {
+                                var emptyFieldsARP = []
+
+                                // Verifique se os campos estão vazios ou contêm apenas espaços em branco
+                                if (!areaparcARP.text || areaparcARP.text.trim() === "") {
+                                    emptyFieldsARP.push("Área da Parcela")
+                                }
+
+                                if (!areainvARP.text || areainvARP.text.trim() === "") {
+                                    emptyFieldsARP.push("Área da População (ha)")
+                                }
+
+                                if (!alphaARP.text || alphaARP.text.trim() === "") {
+                                    emptyFieldsARP.push("Alpha")
+                                }
+
+                                if (emptyFieldsARP.length > 0) {
+                                    // Se houver campos vazios, exiba o diálogo
+                                    emptyDialogARP.text = "Ausência de dados nos campos: " + emptyFieldsARP.join(", ")
+                                    emptyDialogARP.open()
+                                } else if (verifySelected === false) {
+                                    emptySelectedDialogARP.open()
+                                } else {
+
+                                    busyIndicatorARP.running = true
+
+                                    // Aqui você pode adicionar a lógica para processar os dados inseridos
+                                    var resultados = Julia.calcARP(Julia.singleFile(selectedFileDialogARP.currentFile), areaparcARP.text, areainvARP.text, alphaARP.text)
+
+                                    resultVals = resultados[0]
+                                    
+                                    saveFileDialogARP.open()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            BusyIndicator {
+                id: busyIndicatorARP
+                width: 120
+                height: 120
+                running: false
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: 250
+            }
+
+            FileDialog {
+                id: selectedFileDialogARP
+                title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
+                fileMode: FileDialog.OpenFile
+                nameFilters: ["CSV Files (*.csv)"]
+                Component.onCompleted: visible = false
+
+                Connections {
+                    target: selectedFileDialogARP
+                    onAccepted: {
+                        correctARP.visible = true
+                        errorARP.visible = false
+                        verifySelected = true
+                    }
+                    onRejected: {
+                        correctARP.visible = false
+                        errorARP.visible = true
+                        verifySelected = false 
+                    }
+                }
+            }
+
+            MessageDialog {
+                id: conclusionDialogARP
+                title: "Inventário Processado com Sucesso"
+                text: "O inventário foi processado com sucesso, o arquivo de resultado está disponível em: \n" + saveFileDialogARP.selectedFile
+            }
+
+            FileDialog {
+                id: saveFileDialogARP
+                title: "Selecione o local para salvar o arquivo..."
+                fileMode: FileDialog.SaveFile
+                Connections {
+                    target: saveFileDialogARP
+                    onAccepted: {
+                        Julia.saveFile(resultVals, saveFileDialogARP.selectedFile, comboBox.currentIndex)
+                        conclusionDialogARP.open()
+                        busyIndicatorARP.running = false
+                    }
+                    onRejected: {
+                        busyIndicatorARP.running = false
+                    }
+                }
+            }
+
+            MessageDialog {
+                id: emptySelectedDialogARP
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+                text: "Você deve selecionar um arquivo .CSV para prosseguir"
+            }
+
+            MessageDialog {
+                id: emptyDialogARP
+                title: "Dados insuficientes para o processamento do inventário"
+                buttons: MessageDialog.Ok
+            }
+
+            Connections {
+                target: inventARP
+                onClosing:{
+                    correctARP.visible = false
+                    errorARP.visible = true
+                }
             }
         }
     }

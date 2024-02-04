@@ -27,14 +27,23 @@ module Save
         # Salva a tabela de resultado no PATH selecionado pelo usuário
         if i in 0:5
             writetable("$(cleaned_path).xlsx",Resultados=(collect(eachcol(Dados)), names(Dados)), overwrite = true) #Exportar para o Excel
-        elseif i in 6:10
+        elseif i in 6:8
             Dados = convert.(DataFrame, Dados)
-            show(Dados)
+
             writetable("$(cleaned_path).xlsx", Dados=(collect(eachcol(Dados[1])), 
             names(Dados[1])), Primeira_ocasião=(collect(eachcol(Dados[2])), 
             names(Dados[2])), Segunda_ocasião=(collect(eachcol(Dados[3])), 
             names(Dados[3])), Crescimento_ou_mudança=(collect(eachcol(Dados[4])),   
             names(Dados[4])), overwrite = true) #Exportar para o Excel
+        elseif i === 9
+            Dados = convert.(DataFrame, Dados)
+
+            writetable(("$(cleaned_path).xlsx"), Dados=(collect(eachcol(Dados[1])), 
+            names(Dados[1])), Informações_do_inventário=(collect(eachcol(Dados[2])), 
+            names(Dados[2])), Primeira_ocasião=(collect(eachcol(Dados[3])), 
+            names(Dados[3])), Segunda_ocasião=(collect(eachcol(Dados[4])),
+            names(Dados[4])), Crescimento_ou_mudança=(collect(eachcol(Dados[5])), 
+            names(Dados[5])), overwrite = true) #Exportar para o Excel
         else
            println("Deu ruim") 
         end

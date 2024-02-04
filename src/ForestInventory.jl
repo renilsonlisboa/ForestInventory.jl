@@ -69,12 +69,17 @@ export Inventory
     function calcAD(Dados, AreaParc, N, α)
         AD.calcAD(Dados, AreaParc, N, α)
     end
-    
+
+    # processamento do Inventário por meio da amostragem com repeetição parcial
+    function calcARP(Dados, AreaParc, N, α)
+        ARP.calcARP(Dados, AreaParc, N, α)
+    end
+        
     # Função de inicialização do programa em QML
     function Inventory()
         
         # Exporta as funções do Julia para o QML
-        @qmlfunction singleFile saveFile calcAAS calcSIST calcDE calcCONGL calcMULTI calcIND calcART calcAD
+        @qmlfunction singleFile saveFile calcAAS calcSIST calcDE calcCONGL calcMULTI calcIND calcART calcAD calcARP
 
         # Obtém o diretório atual
         current_directory = dirname(@__FILE__)
