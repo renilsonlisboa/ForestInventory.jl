@@ -301,7 +301,7 @@ export calcARP
         #A partir deste ponto, encontra-se a média direta da primeira ocasião
         X=((1-b)*Xu)+(b*Xm)+(c*Ym)-(c*Yn) 
         
-        Mudança_crescimento = DataFrames.DataFrame(Variáveis=["Crescimento médio (m³/ha)", "Média direta da primeira ocasião (m³/ha)",
+        Mudança_crescimento = DataFrame(Variáveis=["Crescimento médio (m³/ha)", "Média direta da primeira ocasião (m³/ha)",
         "Limite inferior do intervalo de confiança para média (m³/ha)", "Limite superior do intervalo de confiança para média (m³/ha)", 
         "Crescimento total estimado (m³)", "Limite inferior do intervalo de confiança para o total (m³)", 
         "Limite superior do intervalo de confiança para o total (m³)", "Erro da amostragem relativo (%)", "Erro da amostragem absoluto (m³/ha)", 
