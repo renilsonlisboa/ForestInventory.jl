@@ -10,9 +10,6 @@ ApplicationWindow {
     height: 480
     title: "Forest Inventory"
 
-        iconSource: "images/wallpaper.jpg" // Replace with the path to your icon file
-    
-
     property var resultVals: []
     property string resultObs: ""
     property int subestratosOK: 0
