@@ -5,10 +5,17 @@ import QtQuick.Dialogs 6.5
 import org.julialang
 
 ApplicationWindow {
-    visible: true
+    id: mainAPP
+    title: "Forest Inventory"
     width: 640
     height: 480
-    title: "Forest Inventory"
+    x: (Screen.width - width)/2
+    y: (Screen.height - height)/2
+    minimumWidth: width
+    maximumWidth: width
+    minimumHeight: height
+    maximumHeight: height
+    visible: true
 
     property var resultVals: []
     property string resultObs: ""
