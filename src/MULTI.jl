@@ -119,7 +119,7 @@ export calcMULTI
         ((length(Tabela.n))*(((first(unique((Tabela.n))))).-1))))./((first(unique((Tabela.n))))))+
         (sum(Tabela.Variância.*(((first(unique((Tabela.n))))).-1))/((length(Tabela.n))*
         (((first(unique((Tabela.n))))).-1)))))*(((first(unique((Tabela.n))))).-1)))))))/Conversor), 
-        area, (((quantile(TDist((length(Tabela.n))-1),1-α/2))*(sqrt.((((sum(Tabela.Variância.*(((first(unique((Tabela.n))))).-1))/
+        Area, (((quantile(TDist((length(Tabela.n))-1),1-α/2))*(sqrt.((((sum(Tabela.Variância.*(((first(unique((Tabela.n))))).-1))/
         ((length(Tabela.n))*(((first(unique((Tabela.n))))).-1)))+(((sum(((first(unique((Tabela.n))))).*(Tabela.Média.-(sum(Tabela.Média)/
         (length(Tabela.n)))).^2)/((length(Tabela.n))-1)).-(sum(Tabela.Variância.*(((first(unique((Tabela.n))))).-1))/((length(Tabela.n))*
         (((first(unique((Tabela.n))))).-1))))./((first(unique((Tabela.n)))))))./((length(Tabela.n))*

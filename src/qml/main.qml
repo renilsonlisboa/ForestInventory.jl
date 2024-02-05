@@ -97,7 +97,7 @@ ApplicationWindow {
 
         Button {
             id: processInvent
-            text: qsTr("Processar Inventário")
+            text: qsTr("Escolher Amostragem")
             width: 200
             anchors.centerIn: parent
             anchors.verticalCenterOffset: 100
@@ -140,6 +140,7 @@ ApplicationWindow {
             }
         }
 
+        //Amostragem Aleatória Simples
         Window {
             id: inventAAS
             title: "Amostragem Aleatória Simples"
@@ -196,8 +197,8 @@ ApplicationWindow {
                     anchors.verticalCenterOffset: -120
                     anchors.horizontalCenterOffset: 185
                     source: "images/errado.png" // Substitua pelo caminho real da sua imagem
-                    width: 50
-                    height: 40
+                    width: 40
+                    height: 30
                     visible: false
                 }
 
@@ -374,8 +375,7 @@ ApplicationWindow {
             }
         }
 
-        // Até aqui funcionou 100%
-
+        //Amostragem Estratificada
         Window {
             id: inventESTRAT
             width: 760
@@ -713,6 +713,7 @@ ApplicationWindow {
             }
         }
 
+        //Amostragem Sistematica
         Window {
             id: inventSIST
             width: 760
@@ -921,6 +922,7 @@ ApplicationWindow {
             }
         }
 
+        //Amostragem em Dois Estágios
         Window {
             id: inventDE
             width: 760
@@ -1142,6 +1144,7 @@ ApplicationWindow {
             }
         }
 
+        //Amostragem em Conglomerados
         Window {
             id: inventCONGL
             width: 760
@@ -1350,6 +1353,7 @@ ApplicationWindow {
             }
         }
 
+        //Amostragem Sistemática com Multiplos Inícios Aleatórios
         Window {
             id: inventMULTI
             width: 760

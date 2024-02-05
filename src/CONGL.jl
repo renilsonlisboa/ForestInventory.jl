@@ -10,19 +10,13 @@ export calcCONGL
     function calcCONGL(Dados, Area, AreaParc, α, EAR) #Determinar função
 
         Area = Float64(Meta.parse(Area))
-        println(Area)
         AreaParc = Float64(Meta.parse(AreaParc))
-        println(AreaParc)
         α = Float64(Meta.parse(α))
-        println(α)
         EAR = Float64(Meta.parse(EAR))
-        println(EAR)
 
         N = (Area*10000)
-        println(N)
 
         Conversor = 10000/AreaParc
-        println(Conversor)
 
         Conjunto_de_dados = (Conversor.*Dados)
 
@@ -99,7 +93,7 @@ export calcCONGL
         (length(Tabela.n)*(first(unique(Tabela.n)).-1)))./first(unique(Tabela.n))+sum(Tabela.Variância.*(first(unique(Tabela.n)).-1))/(length(Tabela.n)*(first(unique(Tabela.n)).-1)))'*
         (first(unique(Tabela.n)).-1)), (0.1*sum(Tabela.Média)/(length(Tabela.n))), length(Tabela.n), first(unique(Tabela.n)), α, Observação]) #Tabela de resultados  
         
-        return [Resultados, População, Observação]
+        return [Resultados, Observação]
 
     end
 end
