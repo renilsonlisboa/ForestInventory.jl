@@ -155,6 +155,10 @@ ApplicationWindow {
             height: 640
             x: (Screen.width - width) / 2  // Centralizar horizontalmente
             y: (Screen.height - height) / 2  // Centralizar verticalmente
+            minimumWidth: width
+            maximumWidth: width
+            minimumHeight: height
+            maximumHeight: height
             visible: false
 
             Rectangle {
@@ -203,7 +207,7 @@ ApplicationWindow {
                     anchors.centerIn: parent
                     anchors.verticalCenterOffset: -120
                     anchors.horizontalCenterOffset: 185
-                    source: "images/errado.png" // Substitua pelo caminho real da sua imagem
+                    source: "images/error.png" // Substitua pelo caminho real da sua imagem
                     width: 40
                     height: 30
                     visible: false
@@ -223,6 +227,17 @@ ApplicationWindow {
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areainvAAS.text.includes(",")) {
+                                    areainvAAS.text = areainvAAS.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: areaparcAAS
@@ -231,22 +246,55 @@ ApplicationWindow {
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areaparcAAS.text.includes(",")) {
+                                    areaparcAAS.text = areaparcAAS.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: earAAS
-                        placeholderText: "Erro Relativo Admitido (%)"
+                        placeholderText: "Erro relativo admitido (%)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (earAAS.text.includes(",")) {
+                                    earAAS.text = earAAS.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: alphaAAS
-                        placeholderText: "Alpha (0.01 à 0.99)"
+                        placeholderText: "Alfa"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (alphaAAS.text.includes(",")) {
+                                    alphaAAS.text = alphaAAS.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
 
                     Button {
@@ -285,7 +333,6 @@ ApplicationWindow {
                                 } else if (verifySelected === false) {
                                     emptySelectedDialogAAS.open()
                                 } else {
-
                                     busyIndicatorAAS.running = true
 
                                     // Aqui você pode adicionar a lógica para processar os dados inseridos
@@ -377,7 +424,8 @@ ApplicationWindow {
                     earAAS.text = ""
                     alphaAAS.text = ""
                     correctAAS.visible = false
-                    errorAAS.visible = true
+                    errorAAS.visible = false
+                    verifySelected = false
                 }
             }
         }
@@ -723,12 +771,16 @@ ApplicationWindow {
         //Amostragem Sistematica
         Window {
             id: inventSIST
+            title: "Amostragem Sistemática"
             width: 760
-            height: 480
-            title: "Janela do Inventário Sistemático"
-            visible: false
+            height: 640
             x: (Screen.width - width) / 2  // Centralizar horizontalmente
             y: (Screen.height - height) / 2  // Centralizar verticalmente
+            minimumWidth: width
+            maximumWidth: width
+            minimumHeight: height
+            maximumHeight: height
+            visible: false
 
             Rectangle {
                 width: parent.width
@@ -743,41 +795,43 @@ ApplicationWindow {
                     visible: true
                 }
 
-                Row {
-                    spacing: 10
+                Button {
+                    id: importDataSIST
+                    text: qsTr("Importar Dados")
+                    width: 300
+                    font.family: "Arial"
+                    font.pointSize: 14
                     anchors.centerIn: parent
-                    anchors.verticalCenterOffset: -140
+                    anchors.verticalCenterOffset: -120
 
-                    Button {
-                        id: importDataSIST
-                        text: qsTr("Importar Dados")
-                        width: 180
-                        font.family: "Arial"
-                        font.pointSize: 14
-
-                        Connections {
-                            target: importDataSIST
-                            onClicked: {
-                                selectedFileDialogSIST.open()
-                            }
+                    Connections {
+                        target: importDataSIST
+                        onClicked: {
+                            selectedFileDialogSIST.open()
                         }
                     }
+                }
 
-                    Image {
-                        id: correctSIST
-                        source: "images/correct.png" // Substitua pelo caminho real da sua imagem
-                        width: 50
-                        height: 40
-                        visible: false
-                    }
+                Image {
+                    id: correctSIST
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
+                    source: "images/correct.png" // Substitua pelo caminho real da sua imagem
+                    width: 50
+                    height: 40
+                    visible: false
+                }
 
-                    Image {
-                        id: errorSIST
-                        source: "images/errado.png" // Substitua pelo caminho real da sua imagem
-                        width: 50
-                        height: 40
-                        visible: true
-                    }
+                Image {
+                    id: errorSIST
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
+                    source: "images/error.png" // Substitua pelo caminho real da sua imagem
+                    width: 40
+                    height: 30
+                    visible: false
                 }
 
                 Column {
@@ -794,6 +848,17 @@ ApplicationWindow {
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+                        
+                        Connections {
+                            onTextChanged: {
+                                if (areainvSIST.text.includes(",")) {
+                                    areainvSIST.text = areainvSIST.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: areaparcSIST
@@ -802,24 +867,56 @@ ApplicationWindow {
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areaparcSIST.text.includes(",")) {
+                                    areaparcSIST.text = areaparcSIST.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: earSIST
-                        placeholderText: "Erro Relativo Admitido (%)"
+                        placeholderText: "Erro relativo admitido (%)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (earSIST.text.includes(",")) {
+                                    earSIST.text = earSIST.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: alphaSIST
-                        placeholderText: "Alpha (0.01 à 0.99)"
+                        placeholderText: "Alfa"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (alphaSIST.text.includes(",")) {
+                                    alphaSIST.text = alphaSIST.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
-                
 
                     Button {
                         id: processInventSIST
@@ -855,9 +952,11 @@ ApplicationWindow {
                                     // Se houver campos vazios, exiba o diálogo
                                     emptyDialogSIST.text = "Ausência de dados nos campos: " + emptyFieldsSIST.join(", ")
                                     emptyDialogSIST.open()
-                                } else if (errorSIST.visible === true) {
+                                } else if (verifySelected === false) {
                                     emptySelectedDialogSIST.open()
                                 } else {
+                                    busyIndicatorSIST.running = true
+
                                     // Aqui você pode adicionar a lógica para processar os dados inseridos
                                     var resultados = Julia.calcSIST(Julia.singleFile(selectedFileDialogSIST.currentFile), areainvSIST.text, areaparcSIST.text, alphaSIST.text, earSIST.text)
 
@@ -872,6 +971,15 @@ ApplicationWindow {
                 }
             }
 
+            BusyIndicator {
+                id: busyIndicatorSIST
+                width: 120
+                height: 120
+                running: false
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: 250
+            }
+
             FileDialog {
                 id: selectedFileDialogSIST
                 title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
@@ -884,10 +992,13 @@ ApplicationWindow {
                     onAccepted: {
                         correctSIST.visible = true
                         errorSIST.visible = false
+                        verifySelected = true
                     }
 
                     onRejected: {
                         errorSIST.visible = true
+                        correctSIST.visible = false
+                        verifySelected = false 
                     }
                 }
             }
@@ -913,6 +1024,10 @@ ApplicationWindow {
                     onAccepted: {
                         Julia.saveFile(resultVals, saveFileDialogSIST.selectedFile, comboBox.currentIndex)
                         conclusionDialogSIST.open()
+                        busyIndicatorSIST.running = false
+                    }
+                    onRejected: {
+                        busyIndicatorSIST.running = false
                     }
                 }
             }
@@ -927,17 +1042,34 @@ ApplicationWindow {
                 buttons: MessageDialog.Ok
                 text: "Você deve selecionar um arquivo .CSV para prosseguir"
             }
+
+            Connections {
+                target: inventSIST
+                onClosing:{
+                    areainvSIST.text = ""
+                    areaparcSIST.text = ""
+                    earSIST.text = ""
+                    alphaSIST.text = ""
+                    correctSIST.visible = false
+                    errorSIST.visible = false
+                    verifySelected = false
+                }
+            }  
         }
 
         //Amostragem em Dois Estágios
         Window {
             id: inventDE
+            title: "Amostragem em Dois Estágios"
             width: 760
-            height: 480
-            title: "Janela do Inventário Dois Estágios"
-            visible: false
+            height: 640
             x: (Screen.width - width) / 2  // Centralizar horizontalmente
             y: (Screen.height - height) / 2  // Centralizar verticalmente
+            minimumWidth: width
+            maximumWidth: width
+            minimumHeight: height
+            maximumHeight: height
+            visible: false
 
             Rectangle {
                 width: parent.width
@@ -952,41 +1084,43 @@ ApplicationWindow {
                     visible: true
                 }
 
-                Row {
-                    spacing: 10
+                Button {
+                    id: importDataDE
+                    text: qsTr("Importar Dados")
+                    width: 400
+                    font.family: "Arial"
+                    font.pointSize: 14
                     anchors.centerIn: parent
-                    anchors.verticalCenterOffset: -180
+                    anchors.verticalCenterOffset: -130
 
-                    Button {
-                        id: importDataDE
-                        text: qsTr("Importar Dados")
-                        width: 250
-                        font.family: "Arial"
-                        font.pointSize: 14
-
-                        Connections {
-                            target: importDataDE
-                            onClicked: {
-                                selectedFileDialogDE.open()
-                            }
+                    Connections {
+                        target: importDataDE
+                        onClicked: {
+                            selectedFileDialogDE.open()
                         }
                     }
+                }
 
-                    Image {
-                        id: correctDE
-                        source: "images/correct.png" // Substitua pelo caminho real da sua imagem
-                        width: 50
-                        height: 40
-                        visible: false
-                    }
+                Image {
+                    id: correctDE
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -130
+                    anchors.horizontalCenterOffset: 235
+                    source: "images/correct.png" // Substitua pelo caminho real da sua imagem
+                    width: 50
+                    height: 40
+                    visible: false
+                }
 
-                    Image {
-                        id: errorDE
-                        source: "images/errado.png" // Substitua pelo caminho real da sua imagem
-                        width: 50
-                        height: 40
-                        visible: true
-                    }
+                Image {
+                    id: errorDE
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -130
+                    anchors.horizontalCenterOffset: 235
+                    source: "images/error.png" // Substitua pelo caminho real da sua imagem
+                    width: 40
+                    height: 30
+                    visible: false
                 }
 
                 Column {
@@ -1003,6 +1137,17 @@ ApplicationWindow {
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 400
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areainvDE.text.includes(",")) {
+                                    areainvDE.text = areainvDE.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: areaparcDE
@@ -1011,30 +1156,74 @@ ApplicationWindow {
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 400
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areaparcDE.text.includes(",")) {
+                                    areaparcDE.text = areaparcDE.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: potencialDE
-                        placeholderText: "Número Potencial de Unidades Secundárias"
+                        placeholderText: "Número potencial de unidades secundárias"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 400
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (potencialDE.text.includes(",")) {
+                                    potencialDE.text = potencialDE.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: earDE
-                        placeholderText: "Erro Relativo Admitido (%)"
+                        placeholderText: "Erro relativo admitido (%)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 400
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (earDE.text.includes(",")) {
+                                    earDE.text = earDE.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: alphaDE
-                        placeholderText: "Alpha (0.01 à 0.99)"
+                        placeholderText: "Alfa"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 400
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (alphaDE.text.includes(",")) {
+                                    alphaDE.text = alphaDE.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
 
                     Button {
@@ -1077,15 +1266,13 @@ ApplicationWindow {
                                     emptyDialogDE.text = "Ausência de dados nos campos: " + emptyFieldsDE.join(
                                                 ", ")
                                     emptyDialogDE.open()
-                                } else if (errorDE.visible === true) {
+                                } else if (verifySelected === false) {
                                     emptySelectedDialogDE.open()
                                 } else {
+                                    busyIndicatorDE.running = true
+                                    
                                     // Aqui você pode adicionar a lógica para processar os dados inseridos
-                                    var resultados = Julia.calcDE(
-                                                Julia.singleFile(
-                                                    selectedFileDialogDE.currentFile),
-                                                areainvDE.text, areaparcDE.text,
-                                                alphaDE.text, earDE.text, potencialDE.text)
+                                    var resultados = Julia.calcDE(Julia.singleFile(selectedFileDialogDE.currentFile), areainvDE.text, areaparcDE.text, alphaDE.text, earDE.text, potencialDE.text)
 
                                     resultVals = resultados[0]
                                     resultObs = resultados[1] + "\n\n" + resultados[2]
@@ -1096,6 +1283,15 @@ ApplicationWindow {
                         }
                     }
                 }
+            }
+
+            BusyIndicator {
+                id: busyIndicatorDE
+                width: 120
+                height: 120
+                running: false
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: 250
             }
             
             FileDialog {
@@ -1110,11 +1306,13 @@ ApplicationWindow {
                     onAccepted: {
                         correctDE.visible = true
                         errorDE.visible = false
+                        verifySelected = true
                     }
 
                     onRejected: {
+                        correctDE.visible = false
                         errorDE.visible = true
-                        console.log("deu ruim")
+                        verifySelected = false
                     }
                 }
             }
@@ -1135,6 +1333,10 @@ ApplicationWindow {
                     onAccepted: {
                         Julia.saveFile(resultVals, saveFileDialogDE.selectedFile, comboBox.currentIndex)
                         conclusionDialogDE.open()
+                        busyIndicatorDE.running = false
+                    }
+                    onRejected: {
+                        busyIndicatorDE.running = false
                     }
                 }
             }
@@ -1149,17 +1351,34 @@ ApplicationWindow {
                 buttons: MessageDialog.Ok
                 text: "Você deve selecionar um arquivo .CSV para prosseguir"
             }
+            Connections {
+                target: inventDE
+                onClosing:{
+                    areainvDE.text = ""
+                    areaparcDE.text = ""
+                    earDE.text = ""
+                    alphaDE.text = ""
+                    potencialDE.text = ""
+                    correctDE.visible = false
+                    errorDE.visible = false
+                    verifySelected = false
+                }
+            }
         }
 
         //Amostragem em Conglomerados
         Window {
             id: inventCONGL
+            title: "Amostragem em Conglomerados"
             width: 760
-            height: 480
-            title: "Janela do Inventário Conglomerados"
-            visible: false
+            height: 640
             x: (Screen.width - width) / 2  // Centralizar horizontalmente
             y: (Screen.height - height) / 2  // Centralizar verticalmente
+            minimumWidth: width
+            maximumWidth: width
+            minimumHeight: height
+            maximumHeight: height
+            visible: false
 
             Rectangle {
                 width: parent.width
@@ -1174,41 +1393,43 @@ ApplicationWindow {
                     visible: true
                 }
 
-                Row {
-                    spacing: 10
+                Button {
+                    id: importDataCONGL
+                    text: qsTr("Importar Dados")
+                    width: 300
+                    font.family: "Arial"
+                    font.pointSize: 14
                     anchors.centerIn: parent
-                    anchors.verticalCenterOffset: -140
+                    anchors.verticalCenterOffset: -120
 
-                    Button {
-                        id: importDataCONGL
-                        text: qsTr("Importar Dados")
-                        width: 180
-                        font.family: "Arial"
-                        font.pointSize: 14
-
-                        Connections {
-                            target: importDataCONGL
-                            onClicked: {
-                                selectedFileDialogCONGL.open()
-                            }
+                    Connections {
+                        target: importDataCONGL
+                        onClicked: {
+                            selectedFileDialogCONGL.open()
                         }
                     }
+                }
 
-                    Image {
-                        id: correctCONGL
-                        source: "images/correct.png" // Substitua pelo caminho real da sua imagem
-                        width: 50
-                        height: 40
-                        visible: false
-                    }
+                Image {
+                    id: correctCONGL
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
+                    source: "images/correct.png" // Substitua pelo caminho real da sua imagem
+                    width: 50
+                    height: 40
+                    visible: false
+                }
 
-                    Image {
-                        id: errorCONGL
-                        source: "images/errado.png" // Substitua pelo caminho real da sua imagem
-                        width: 50
-                        height: 40
-                        visible: true
-                    }
+                Image {
+                    id: errorCONGL
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
+                    source: "images/error.png" // Substitua pelo caminho real da sua imagem
+                    width: 40
+                    height: 30
+                    visible: false
                 }
 
                 Column {
@@ -1225,6 +1446,17 @@ ApplicationWindow {
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areainvCONGL.text.includes(",")) {
+                                    areainvCONGL.text = areainvCONGL.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: areaparcCONGL
@@ -1233,25 +1465,57 @@ ApplicationWindow {
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areaparcCONGL.text.includes(",")) {
+                                    areaparcCONGL.text = areaparcCONGL.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: earCONGL
-                        placeholderText: "Erro Relativo Admitido (%)"
+                        placeholderText: "Erro relativo admitido (%)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (earCONGL.text.includes(",")) {
+                                    earCONGL.text = earCONGL.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: alphaCONGL
-                        placeholderText: "Alpha (0.01 à 0.99)"
+                        placeholderText: "Alfa"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (alphaCONGL.text.includes(",")) {
+                                    alphaCONGL.text = alphaCONGL.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                 
-
                     Button {
                         id: processInventCONGL
                         text: qsTr("Processar Inventário")
@@ -1286,14 +1550,16 @@ ApplicationWindow {
                                     // Se houver campos vazios, exiba o diálogo
                                     emptyDialogCONGL.text = "Ausência de dados nos campos: " + emptyFieldsCONGL.join(", ")
                                     emptyDialogCONGL.open()
-                                } else if (errorCONGL.visible === true) {
+                                } else if (verifySelected === false) {
                                     emptySelectedDialogCONGL.open()
                                 } else {
+                                    busyIndicatorCONGL.running = true                                    
+
                                     // Aqui você pode adicionar a lógica para processar os dados inseridos
                                     var resultados = Julia.calcCONGL(Julia.singleFile(selectedFileDialogCONGL.currentFile), areainvCONGL.text, areaparcCONGL.text, alphaCONGL.text, earCONGL.text)
 
                                     resultVals = resultados[0]
-                                    resultObs = resultados[1] + "\n\n" + resultados[2]
+                                    resultObs = resultados[1]
 
                                     saveFileDialogCONGL.open()
                                 }
@@ -1301,6 +1567,15 @@ ApplicationWindow {
                         }
                     }
                 }
+            }
+
+            BusyIndicator {
+                id: busyIndicatorCONGL
+                width: 120
+                height: 120
+                running: false
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: 250
             }
 
             FileDialog {
@@ -1315,10 +1590,13 @@ ApplicationWindow {
                     onAccepted: {
                         correctCONGL.visible = true
                         errorCONGL.visible = false
+                        verifySelected = true
                     }
 
                     onRejected: {
+                        correctCONGL.visible = false
                         errorCONGL.visible = true
+                        verifySelected = false 
                     }
                 }
             }
@@ -1327,12 +1605,6 @@ ApplicationWindow {
                 id: conclusionDialogCONGL
                 title: "Inventário Processado com Sucesso"
                 text: resultObs
-            }
-            MessageDialog {
-                id: emptySelectedFileDialogCONGL
-                title: "Falha ao tentar processar inventário"
-                text: "Selecione um arquivo com dados válidos para continuar" + "\n"
-                    + selectedFileDialogCONGL.currentFile
             }
             FileDialog {
                 id: saveFileDialogCONGL
@@ -1344,6 +1616,10 @@ ApplicationWindow {
                     onAccepted: {
                         Julia.saveFile(resultVals, saveFileDialogCONGL.selectedFile, comboBox.currentIndex)
                         conclusionDialogCONGL.open()
+                        busyIndicatorCONGL.running = false
+                    }
+                    onRejected: {
+                        busyIndicatorCONGL.running = false
                     }
                 }
             }
@@ -1358,17 +1634,34 @@ ApplicationWindow {
                 buttons: MessageDialog.Ok
                 text: "Você deve selecionar um arquivo .CSV para prosseguir"
             }
+            
+            Connections {
+                target: inventCONGL
+                onClosing:{
+                    areainvCONGL.text = ""
+                    areaparcCONGL.text = ""
+                    earCONGL.text = ""
+                    alphaCONGL.text = ""
+                    correctCONGL.visible = false
+                    errorCONGL.visible = false
+                    verifySelected = false
+                }
+            }
         }
 
         //Amostragem Sistemática com Multiplos Inícios Aleatórios
         Window {
             id: inventMULTI
+            title: "Amostragem Sistemática com Multiplos Inícios Aleatórios"
             width: 760
-            height: 480
-            title: "Janela do Inventário Sistemático Multiplos Inícios"
-            visible: false
+            height: 640
             x: (Screen.width - width) / 2  // Centralizar horizontalmente
             y: (Screen.height - height) / 2  // Centralizar verticalmente
+            minimumWidth: width
+            maximumWidth: width
+            minimumHeight: height
+            maximumHeight: height
+            visible: false
 
             Rectangle {
                 width: parent.width
@@ -1383,41 +1676,43 @@ ApplicationWindow {
                     visible: true
                 }
 
-                Row {
-                    spacing: 10
+                Button {
+                    id: importDataMULTI
+                    text: qsTr("Importar Dados")
+                    width: 300
+                    font.family: "Arial"
+                    font.pointSize: 14
                     anchors.centerIn: parent
-                    anchors.verticalCenterOffset: -140
+                    anchors.verticalCenterOffset: -120
 
-                    Button {
-                        id: importDataMULTI
-                        text: qsTr("Importar Dados")
-                        width: 180
-                        font.family: "Arial"
-                        font.pointSize: 14
-
-                        Connections {
-                            target: importDataMULTI
-                            onClicked: {
-                                selectedFileDialogMULTI.open()
-                            }
+                    Connections {
+                        target: importDataMULTI
+                        onClicked: {
+                            selectedFileDialogMULTI.open()
                         }
                     }
+                }
 
-                    Image {
-                        id: correctMULTI
-                        source: "images/correct.png" // Substitua pelo caminho real da sua imagem
-                        width: 50
-                        height: 40
-                        visible: false
-                    }
+                Image {
+                    id: correctMULTI
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
+                    source: "images/correct.png" // Substitua pelo caminho real da sua imagem
+                    width: 50
+                    height: 40
+                    visible: false
+                }
 
-                    Image {
-                        id: errorMULTI
-                        source: "images/errado.png" // Substitua pelo caminho real da sua imagem
-                        width: 50
-                        height: 40
-                        visible: true
-                    }
+                Image {
+                    id: errorMULTI
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -120
+                    anchors.horizontalCenterOffset: 185
+                    source: "images/error.png" // Substitua pelo caminho real da sua imagem
+                    width: 40
+                    height: 30
+                    visible: false
                 }
 
                 Column {
@@ -1434,14 +1729,36 @@ ApplicationWindow {
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areainvMULTI.text.includes(",")) {
+                                    areainvMULTI.text = areainvMULTI.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: areaparcMULTI
                         placeholderText: "Área da parcela (m²)"
-                        horizontalAlignment: Text.AlignHCenter
+                          horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areaparcMULTI.text.includes(",")) {
+                                    areaparcMULTI.text = areaparcMULTI.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: earMULTI
@@ -1450,16 +1767,37 @@ ApplicationWindow {
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (earMULTI.text.includes(",")) {
+                                    earMULTI.text = earMULTI.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: alphaMULTI
-                        placeholderText: "Alpha (0.01 à 0.99)"
+                        placeholderText: "Alfa"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (alphaMULTI.text.includes(",")) {
+                                    alphaMULTI.text = alphaMULTI.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
-                
 
                     Button {
                         id: processInventMULTI
@@ -1495,9 +1833,11 @@ ApplicationWindow {
                                     // Se houver campos vazios, exiba o diálogo
                                     emptyDialogMULTI.text = "Ausência de dados nos campos: " + emptyFieldsMULTI.join(", ")
                                     emptyDialogMULTI.open()
-                                } else if (errorMULTI.visible === true) {
+                                } else if (verifySelected === false) {
                                     emptySelectedDialogMULTI.open()
                                 } else {
+                                    busyIndicatorMULTI.running = true
+
                                     // Aqui você pode adicionar a lógica para processar os dados inseridos
                                     var resultados = Julia.calcMULTI(Julia.singleFile(selectedFileDialogMULTI.currentFile), areainvMULTI.text, areaparcMULTI.text, alphaMULTI.text, earMULTI.text)
 
@@ -1512,6 +1852,15 @@ ApplicationWindow {
                 }
             }
 
+            BusyIndicator {
+                id: busyIndicatorMULTI
+                width: 120
+                height: 120
+                running: false
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: 250
+            }
+
             FileDialog {
                 id: selectedFileDialogMULTI
                 title: "Selecione o arquivo no formato .CSV com os dados a serem processados"
@@ -1524,10 +1873,13 @@ ApplicationWindow {
                     onAccepted: {
                         correctMULTI.visible = true
                         errorMULTI.visible = false
+                        verifySelected = true
                     }
 
                     onRejected: {
+                        correctMULTI.visible = false
                         errorMULTI.visible = true
+                        verifySelected = false
                     }
                 }
             }
@@ -1536,12 +1888,6 @@ ApplicationWindow {
                 id: conclusionDialogMULTI
                 title: "Inventário Processado com Sucesso"
                 text: resultObs
-            }
-            MessageDialog {
-                id: emptySelectedFileDialogMULTI
-                title: "Falha ao tentar processar inventário"
-                text: "Selecione um arquivo com dados válidos para continuar" + "\n"
-                    + selectedFileDialogMULTI.currentFile
             }
             FileDialog {
                 id: saveFileDialogMULTI
@@ -1553,6 +1899,10 @@ ApplicationWindow {
                     onAccepted: {
                         Julia.saveFile(resultVals, saveFileDialogMULTI.selectedFile, comboBox.currentIndex)
                         conclusionDialogMULTI.open()
+                        busyIndicatorMULTI.running = false
+                    }
+                    onRejected: {
+                        busyIndicatorMULTI.running = false
                     }
                 }
             }
@@ -1567,6 +1917,18 @@ ApplicationWindow {
                 buttons: MessageDialog.Ok
                 text: "Você deve selecionar um arquivo .CSV para prosseguir"
             }
+            Connections {
+                target: inventMULTI
+                onClosing:{
+                    areainvMULTI.text = ""
+                    areaparcMULTI.text = ""
+                    earMULTI.text = ""
+                    alphaMULTI.text = ""
+                    correctMULTI.visible = false
+                    errorMULTI.visible = false
+                    verifySelected = false
+                }
+            }
         }
         
         // Amostragem Independente
@@ -1577,6 +1939,10 @@ ApplicationWindow {
             height: 640
             x: (Screen.width - width) / 2  // Centralizar horizontalmente
             y: (Screen.height - height) / 2  // Centralizar verticalmente
+            minimumWidth: width
+            maximumWidth: width
+            minimumHeight: height
+            maximumHeight: height
             visible: false
 
             Rectangle {
@@ -1595,7 +1961,7 @@ ApplicationWindow {
                 Button {
                     id: importDataIND
                     text: qsTr("Importar Dados")
-                    width: 300
+                    width: 320
                     font.family: "Arial"
                     font.pointSize: 14
                     anchors.centerIn: parent
@@ -1625,9 +1991,9 @@ ApplicationWindow {
                     anchors.centerIn: parent
                     anchors.verticalCenterOffset: -120
                     anchors.horizontalCenterOffset: 185
-                    source: "images/errado.png" // Substitua pelo caminho real da sua imagem
-                    width: 50
-                    height: 40
+                    source: "images/error.png" // Substitua pelo caminho real da sua imagem
+                    width: 40
+                    height: 30
                     visible: false
                 }
 
@@ -1644,37 +2010,81 @@ ApplicationWindow {
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
-                        width: 300
+                        width: 320
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areaparcIND.text.includes(",")) {
+                                    areaparcIND.text = areaparcIND.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: areainvOc1IND
-                        placeholderText: "Área Inventáriada na Ocasião 1 (ha)"
+                        placeholderText: "Área inventáriada na ocasião 1 (ha)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
-                        width: 300
+                        width: 320
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areainvOc1IND.text.includes(",")) {
+                                    areainvOc1IND.text = areainvOc1IND.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: areainvOc2IND
-                        placeholderText: "Área Inventáriada na Ocasião 1 (ha)"
+                        placeholderText: "Área inventáriada na ocasião 2 (ha)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
-                        width: 300
+                        width: 320
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areainvOc2IND.text.includes(",")) {
+                                    areainvOc2IND.text = areainvOc2IND.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: alphaIND
-                        placeholderText: "Alpha (0.01 à 0.99)"
+                        placeholderText: "Alfa"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
-                        width: 300
+                        width: 320
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (alphaIND.text.includes(",")) {
+                                    alphaIND.text = alphaIND.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
 
                     Button {
                         id: processInventIND
                         text: qsTr("Processar Inventário")
-                        width: 300
+                        width: 320
                         font.pointSize: 14
                         font.family: "Arial"
 
@@ -1757,7 +2167,7 @@ ApplicationWindow {
             MessageDialog {
                 id: conclusionDialogIND
                 title: "Inventário Processado com Sucesso"
-                text: "O inventário foi processado com sucesso, o arquivo de resultado está disponível em: \n" + saveFileDialogIND.selectedFile
+                text: "O inventário foi processado com sucesso, o arquivo de resultado está disponível em: \n\n" + saveFileDialogIND.selectedFile
             }
 
             FileDialog {
@@ -1793,8 +2203,13 @@ ApplicationWindow {
             Connections {
                 target: inventIND
                 onClosing:{
+                    areaparcIND.text = ""
+                    areainvOc1IND.text = ""
+                    areainvOc2IND.text = ""
+                    alphaIND.text = ""
                     correctIND.visible = false
-                    errorIND.visible = true
+                    errorIND.visible = false
+                    verifySelected = false
                 }
             }
         }
@@ -1807,6 +2222,10 @@ ApplicationWindow {
             height: 640
             x: (Screen.width - width) / 2  // Centralizar horizontalmente
             y: (Screen.height - height) / 2  // Centralizar verticalmente
+            minimumWidth: width
+            maximumWidth: width
+            minimumHeight: height
+            maximumHeight: height
             visible: false
 
             Rectangle {
@@ -1825,7 +2244,7 @@ ApplicationWindow {
                 Button {
                     id: importDataART
                     text: qsTr("Importar Dados")
-                    width: 300
+                    width: 320
                     font.family: "Arial"
                     font.pointSize: 14
                     anchors.centerIn: parent
@@ -1855,9 +2274,9 @@ ApplicationWindow {
                     anchors.centerIn: parent
                     anchors.verticalCenterOffset: -120
                     anchors.horizontalCenterOffset: 185
-                    source: "images/errado.png" // Substitua pelo caminho real da sua imagem
-                    width: 50
-                    height: 40
+                    source: "images/error.png" // Substitua pelo caminho real da sua imagem
+                    width: 40
+                    height: 30
                     visible: false
                 }
 
@@ -1874,37 +2293,81 @@ ApplicationWindow {
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
-                        width: 300
+                        width: 320
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areaparcART.text.includes(",")) {
+                                    areaparcART.text = areaparcART.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: areainvOc1ART
-                        placeholderText: "Área Inventáriada na Ocasião 1 (ha)"
+                        placeholderText: "Área inventáriada na ocasião 1 (ha)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
-                        width: 300
+                        width: 320
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areainvOc1ART.text.includes(",")) {
+                                    areainvOc1ART.text = areainvOc1ART.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: areainvOc2ART
-                        placeholderText: "Área Inventáriada na Ocasião 1 (ha)"
+                        placeholderText: "Área inventáriada na ocasião 2 (ha)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
-                        width: 300
+                        width: 320
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areainvOc2ART.text.includes(",")) {
+                                    areainvOc2ART.text = areainvOc2ART.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: alphaART
-                        placeholderText: "Alpha (0.01 à 0.99)"
+                        placeholderText: "Alfa"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
-                        width: 300
+                        width: 320
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (alphaART.text.includes(",")) {
+                                    alphaART.text = alphaART.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
 
                     Button {
                         id: processInventART
                         text: qsTr("Processar Inventário")
-                        width: 300
+                        width: 320
                         font.pointSize: 14
                         font.family: "Arial"
 
@@ -1919,15 +2382,15 @@ ApplicationWindow {
                                 }
 
                                 if (!areainvOc1ART.text || areainvOc1ART.text.trim() === "") {
-                                    emptyFieldsART.push("Área Inventáriada na Ocasião 1")
+                                    emptyFieldsART.push("Área inventáriada na ocasião 1")
                                 }
 
                                 if (!areainvOc2ART.text || areainvOc2ART.text.trim() === "") {
-                                    emptyFieldsART.push("Área Inventariada na Ocasião 2")
+                                    emptyFieldsART.push("Área inventariada na ocasião 2")
                                 }
 
                                 if (!alphaART.text || alphaART.text.trim() === "") {
-                                    emptyFieldsART.push("Alpha")
+                                    emptyFieldsART.push("Alfa")
                                 }
 
                                 if (emptyFieldsART.length > 0) {
@@ -2023,8 +2486,13 @@ ApplicationWindow {
             Connections {
                 target: inventART
                 onClosing:{
+                    areaparcIND.text = ""
+                    areainvOc1ART.text = ""
+                    areainvOc2ART.text = ""
+                    alphaART.text = ""
                     correctART.visible = false
-                    errorART.visible = true
+                    errorART.visible = false
+                    verifySelected = false
                 }
             }
         }
@@ -2037,6 +2505,10 @@ ApplicationWindow {
             height: 640
             x: (Screen.width - width) / 2  // Centralizar horizontalmente
             y: (Screen.height - height) / 2  // Centralizar verticalmente
+            minimumWidth: width
+            maximumWidth: width
+            minimumHeight: height
+            maximumHeight: height
             visible: false
 
             Rectangle {
@@ -2085,9 +2557,9 @@ ApplicationWindow {
                     anchors.centerIn: parent
                     anchors.verticalCenterOffset: -120
                     anchors.horizontalCenterOffset: 185
-                    source: "images/errado.png" // Substitua pelo caminho real da sua imagem
-                    width: 50
-                    height: 40
+                    source: "images/error.png" // Substitua pelo caminho real da sua imagem
+                    width: 40
+                    height: 30
                     visible: false
                 }
 
@@ -2105,6 +2577,17 @@ ApplicationWindow {
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areaparcAD.text.includes(",")) {
+                                    areaparcAD.text = areaparcAD.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: areainvAD
@@ -2113,14 +2596,36 @@ ApplicationWindow {
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areainvAD.text.includes(",")) {
+                                    areainvAD.text = areainvAD.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: alphaAD
-                        placeholderText: "Alpha (0.01 à 0.99)"
+                        placeholderText: "Alfa"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (alphaAD.text.includes(",")) {
+                                    alphaAD.text = alphaAD.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
 
                     Button {
@@ -2241,8 +2746,12 @@ ApplicationWindow {
             Connections {
                 target: inventAD
                 onClosing:{
+                    areaparcAD.text = ""
+                    areainvAD.text = ""
+                    alphaAD.text = ""
                     correctAD.visible = false
-                    errorAD.visible = true
+                    errorAD.visible = false
+                    verifySelected = false
                 }
             }
         }
@@ -2255,6 +2764,10 @@ ApplicationWindow {
             height: 640
             x: (Screen.width - width) / 2  // Centralizar horizontalmente
             y: (Screen.height - height) / 2  // Centralizar verticalmente
+            minimumWidth: width
+            maximumWidth: width
+            minimumHeight: height
+            maximumHeight: height
             visible: false
 
             Rectangle {
@@ -2303,9 +2816,9 @@ ApplicationWindow {
                     anchors.centerIn: parent
                     anchors.verticalCenterOffset: -120
                     anchors.horizontalCenterOffset: 185
-                    source: "images/errado.png" // Substitua pelo caminho real da sua imagem
-                    width: 50
-                    height: 40
+                    source: "images/error.png" // Substitua pelo caminho real da sua imagem
+                    width: 40
+                    height: 30
                     visible: false
                 }
 
@@ -2323,6 +2836,17 @@ ApplicationWindow {
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areaparcARP.text.includes(",")) {
+                                    areaparcARP.text = areaparcARP.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: areainvARP
@@ -2331,14 +2855,36 @@ ApplicationWindow {
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areainvARP.text.includes(",")) {
+                                    areainvARP.text = areainvARP.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: alphaARP
-                        placeholderText: "Alpha (0.01 à 0.99)"
+                        placeholderText: "Alfa"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
                         width: 300
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (alphaARP.text.includes(",")) {
+                                    alphaARP.text = alphaARP.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
 
                     Button {
@@ -2459,8 +3005,12 @@ ApplicationWindow {
             Connections {
                 target: inventARP
                 onClosing:{
+                    areaparcARP.text = ""
+                    areainvARP.text = ""
+                    alphaARP.text = ""
                     correctARP.visible = false
-                    errorARP.visible = true
+                    errorARP.visible = false
+                    verifySelected = false
                 }
             }
         }
