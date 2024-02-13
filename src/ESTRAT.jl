@@ -157,7 +157,7 @@ export calcESTRAT
         (round((Area/(length(Unidade)))*nh2)*10)/N*(round(Finita)), 
         (round((Area/(length(Unidade)))*nh3)*10)/N*(round(Finita)), Tamanho_da_amostra, População, Observação]) #Tabela de resultados    
 
-        Resultados = [Dados, Informações_do_inventário, Por_estrato, Anova_da_estratificação, Resultados]
+        Resultados = [Dados, Informações_do_inventário, Tabela, Anova_da_estratificação, Resultados]
 
         return [Resultados, População, Observação]
 
