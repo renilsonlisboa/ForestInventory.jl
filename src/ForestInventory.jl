@@ -7,7 +7,7 @@ include(joinpath(@__DIR__, "ESTRAT.jl")) # Amostragem Estratificada
 include(joinpath(@__DIR__, "SIST.jl")) # Amostragem Sistemática
 include(joinpath(@__DIR__, "DE.jl")) # Amostragem Dois Estágios
 include(joinpath(@__DIR__, "CONGL.jl")) # Amostragem em Conglomerados
-include(joinpath(@__DIR__, "MULTI.jl")) # Amostragem co Multíplos Inicios Aleatórios
+include(joinpath(@__DIR__, "MULTI.jl")) # Amostragem com Multíplos Inicios Aleatórios
 include(joinpath(@__DIR__, "IND.jl")) # Amostragem Individual
 include(joinpath(@__DIR__, "ART.jl")) # Amostragem com Repetição Total
 include(joinpath(@__DIR__, "AD.jl")) # Amostragem Dupla
@@ -36,9 +36,11 @@ export Inventory
         AAS.calcAAS(Dados, Area, AreaParc, α, EAR)
     end
 
+    # processamento do Inventário por meio da amostragem estratitificada
     function calcESTRAT(Dados, Area, AreaParc, α, EAR, nh1, nh2, nh3)
         ESTRAT.calcESTRAT(Dados, Area, AreaParc, α, EAR, nh1, nh2, nh3)
     end
+
     # processamento do Inventário por meio da amostragem aleatória sistemática
     function calcSIST(Dados, Area, AreaParc, α, EAR)
         SIST.calcSIST(Dados, Area, AreaParc, α, EAR)
@@ -59,17 +61,17 @@ export Inventory
         MULTI.calcMULTI(Dados, Area, AreaParc, α, EAR)
     end
     
-    # processamento do Inventário por meio da amostragem sistemática com múltiplos inícios aleatórios
+    # processamento do Inventário por meio da amostragem individual
     function calcIND(Dados, AreaParc, α, N1, N2)
         IND.calcIND(Dados, AreaParc, α, N1, N2)
     end
 
-    # processamento do Inventário por meio da amostragem sistemática com múltiplos inícios aleatórios
+    # processamento do Inventário por meio da amostragem com Repetição total
     function calcART(Dados, AreaParc, α, N1, N2)
         ART.calcART(Dados, AreaParc, α, N1, N2)
     end
 
-    # processamento do Inventário por meio da amostragem sistemática com múltiplos inícios aleatórios
+    # processamento do Inventário por meio da amostragem dupla
     function calcAD(Dados, AreaParc, N, α)
         AD.calcAD(Dados, AreaParc, N, α)
     end
@@ -79,7 +81,7 @@ export Inventory
         ARP.calcARP(Dados, AreaParc, N, α)
     end
         
-    # Função de inicialização do programa em QML
+    # Definição da função de inicialização do programa em QML
     function Inventory()
         
         # Exporta as funções do Julia para o QML

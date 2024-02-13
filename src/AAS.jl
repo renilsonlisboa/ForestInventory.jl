@@ -18,8 +18,8 @@ export CalcAAS
 
         Conversor = 10000/AreaParc
         
-        Volume = (Conversor.*Dados.Volume)
-        Unidades = Dados.Unidades
+        Volume = (Conversor.*(Dados[!,2]))
+        Unidades = Dados[!,1]
         
         AAS = DataFrame(Unidades = Unidades, Volume= Volume)
         
@@ -48,7 +48,7 @@ export CalcAAS
         end 
     
         VarMed = (Variancia/NumUni)*(1-(NumUni/N)) #Variância média
-
+        
         ErroPad = (DesvPad/sqrt(NumUni))*sqrt((1-(NumUni/N))) #Erro padrão
 
         ErroPadRel = ErroPad/mean(Volume)*100 #Erro padrão relativo
@@ -86,6 +86,8 @@ export CalcAAS
         "Fator de correção", "Tamanho da amostra", "População", "Número total de unidades amostrais da população", 
         "Nível de significância (α)", "Observação"], Valores=[Media, LII, LIS, ValTotal, LIItotal, LIStotal, ErroPadRel, Area, ErroAmostAbs, ErroPad, DesvPad, Variancia, VarMed, VarMedRel, CV, LE, EAR, FatorCorr, Tamanho_da_amostra, População, N, α, Observação])
      
+        Resultados = [Dados, Resultados]
+
         return [Resultados, População, Observação]
     end
 end
