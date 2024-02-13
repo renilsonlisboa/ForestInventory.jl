@@ -173,7 +173,6 @@ ApplicationWindow {
                     fillMode: Image.Stretch
                     visible: true
                 }
-
                 Button {
                     id: importDataAAS
                     text: qsTr("Importar Dados")
