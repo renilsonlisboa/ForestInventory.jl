@@ -42,6 +42,27 @@ module Save
             names(Dados[3])), Anova_da_estratificação=(collect(eachcol(Dados[4])), 
             names(Dados[4])), Resultados=( collect(eachcol(Dados[5])), 
             names(Dados[5]))) #Export to Excel
+        elseif i === 2
+            XLSX.writetable(("$(cleaned_path).xlsx"), Dados=(collect(eachcol(Dados[1])), 
+            names(Dados[1])), Informações_do_inventário=(collect(eachcol(Dados[2])), 
+            names(Dados[2])), Por_estrato=(collect(eachcol(Dados[3])), 
+            names(Dados[3])), Anova_da_estratificação=(collect(eachcol(Dados[4])), 
+            names(Dados[4])), Resultados=( collect(eachcol(Dados[5])), 
+            names(Dados[5]))) #Export to Excel
+        elseif i === 3
+            XLSX.writetable(("$(cleaned_path).xlsx"), Dados=(collect(eachcol(Dados[1])), 
+            names(Dados[1])), Informações_do_inventário=(collect(eachcol(Dados[2])), 
+            names(Dados[2])), Por_estrato=(collect(eachcol(Dados[3])), 
+            names(Dados[3])), Anova_da_estratificação=(collect(eachcol(Dados[4])), 
+            names(Dados[4])), Resultados=( collect(eachcol(Dados[5])), 
+            names(Dados[5]))) #Export to Excel
+        elseif i === 4
+            XLSX.writetable(("$(cleaned_path).xlsx"), Dados=(collect(eachcol(Dados[1])), 
+            names(Dados[1])), Informações_do_inventário=(collect(eachcol(Dados[2])), 
+            names(Dados[2])), Por_estrato=(collect(eachcol(Dados[3])), 
+            names(Dados[3])), Anova_da_estratificação=(collect(eachcol(Dados[4])), 
+            names(Dados[4])), Resultados=( collect(eachcol(Dados[5])), 
+            names(Dados[5]))) #Export to Excel
         elseif i === 6
             writetable("$(cleaned_path).xlsx", Dados=(collect(eachcol(Dados[1])), 
             names(Dados[1])), Primeira_ocasião=(collect(eachcol(Dados[2])), 
