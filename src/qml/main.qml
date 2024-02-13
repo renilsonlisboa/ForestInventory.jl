@@ -646,7 +646,7 @@ ApplicationWindow {
                                     // Se houver campos vazios, exiba o diálogo
                                     emptyDialogESTRAT.text = "Ausência de dados nos campos: "+ emptyFieldsESTRAT.join(", ")
                                     emptyDialogESTRAT.open()
-                                } else if (verifySelected === true) {
+                                } else if (verifySelected === false) {
                                     emptySelectedDialogESTRAT.open()
                                 } else {
                                     busyIndicatorESTRAT.running = true
