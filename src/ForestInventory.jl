@@ -1,3 +1,4 @@
+# Inícia o módulo ForestInventory
 module ForestInventory
 
 # Inclui os módulos auxiliares ao escopo principal do projeto
