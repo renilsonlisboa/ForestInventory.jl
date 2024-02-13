@@ -433,12 +433,16 @@ ApplicationWindow {
         //Amostragem Estratificada
         Window {
             id: inventESTRAT
+            title: "Amostragem Estratificada"
             width: 760
-            height: 480
-            title: "Janela do Inventário Estratificado"
-            visible: false
+            height: 640
             x: (Screen.width - width) / 2  // Centralizar horizontalmente
             y: (Screen.height - height) / 2  // Centralizar verticalmente
+            minimumWidth: width
+            maximumWidth: width
+            minimumHeight: height
+            maximumHeight: height
+            visible: false
             
             Rectangle {
                 width: parent.width
@@ -453,41 +457,44 @@ ApplicationWindow {
                     visible: true
                 }
 
-                Row {
-                    spacing: 10
+
+                Button {
+                    id: importDataESTRAT
+                    text: qsTr("Importar Dados")
+                    width: 380
+                    font.family: "Arial"
+                    font.pointSize: 14
                     anchors.centerIn: parent
-                    anchors.verticalCenterOffset: -200
+                    anchors.verticalCenterOffset: -125
 
-                    Button {
-                        id: importDataESTRAT
-                        text: qsTr("Importar Dados")
-                        width: 180
-                        font.family: "Arial"
-                        font.pointSize: 14
-
-                        Connections {
-                            target: importDataESTRAT
-                            onClicked: {
-                                selectedFileDialogESTRAT.open()
-                            }
+                    Connections {
+                        target: importDataESTRAT
+                        onClicked: {
+                            selectedFileDialogESTRAT.open()
                         }
                     }
+                }
 
-                    Image {
-                        id: correctESTRAT
-                        source: "images/correct.png" // Substitua pelo caminho real da sua imagem
-                        width: 50
-                        height: 40
-                        visible: false
-                    }
+                Image {
+                    id: correctESTRAT
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -125
+                    anchors.horizontalCenterOffset: 220
+                    source: "images/correct.png" // Substitua pelo caminho real da sua imagem
+                    width: 50
+                    height: 40
+                    visible: false
+                }
 
-                    Image {
-                        id: errorESTRAT
-                        source: "images/errado.png" // Substitua pelo caminho real da sua imagem
-                        width: 50
-                        height: 40
-                        visible: true
-                    }
+                Image {
+                    id: errorESTRAT
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -125
+                    anchors.horizontalCenterOffset: 220
+                    source: "images/error.png" // Substitua pelo caminho real da sua imagem
+                    width: 40
+                    height: 30
+                    visible: false
                 }
 
                 Column {
@@ -503,7 +510,18 @@ ApplicationWindow {
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
-                        width: 300
+                        width: 380
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areainvESTRAT.text.includes(",")) {
+                                    areainvESTRAT.text = areainvESTRAT.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: areaparcESTRAT
@@ -511,45 +529,92 @@ ApplicationWindow {
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
-                        width: 300
+                        width: 380
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (areaparcESTRAT.text.includes(",")) {
+                                    areaparcESTRAT.text = areaparcESTRAT.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: earESTRAT
-                        placeholderText: "Erro Relativo Admitido (%)"
+                        placeholderText: "Erro relativo admitido (%)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
-                        width: 300
+                        width: 380
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
+
+                        Connections {
+                            onTextChanged: {
+                                if (earESTRAT.text.includes(",")) {
+                                    earESTRAT.text = earESTRAT.text.replace(/,/g, ".");
+                                }
+                            }
+                        }
                     }
                     TextField {
                         id: alphaESTRAT
-                        placeholderText: "Alpha (0.01 à 0.99)"
+                        placeholderText: "Alfa"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
-                        width: 300
-                    }
-                    TextField {
-                        id: estratosESTRAT
-                        placeholderText: "Número de Estratos"
-                        validator: IntValidator {}
-                        horizontalAlignment: Text.AlignHCenter
-                        font.pointSize: 14
-                        font.family: "Arial"
-                        width: 300
+                        width: 380
+                        validator: RegularExpressionValidator{
+                            regularExpression: /^\d*\.?\d+(,\d+)?$/
+                        }
 
                         Connections {
-                            target: estratosESTRAT
                             onTextChanged: {
-                                enterNumSubEstratos.visible = true
+                                if (alphaESTRAT.text.includes(",")) {
+                                    alphaAalphaESTRAT.text = alphaESTRAT.text.replace(/,/g, ".");
+                                }
                             }
+                        }
+                    }
+                    Row {
+                        spacing: 10
+                        TextField {
+                            id: estratosESTRAT
+                            placeholderText: "1º Subestrato"
+                            validator: IntValidator {}
+                            horizontalAlignment: Text.AlignHCenter
+                            font.pointSize: 14
+                            font.family: "Arial"
+                            width: 120
+                        }
+                        TextField {
+                            id: estratosESTRAT2
+                            placeholderText: "2º Subestrato"
+                            validator: IntValidator {}
+                            horizontalAlignment: Text.AlignHCenter
+                            font.pointSize: 14
+                            font.family: "Arial"
+                            width: 120
+                        }
+                        TextField {
+                            id: estratosESTRAT3
+                            placeholderText: "3º Subestrato"
+                            validator: IntValidator {}
+                            horizontalAlignment: Text.AlignHCenter
+                            font.pointSize: 14
+                            font.family: "Arial"
+                            width: 120
                         }
                     }
 
                     Button {
                         id: processInventESTRAT
                         text: qsTr("Processar Inventário")
-                        width: 300
+                        width: 380
                         font.pointSize: 14
                         font.family: "Arial"
                         anchors.verticalCenterOffset: 140
@@ -560,13 +625,11 @@ ApplicationWindow {
                                 var emptyFieldsESTRAT = []
 
                                 // Verifique se os campos estão vazios ou contêm apenESTRAT espaços em branco
-                                if (!areainvESTRAT.text || areainvESTRAT.text.trim(
-                                            ) === "") {
+                                if (!areainvESTRAT.text || areainvESTRAT.text.trim() === "") {
                                     emptyFieldsESTRAT.push("Área Inventariada")
                                 }
 
-                                if (!areaparcESTRAT.text || areaparcESTRAT.text.trim(
-                                            ) === "") {
+                                if (!areaparcESTRAT.text || areaparcESTRAT.text.trim() === "") {
                                     emptyFieldsESTRAT.push("Área da Parcela")
                                 }
 
@@ -578,29 +641,15 @@ ApplicationWindow {
                                     emptyFieldsESTRAT.push("Alpha")
                                 }
 
-                                if (!estratosESTRAT.text || estratosESTRAT.text.trim(
-                                            ) === "") {
-                                    emptyFieldsESTRAT.push("Número de Estratos")
-                                }
-
-                                if (subestratosOK === 0) {
-                                    emptyFieldsESTRAT.push("Número de Sub-Estratos")
-                                }
-
                                 if (emptyFieldsESTRAT.length > 0) {
                                     // Se houver campos vazios, exiba o diálogo
-                                    emptyDialogESTRAT.text = "Ausência de dados nos campos: "
-                                            + emptyFieldsESTRAT.join(", ")
+                                    emptyDialogESTRAT.text = "Ausência de dados nos campos: "+ emptyFieldsESTRAT.join(", ")
                                     emptyDialogESTRAT.open()
-                                } else if (errorESTRAT.visible === true) {
+                                } else if (verifySelected === true) {
                                     emptySelectedDialogESTRAT.open()
                                 } else {
                                     // Aqui você pode adicionar a lógica para processar os dados inseridos
-                                    var resultados = Julia.calcESTRAT(
-                                                Julia.singleFile(
-                                                    selectedFileDialogESTRAT.currentFile),
-                                                areainvESTRAT.text, areaparcESTRAT.text,
-                                                alphaESTRAT.text, earESTRAT.text)
+                                    var resultados = Julia.calcESTRAT(Julia.singleFile(selectedFileDialogESTRAT.currentFile), areainvESTRAT.text, areaparcESTRAT.text, alphaESTRAT.text, earESTRAT.text, estratosESTRAT.text, estratosESTRAT2.text, estratosESTRAT3.text)
 
                                     resultVals = resultados[0]
                                     resultObs = resultados[1] + "\n\n" + resultados[2]
@@ -609,104 +658,6 @@ ApplicationWindow {
                                 }
                             }
                         }
-
-                        Button {
-                            id: enterNumSubEstratos
-                            text: qsTr("Sub-estratos")
-                            anchors.centerIn: parent
-                            anchors.verticalCenterOffset: -55
-                            anchors.horizontalCenterOffset: 230
-                            visible: false
-
-                            Connections {
-                                target: enterNumSubEstratos
-                                onClicked: {
-                                    windowSubEstratos.visible = true
-                                }
-                            }
-                        }
-                    }
-                }
-
-                Window {
-                    id: windowSubEstratos
-                    width: 840
-                    height: 640
-                    visible: false
-                    x: (Screen.width - width) / 2  // Centralizar horizontalmente
-                    y: (Screen.height - height) / 2  // Centralizar verticalmente
-
-                    Rectangle {
-                        width: parent.width
-                        height: parent.height
-
-                        Image {
-                            source: "images/wallpaper.jpg" // Substitua pelo caminho real da sua imagem
-                            width: parent.width
-                            height: parent.height
-                            fillMode: Image.Stretch
-                            visible: true
-                        }
-
-                        Grid {
-                            id: gridLayout
-                            anchors.centerIn: parent
-                            spacing: 10
-
-                            Repeater {
-                                model: estratosESTRAT.text
-                                TextField {
-                                    placeholderText: "SubEstrato" + (index + 1)
-                                    horizontalAlignment: Text.AlignHCenter
-                                    validator: IntValidator {}
-                                    width: 120
-                                    height: 30
-                                    font.family: "Arial"
-                                    font.pointSize: 10
-                                }
-                            }
-                        }
-
-                        Button {
-                            id: closeSubEstratos
-                            width: 200
-                            text: qsTr("Confirmar")
-                            font.pointSize: 14
-                            font.family: "Arial"
-                            anchors.centerIn: parent
-                            anchors.verticalCenterOffset: 200
-
-                            Connections {
-                                target: closeSubEstratos
-                                onClicked: {
-                                    var vector = [] // Criar vetor vazio
-                                    var contNull = 0
-
-                                    for (var i = 0; i < gridLayout.children.length; ++i) {
-                                        var textField = gridLayout.children[i]
-
-                                        if (textField.text === "") {
-                                            contNull = contNull + 1
-                                        } else {
-                                            vector.push(textField.text) // Adicionar texto de cada campo ao vetor
-                                        }
-                                    }
-                                    if (contNull === 0) {
-                                        windowSubEstratos.close()
-                                        subestratosOK = 1
-                                    } else {
-                                        emptySubEstratos.open()
-                                        subestratosOK = 0
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    MessageDialog {
-                        id: emptySubEstratos
-                        title: "Número de SubEstratos Insuficiente"
-                        buttons: MessageDialog.Ok
                     }
                 }
 
@@ -734,12 +685,6 @@ ApplicationWindow {
                     id: conclusionDialogESTRAT
                     title: "Inventário Processado com Sucesso"
                     text: resultObs
-                }
-                MessageDialog {
-                    id: emptySelectedFileDialogESTRAT
-                    title: "Falha ao tentar processar inventário"
-                    text: "Selecione um arquivo com dados válidos para continuar" + "\n"
-                        + selectedFileDialogESTRAT.currentFile
                 }
                 FileDialog {
                     id: saveFileDialogESTRAT

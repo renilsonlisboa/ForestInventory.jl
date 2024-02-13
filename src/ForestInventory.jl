@@ -2,7 +2,7 @@ module ForestInventory
 
 # Inclui os módulos auxiliares ao escopo principal do projeto
 include(joinpath(@__DIR__, "AAS.jl")) # Amostragem Aleatória Simples
-#include(joinpath(@__DIR__, "ESTRAT.jl")) # Amostragem Estratificada
+include(joinpath(@__DIR__, "ESTRAT.jl")) # Amostragem Estratificada
 include(joinpath(@__DIR__, "SIST.jl")) # Amostragem Sistemática
 include(joinpath(@__DIR__, "DE.jl")) # Amostragem Dois Estágios
 include(joinpath(@__DIR__, "CONGL.jl")) # Amostragem em Conglomerados
@@ -35,6 +35,9 @@ export Inventory
         AAS.calcAAS(Dados, Area, AreaParc, α, EAR)
     end
 
+    function calcESTRAT(Dados, Area, AreaParc, α, EAR, nh1, nh2, nh3)
+        ESTRAT.calcESTRAT(Dados, Area, AreaParc, α, EAR, nh1, nh2, nh3)
+    end
     # processamento do Inventário por meio da amostragem aleatória sistemática
     function calcSIST(Dados, Area, AreaParc, α, EAR)
         SIST.calcSIST(Dados, Area, AreaParc, α, EAR)
@@ -79,7 +82,7 @@ export Inventory
     function Inventory()
         
         # Exporta as funções do Julia para o QML
-        @qmlfunction singleFile saveFile calcAAS calcSIST calcDE calcCONGL calcMULTI calcIND calcART calcAD calcARP
+        @qmlfunction singleFile saveFile calcAAS calcESTRAT calcSIST calcDE calcCONGL calcMULTI calcIND calcART calcAD calcARP
 
         # Obtém o diretório atual
         current_directory = dirname(@__FILE__)
