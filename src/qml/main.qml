@@ -580,6 +580,7 @@ ApplicationWindow {
                             }
                         }
                     }
+
                     Row {
                         spacing: 10
                         TextField {
@@ -648,6 +649,8 @@ ApplicationWindow {
                                 } else if (verifySelected === true) {
                                     emptySelectedDialogESTRAT.open()
                                 } else {
+                                    busyIndicatorESTRAT.running = true
+
                                     // Aqui você pode adicionar a lógica para processar os dados inseridos
                                     var resultados = Julia.calcESTRAT(Julia.singleFile(selectedFileDialogESTRAT.currentFile), areainvESTRAT.text, areaparcESTRAT.text, alphaESTRAT.text, earESTRAT.text, estratosESTRAT.text, estratosESTRAT2.text, estratosESTRAT3.text)
 
@@ -659,6 +662,15 @@ ApplicationWindow {
                             }
                         }
                     }
+                }
+            
+                BusyIndicator {
+                    id: busyIndicatorESTRAT
+                    width: 120
+                    height: 120
+                    running: false
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 250
                 }
 
                 FileDialog {
@@ -673,10 +685,13 @@ ApplicationWindow {
                         onAccepted: {
                             correctESTRAT.visible = true
                             errorESTRAT.visible = false
+                            verifySelected = true
                         }
 
                         onRejected: {
+                            correctESTRAT.visible = false
                             errorESTRAT.visible = true
+                            verifySelected = false
                         }
                     }
                 }
@@ -696,6 +711,10 @@ ApplicationWindow {
                         onAccepted: {
                             Julia.saveFile(resultVals, saveFileDialogESTRAT.selectedFile, comboBox.currentIndex)
                             conclusionDialogESTRAT.open()
+                            busyIndicatorESTRAT.running = false
+                        }
+                        onRejected: {
+                            busyIndicatorESTRAT.running = false
                         }
                     }
                 }
@@ -709,6 +728,22 @@ ApplicationWindow {
                     title: "Dados insuficientes para o processamento do inventário"
                     buttons: MessageDialog.Ok
                     text: "Você deve selecionar um arquivo .CSV para prosseguir"
+                }
+
+                Connections {
+                    target: inventESTRAT
+                    onClosing:{
+                        areainvESTRAT.text = ""
+                        areaparcESTRAT.text = ""
+                        earESTRAT.text = ""
+                        alphaESTRAT.text = ""
+                        estratosESTRAT = ""
+                        estratosESTRAT2 = ""
+                        estratosESTRAT3 = ""
+                        correctESTRAT.visible = false
+                        errorESTRAT.visible = false
+                        verifySelected = false
+                    }
                 }
             }
         }
