@@ -137,6 +137,8 @@ export calcDE
         (length(Tabela.n)*first(unique(Tabela.n)))))/Conversor, (0.1*(sum(Tabela.Média)/length(Tabela.n))), 1-(length(Tabela.n)/N), População, Tamanho_da_amostra,  
         M, N, length(Tabela.n), first(unique(Tabela.n)), α, Observação]) #Tabela de resultados  
         
+        Resultados = [Conjunto_de_dados, Tabela, Resultados]
+
         return [Resultados, População, Observação]
     end
 end

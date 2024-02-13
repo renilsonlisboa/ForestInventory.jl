@@ -1822,7 +1822,7 @@ ApplicationWindow {
                                     var resultados = Julia.calcMULTI(Julia.singleFile(selectedFileDialogMULTI.currentFile), areainvMULTI.text, areaparcMULTI.text, alphaMULTI.text, earMULTI.text)
 
                                     resultVals = resultados[0]
-                                    resultObs = resultados[1] + "\n\n" + resultados[2]
+                                    resultObs = resultados[1]
 
                                     saveFileDialogMULTI.open()
                                 }
@@ -2005,7 +2005,7 @@ ApplicationWindow {
                     }
                     TextField {
                         id: areainvOc1IND
-                        placeholderText: "Área inventáriada na ocasião 1 (ha)"
+                        placeholderText: "Área inventáriada na ocasião 1 (m²)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
@@ -2024,7 +2024,7 @@ ApplicationWindow {
                     }
                     TextField {
                         id: areainvOc2IND
-                        placeholderText: "Área inventáriada na ocasião 2 (ha)"
+                        placeholderText: "Área inventáriada na ocasião 2 (m²)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
@@ -2288,7 +2288,7 @@ ApplicationWindow {
                     }
                     TextField {
                         id: areainvOc1ART
-                        placeholderText: "Área inventáriada na ocasião 1 (ha)"
+                        placeholderText: "Área inventáriada na ocasião 1 (m²)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
@@ -2307,7 +2307,7 @@ ApplicationWindow {
                     }
                     TextField {
                         id: areainvOc2ART
-                        placeholderText: "Área inventáriada na ocasião 2 (ha)"
+                        placeholderText: "Área inventáriada na ocasião 2 (m²)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
@@ -2430,7 +2430,7 @@ ApplicationWindow {
             MessageDialog {
                 id: conclusionDialogART
                 title: "Inventário Processado com Sucesso"
-                text: "O inventário foi processado com sucesso, o arquivo de resultado está disponível em: \n" + saveFileDialogART.selectedFile
+                text: "O inventário foi processado com sucesso, o arquivo de resultado está disponível em: \n\n" + saveFileDialogART.selectedFile
             }
 
             FileDialog {
@@ -2466,7 +2466,7 @@ ApplicationWindow {
             Connections {
                 target: inventART
                 onClosing:{
-                    areaparcIND.text = ""
+                    areaparcART.text = ""
                     areainvOc1ART.text = ""
                     areainvOc2ART.text = ""
                     alphaART.text = ""
@@ -2552,7 +2552,7 @@ ApplicationWindow {
                     // Adicione 4 campos de entrada (TextField)
                     TextField {
                         id: areaparcAD
-                        placeholderText: "Área da Parcela (ha)"
+                        placeholderText: "Área da Parcela (m²)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
@@ -2571,7 +2571,7 @@ ApplicationWindow {
                     }
                     TextField {
                         id: areainvAD
-                        placeholderText: "Área da população (ha)"
+                        placeholderText: "Área da população (m²)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
@@ -2690,7 +2690,7 @@ ApplicationWindow {
             MessageDialog {
                 id: conclusionDialogAD
                 title: "Inventário Processado com Sucesso"
-                text: "O inventário foi processado com sucesso, o arquivo de resultado está disponível em: \n" + saveFileDialogAD.selectedFile
+                text: "O inventário foi processado com sucesso, o arquivo de resultado está disponível em: \n\n" + saveFileDialogAD.selectedFile
             }
 
             FileDialog {
@@ -2811,7 +2811,7 @@ ApplicationWindow {
                     // Adicione 4 campos de entrada (TextField)
                     TextField {
                         id: areaparcARP
-                        placeholderText: "Área da Parcela (ha)"
+                        placeholderText: "Área da Parcela (m²)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
@@ -2830,7 +2830,7 @@ ApplicationWindow {
                     }
                     TextField {
                         id: areainvARP
-                        placeholderText: "Área da população (ha)"
+                        placeholderText: "Área da população (m²)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"

@@ -18,6 +18,9 @@ module Save
             return 0
         end
             
+        # Convert i to Int64
+        i = Int64(i)
+
         # Converte a entrada em QString do QML em String do Julia
         uri_s = QString(uri)
 
@@ -36,34 +39,45 @@ module Save
             names(Dados[1])), Resultados=(collect(eachcol(Dados[2])),
             names(Dados[2])), overwrite = true) #Exportar para o Excel
         elseif i === 1
-            XLSX.writetable(("$(cleaned_path).xlsx"), Dados=(collect(eachcol(Dados[1])), 
+            writetable(("$(cleaned_path).xlsx"), Dados=(collect(eachcol(Dados[1])), 
             names(Dados[1])), Informações_do_inventário=(collect(eachcol(Dados[2])), 
             names(Dados[2])), Por_estrato=(collect(eachcol(Dados[3])), 
             names(Dados[3])), Anova_da_estratificação=(collect(eachcol(Dados[4])), 
-            names(Dados[4])), Resultados=( collect(eachcol(Dados[5])), 
-            names(Dados[5]))) #Export to Excel
+            names(Dados[4])), Resultados=(collect(eachcol(Dados[5])), 
+            names(Dados[5])), overwrite = true) #Export to Excel
         elseif i === 2
-            XLSX.writetable(("$(cleaned_path).xlsx"), Dados=(collect(eachcol(Dados[1])), 
-            names(Dados[1])), Informações_do_inventário=(collect(eachcol(Dados[2])), 
-            names(Dados[2])), Por_estrato=(collect(eachcol(Dados[3])), 
-            names(Dados[3])), Anova_da_estratificação=(collect(eachcol(Dados[4])), 
-            names(Dados[4])), Resultados=( collect(eachcol(Dados[5])), 
-            names(Dados[5]))) #Export to Excel
+            writetable(("$(cleaned_path).xlsx"), Dados=(collect(eachcol(Dados[1])), 
+            names(Dados[1])), Analise_descritiva=(collect(eachcol(Dados[2])),
+            names(Dados[2])), Resultados=(collect(eachcol(Dados[3])), 
+            names(Dados[3])), overwrite = true) #Exportar para o Excel
         elseif i === 3
-            XLSX.writetable(("$(cleaned_path).xlsx"), Dados=(collect(eachcol(Dados[1])), 
-            names(Dados[1])), Informações_do_inventário=(collect(eachcol(Dados[2])), 
-            names(Dados[2])), Por_estrato=(collect(eachcol(Dados[3])), 
-            names(Dados[3])), Anova_da_estratificação=(collect(eachcol(Dados[4])), 
-            names(Dados[4])), Resultados=( collect(eachcol(Dados[5])), 
-            names(Dados[5]))) #Export to Excel
+            writetable(("$(cleaned_path).xlsx"), Dados=(collect(eachcol(Dados[1])), 
+            names(Dados[1])), Analise_descritiva=(collect(eachcol(Dados[2])), 
+            names(Dados[2])), Resultados=(collect(eachcol(Dados[3])), 
+            names(Dados[3])), overwrite = true) #Exportar para o Excel
         elseif i === 4
-            XLSX.writetable(("$(cleaned_path).xlsx"), Dados=(collect(eachcol(Dados[1])), 
-            names(Dados[1])), Informações_do_inventário=(collect(eachcol(Dados[2])), 
-            names(Dados[2])), Por_estrato=(collect(eachcol(Dados[3])), 
-            names(Dados[3])), Anova_da_estratificação=(collect(eachcol(Dados[4])), 
-            names(Dados[4])), Resultados=( collect(eachcol(Dados[5])), 
-            names(Dados[5]))) #Export to Excel
+            writetable(("$(cleaned_path).xlsx"), Dados=(collect(eachcol(Dados[1])), 
+            names(Dados[1])), Analise_descritiva=(collect(eachcol(Dados[2])), 
+            names(Dados[2])), Resultados=(collect(eachcol(Dados[3])), 
+            names(Dados[3])), overwrite = true) #Exportar para o Excel
+        elseif i === 5
+            writetable(("$(cleaned_path).xlsx"), Dados=(collect(eachcol(Dados[1])), 
+            names(Dados[1])), Analise_descritiva=(collect(eachcol(Dados[2])), 
+            names(Dados[2])), Resultados=(collect(eachcol(Dados[3])), 
+            names(Dados[3])), overwrite = true) #Exportar para o Excel
         elseif i === 6
+            writetable("$(cleaned_path).xlsx", Dados=(collect(eachcol(Dados[1])), 
+            names(Dados[1])), Primeira_ocasião=(collect(eachcol(Dados[2])), 
+            names(Dados[2])), Segunda_ocasião=(collect(eachcol(Dados[3])), 
+            names(Dados[3])), Crescimento_ou_mudança=(collect(eachcol(Dados[4])),   
+            names(Dados[4])), overwrite = true) #Exportar para o Excel
+        elseif i === 7
+            writetable("$(cleaned_path).xlsx", Dados=(collect(eachcol(Dados[1])), 
+            names(Dados[1])), Primeira_ocasião=(collect(eachcol(Dados[2])), 
+            names(Dados[2])), Segunda_ocasião=(collect(eachcol(Dados[3])), 
+            names(Dados[3])), Crescimento_ou_mudança=(collect(eachcol(Dados[4])),   
+            names(Dados[4])), overwrite = true) #Exportar para o Excel
+        elseif i === 8
             writetable("$(cleaned_path).xlsx", Dados=(collect(eachcol(Dados[1])), 
             names(Dados[1])), Primeira_ocasião=(collect(eachcol(Dados[2])), 
             names(Dados[2])), Segunda_ocasião=(collect(eachcol(Dados[3])), 

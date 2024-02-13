@@ -190,7 +190,9 @@ export calcMULTI
         (((first(unique((Tabela.n))))).-1)))))*(((first(unique((Tabela.n))))).-1)), (0.1*(sum(Tabela.Média)/(length(Tabela.n)))), 
         length(Tabela.n), first((first(unique((Tabela.n))))), α, Observação]) #Tabela de resultados    
         
-        return [Resultados, População, Observação]
+        Resultados = [Conjunto_de_dados, Tabela, Resultados]
+
+        return [Resultados, Observação]
 
     end
 end

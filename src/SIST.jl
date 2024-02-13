@@ -69,6 +69,8 @@ export calcSIST
             first(unique((Tabela.n))), length(Tabela.n), α, Observação])
         ) #Tabela de resultados
         
+        Resultados = [Conjunto_de_dados, Tabela, Resultados]
+
         return [Resultados, População, Observação]
 
     end 
