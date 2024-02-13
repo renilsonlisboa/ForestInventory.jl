@@ -2811,7 +2811,7 @@ ApplicationWindow {
                     // Adicione 4 campos de entrada (TextField)
                     TextField {
                         id: areaparcARP
-                        placeholderText: "Área da Parcela (m²)"
+                        placeholderText: "Área da Parcela (ha)"
                         horizontalAlignment: Text.AlignHCenter
                         font.pointSize: 14
                         font.family: "Arial"
@@ -2949,7 +2949,7 @@ ApplicationWindow {
             MessageDialog {
                 id: conclusionDialogARP
                 title: "Inventário Processado com Sucesso"
-                text: "O inventário foi processado com sucesso, o arquivo de resultado está disponível em: \n" + saveFileDialogARP.selectedFile
+                text: "O inventário foi processado com sucesso, o arquivo de resultado está disponível em: \n\n" + saveFileDialogARP.selectedFile
             }
 
             FileDialog {

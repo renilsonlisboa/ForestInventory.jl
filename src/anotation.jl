@@ -11,6 +11,4 @@
 -> MULTI
 * Verificar valores (total população, intervalo inf e sup)
 
-
-
 """
