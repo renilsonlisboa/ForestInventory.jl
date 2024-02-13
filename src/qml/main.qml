@@ -575,7 +575,7 @@ ApplicationWindow {
                         Connections {
                             onTextChanged: {
                                 if (alphaESTRAT.text.includes(",")) {
-                                    alphaAalphaESTRAT.text = alphaESTRAT.text.replace(/,/g, ".");
+                                    alphaESTRAT.text = alphaESTRAT.text.replace(/,/g, ".");
                                 }
                             }
                         }
@@ -737,9 +737,9 @@ ApplicationWindow {
                         areaparcESTRAT.text = ""
                         earESTRAT.text = ""
                         alphaESTRAT.text = ""
-                        estratosESTRAT = ""
-                        estratosESTRAT2 = ""
-                        estratosESTRAT3 = ""
+                        estratosESTRAT.text = ""
+                        estratosESTRAT2.text = ""
+                        estratosESTRAT3.text = ""
                         correctESTRAT.visible = false
                         errorESTRAT.visible = false
                         verifySelected = false
