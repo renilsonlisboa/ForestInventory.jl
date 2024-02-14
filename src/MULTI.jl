@@ -13,8 +13,8 @@ export calcMULTI
         AreaParc = Float64(Meta.parse(AreaParc))
         α = Float64(Meta.parse(α))
         EAR = Float64(Meta.parse(EAR))
-
-        N = (Area*10000)/AreaParc
+        
+        N = (Area)/2
 
         Conversor = 10000/AreaParc
 

@@ -51,8 +51,7 @@ export CalcAAS
         
         ErroPad = (DesvPad/sqrt(NumUni))*sqrt((1-(NumUni/N))) #Erro padrão
 
-        ErroPadRel = ErroPad/mean(Volume)*100 #Erro padrão relativo
-
+        ErroPadRel = (ErroPad/mean(Volume))*100 #Erro padrão relativo
 
         CV = (DesvPad/Media)*100 #Coeficiente de variação
 
@@ -86,7 +85,7 @@ export CalcAAS
         "Fator de correção", "Tamanho da amostra", "População", "Número total de unidades amostrais da população", 
         "Nível de significância (α)", "Observação"], Valores=[Media, LII, LIS, ValTotal, LIItotal, LIStotal, ErroPadRel, Area, ErroAmostAbs, ErroPad, DesvPad, Variancia, VarMed, VarMedRel, CV, LE, EAR, FatorCorr, Tamanho_da_amostra, População, N, α, Observação])
      
-        Resultados = [Dados, Resultados]
+        Resultados = [AAS, Resultados]
 
         return [Resultados, População, Observação]
     end
