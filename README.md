@@ -13,16 +13,16 @@ O ForestInventory é um aplicativo desenvolvido em Linguagem Julia. Ele foi proj
 
 ## Processos de Amostragem
 
-- [Amostragem Aleatória Simples](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y)
-- Amostragem Estratificada
-- Amostragem Sistemática
-- Amostragem em Dois Estágios
-- Amostragem em Conglemerados
-- Amostragem Sistemática com Múltiplos Inícios Alatórios
-- Amostragem Independente
-- Amostragem com Repetição Total
-- Amostragem Dupla
-- Amostragem com Repetição Parcial
+- [Amostragem Aleatória Simples](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y#page=28)
+- [Amostragem Estratificada](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y#page=29)
+- [Amostragem Sistemática](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y#page=29)
+- [Amostragem em Dois Estágios](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y#page=30)
+- [Amostragem em Conglemerados](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y#page=31)
+- [Amostragem Sistemática com Múltiplos Inícios Alatórios](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y#page=32)
+- [Amostragem Independente](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y#page=32)
+- [Amostragem com Repetição Total](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y#page=33)
+- [Amostragem Dupla](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y#page=33)
+- [Amostragem com Repetição Parcial](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y#page=34)
 
 ## Documentation
 
