@@ -7,9 +7,9 @@
 
 ## ForestInventory
 
-<p style="text-align: justify;">
+<div style="text-align: justify;">
 O ForestInventory é um aplicativo desenvolvido em Linguagem Julia. Ele foi projetado para facilitar os processamentos dos processos de amostragem do inventário florestal. Nele é possível analisar 10 processos de amostragem do inventário florestal, que estão baseados no Livro de Inventário Florestal, 1997 de Sylvio Péllico Netto e Doádi Antônio Brena. Essa ferramenta tem o intuito de contribuir e facilitar o processamento de dados por pesquisadores, engenheiros florestais, estatísticos e pessoas que trabalhem com dados relacionados ao inventário florestal. Além disso, o seu uso é de livre acesso, possibilitando seu uso no ensino superior.
-</p>
+</div>
 
 ## Processos de Amostragem
 
@@ -23,11 +23,6 @@ O ForestInventory é um aplicativo desenvolvido em Linguagem Julia. Ele foi proj
 - [Amostragem com Repetição Total](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y#page=33)
 - [Amostragem Dupla](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y#page=33)
 - [Amostragem com Repetição Parcial](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y#page=34)
-
-## Documentation
-
-- Stable Documentation: [ForestInventory Stable Docs](https://renilsonlisboa.github.io/ForestInventory.jl/stable/)
-- Development Documentation: [ForestInventory Dev Docs](https://renilsonlisboa.github.io/ForestInventory.jl/dev/)
 
 ## Installation
 
