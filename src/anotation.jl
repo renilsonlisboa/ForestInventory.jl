@@ -1,5 +1,0 @@
-"""
--> CONGL
-* Verificar valores (arredondamentos)
-
-"""
