@@ -13,7 +13,7 @@ O ForestInventory é um aplicativo desenvolvido em Linguagem Julia. Ele foi proj
 
 ## Processos de Amostragem
 
-- Amostragem Aleatória Simples
+- [Amostragem Aleatória Simples](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y)
 - Amostragem Estratificada
 - Amostragem Sistemática
 - Amostragem em Dois Estágios
