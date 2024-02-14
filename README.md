@@ -22,9 +22,9 @@
 - [Amostragem Dupla](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y#page=33)
 - [Amostragem com Repetição Parcial](https://repositorio.ufsm.br/bitstream/handle/1/28263/DIS_PPGAAA_2023_NARDINI_CLAITON.pdf?sequence=1&isAllowed=y#page=34)
 
-## Installation
+## Instalação do Pacote
 
-You can install ForestInventory.jl and its dependencies using the Julia package manager. Open the Julia REPL and run:
+<p align="justify"> A instalação do pacote ForesteInventory.jl e suas dependências pode ser feita por meio do gestor de pacotes de Julia. Para isto, basta o usuário abrir o Julia REPL e executar os comandos: </p>
 
 ```julia
 using Pkg
@@ -32,13 +32,9 @@ using Pkg
 Pkg.add("https://github.com/renilsonlisboa/ForestInventory.jl")
 ```
 
-Or you can install using ]
+## Usando ForestInventory.jl
 
-```julia
-]add https://github.com/renilsonlisboa/ForestInventory.jl
-```
-
-## Using ForestInventory.jl
+<p align="justify"> Após finalizada a instalação do pacote por meio dos comandos a cima, o usuário podera utilizar o pacote ForestInventory.jl por meio dos seguintes comandos: </p>
 
 ```julia
 using ForestInventory
