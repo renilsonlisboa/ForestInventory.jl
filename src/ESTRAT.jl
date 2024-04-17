@@ -69,6 +69,7 @@ export calcESTRAT
             (round((Area/(length(Unidade)))*nh2)*10)/N; 
             (round((Area/(length(Unidade)))*nh3)*10)/N*Tabela.Variância)))/(((0.1*mean(Volume)))^2)
             round(Infinita)
+            Finita = Infinita
         elseif (1-(length(Unidade)/N)) < 0.98
             #População finita. O tamanho da amostra é calculado pela seguinte equação:
             Finita=(((t)^2)*sum(((round((Area/(length(Unidade)))*nh1)*10)/N; 
