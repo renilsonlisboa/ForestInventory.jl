@@ -35,7 +35,7 @@ export calcESTRAT
         "Número potencial de Unidades do estrato II", "Número potencial de Unidades do estrato III"], 
         Valores=[Area, N, α, nh1, nh2, nh3, length(unique(Estrato)), length(Unidade), 
         (round((Area/(length(Unidade)))*nh1)*10), (round((Area/(length(Unidade)))*nh2)*10), 
-        (round((Area/(length(Unidade)))*nh3)*10)/N]) #Tabela de resultados
+        (round((Area/(length(Unidade)))*nh3)*10)]) #Tabela de resultados
 
         #Tabela com estatítica descritiva pro estrato
         Tabela= combine(groupby(Conjunto_de_dados, :Estrato)) do df
